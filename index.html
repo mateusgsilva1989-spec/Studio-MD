@@ -25,15 +25,16 @@
     header p { font-size: 0.85rem; color: var(--text-dim); }
 
     /* NAVEGAÇÃO PRINCIPAL */
-    .main-nav { display: flex; gap: 6px; margin-bottom: 16px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); }
-    .main-nav-btn { flex: 1; padding: 12px 4px; text-align: center; background: transparent; color: var(--text-dim); border: none; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .main-nav { display: flex; gap: 4px; margin-bottom: 16px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
+    .main-nav-btn { flex: 1; padding: 10px 2px; text-align: center; background: transparent; color: var(--text-dim); border: none; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; min-width: 75px; }
     .main-nav-btn.active { background: var(--accent); color: #000; }
 
     .card { background-color: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
     .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
 
-    label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; margin-bottom: 4px; }
+    label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; margin-bottom: 4px; font-weight: 500; }
     input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background-color: #0f172a; color: #fff; font-size: 0.95rem; }
+    textarea { resize: vertical; }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -96,20 +97,25 @@
 
   <!-- BARRA DE NAVEGAÇÃO SUPERIOR -->
   <nav class="main-nav">
-    <button class="main-nav-btn active" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Novo Projeto</button>
+    <button class="main-nav-btn active" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Projeto</button>
+    <button class="main-nav-btn" id="navConstrucaoBtn" onclick="mudarVisaoPrincipal('construcao')">🛠️ Construção</button>
     <button class="main-nav-btn" id="navHistoricoBtn" onclick="mudarVisaoPrincipal('historico')">📁 Histórico</button>
-    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Configurações</button>
+    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Config.</button>
   </nav>
 
   <!-- ==================== VISÃO 1: NOVO PROJETO ==================== -->
   <div id="viewProjeto" class="main-view">
     
-    <!-- UPLOAD DE FOTO -->
+    <!-- UPLOAD DE FOTO E DESCRIÇÃO -->
     <div class="card">
-      <h2>📷 Foto do Esboço / Croqui</h2>
+      <h2>📷 Desenho e Descrição do Móvel</h2>
       
-      <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim);">
-        Material / MDF Base Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
+      <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
+      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..."></textarea>
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura e medidas exatas reduz muito a chance da Inteligência Artificial errar a leitura do croqui.</p>
+
+      <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
+        Material Base / MDF Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
       </div>
 
       <div class="grid-2">
@@ -135,7 +141,7 @@
       <div class="tabs">
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
         <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
-        <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha Técnica</div>
+        <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
       </div>
 
       <!-- ABA COMERCIAL -->
@@ -161,9 +167,9 @@
         
         <!-- PAINEL DE MEMÓRIA DE CÁLCULO E SIMULAÇÃO DE VALORES -->
         <div class="calc-box">
-          <h4>🧮 Memória de Cálculo & Simulação do Preço</h4>
+          <h4>🧮 Simulação do Preço Final</h4>
           <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:10px;">
-            Altere qualquer valor abaixo para simular e recalcular o preço final em tempo real:
+            Altere qualquer valor abaixo para simular e recalcular o preço em tempo real:
           </p>
 
           <div class="grid-2">
@@ -194,7 +200,7 @@
               <strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong>
             </div>
             <div style="text-align:right;">
-              <span style="font-size:0.75rem; color:var(--text-dim);">Valor Final com Margem:</span><br>
+              <span style="font-size:0.75rem; color:var(--text-dim);">Valor Final:</span><br>
               <strong id="lblValorFinalTecnico" style="font-size:1.1rem; color:var(--accent);">R$ 0,00</strong>
             </div>
           </div>
@@ -266,7 +272,43 @@
 
   </div>
 
-  <!-- ==================== VISÃO 2: HISTÓRICO ==================== -->
+  <!-- ==================== VISÃO 2: CONSTRUÇÃO ==================== -->
+  <div id="viewConstrucao" class="main-view" style="display: none;">
+    <div class="card">
+      <h2>🛠️ Regras e Padrões Construtivos</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 16px;">Configure aqui os padrões estruturais da sua marcenaria. A IA usará essas espessuras e folgas para calcular a lista de peças do móvel.</p>
+      
+      <div class="grid-2">
+        <div>
+          <label>Espessura Caixa (mm)</label>
+          <select id="espCaixa" onchange="salvarConfig()">
+            <option value="15">15 mm</option>
+            <option value="18">18 mm</option>
+          </select>
+        </div>
+        <div>
+          <label>Espessura Fundo (mm)</label>
+          <select id="espFundo" onchange="salvarConfig()">
+            <option value="6">6 mm</option>
+            <option value="15">15 mm</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 10px;">
+        <div>
+          <label>Folga para Gavetas (mm)</label>
+          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()" placeholder="Ex: 26">
+        </div>
+        <div>
+          <label>Margem / Lucro Padrão (%)</label>
+          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()" placeholder="Ex: 100">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VISÃO 3: HISTÓRICO ==================== -->
   <div id="viewHistorico" class="main-view" style="display: none;">
     <div class="card">
       <h2>📁 Histórico de Orçamentos Salvos</h2>
@@ -275,12 +317,12 @@
     </div>
   </div>
 
-  <!-- ==================== VISÃO 3: CONFIGURAÇÕES ==================== -->
+  <!-- ==================== VISÃO 4: CONFIGURAÇÕES E PREÇOS ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
     
     <!-- CREDENCIAIS E API -->
     <div class="card">
-      <h2>🔑 Chave de Conexão da Inteligência Artificial</h2>
+      <h2>🔑 Chave de Conexão (Inteligência Artificial)</h2>
       <div id="statusApiKeyBadge"></div>
       
       <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
@@ -288,56 +330,24 @@
       <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">Sua chave é salva somente no seu navegador e usada para ler fotos e croquis.</p>
     </div>
 
-    <!-- PARÂMETROS CONSTRUTIVOS -->
-    <div class="card">
-      <h2>⚙️ Regras e Padrões Construtivos</h2>
-      
-      <div class="grid-2">
-        <div>
-          <label>Caixa MDF (mm)</label>
-          <select id="espCaixa" onchange="salvarConfig()">
-            <option value="15">15 mm</option>
-            <option value="18">18 mm</option>
-          </select>
-        </div>
-        <div>
-          <label>Fundo MDF (mm)</label>
-          <select id="espFundo" onchange="salvarConfig()">
-            <option value="6">6 mm</option>
-            <option value="15">15 mm</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div>
-          <label>Folga Gavetas (mm)</label>
-          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
-        </div>
-        <div>
-          <label>Margem/Lucro (%)</label>
-          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
-        </div>
-      </div>
-    </div>
-
     <!-- TABELA DE PREÇOS GERAL -->
     <div class="card">
-      <h2>🏷️ Tabela de Preços (MDF, Ferragens e Insumos)</h2>
-      
+      <h2>🏷️ Tabela de Preços (MDF e Insumos)</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Cadastre chapas de MDF, corrediças, dobradiças e outros materiais.</p>
+
       <label>Material / MDF Principal Selecionado no Projeto</label>
       <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
 
       <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
-        <label>➕ Cadastrar Novo Item na Tabela de Preços</label>
+        <label>➕ Cadastrar Novo Item na Tabela</label>
         <div class="grid-2">
-          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm, MDF Freijó">
+          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
           <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
         </div>
         <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
       </div>
 
-      <label style="margin-top: 16px;">📋 Itens Cadastrados na Tabela de Preços:</label>
+      <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
       <div id="listaItensTabela"></div>
     </div>
 
@@ -373,10 +383,12 @@
     // --- CONTROLE DE VISÃO DA NAVEGAÇÃO SUPERIOR ---
     function mudarVisaoPrincipal(visao) {
       document.getElementById('viewProjeto').style.display = visao === 'projeto' ? 'block' : 'none';
+      document.getElementById('viewConstrucao').style.display = visao === 'construcao' ? 'block' : 'none';
       document.getElementById('viewHistorico').style.display = visao === 'historico' ? 'block' : 'none';
       document.getElementById('viewConfig').style.display = visao === 'config' ? 'block' : 'none';
 
       document.getElementById('navProjetoBtn').className = visao === 'projeto' ? 'main-nav-btn active' : 'main-nav-btn';
+      document.getElementById('navConstrucaoBtn').className = visao === 'construcao' ? 'main-nav-btn active' : 'main-nav-btn';
       document.getElementById('navHistoricoBtn').className = visao === 'historico' ? 'main-nav-btn active' : 'main-nav-btn';
       document.getElementById('navConfigBtn').className = visao === 'config' ? 'main-nav-btn active' : 'main-nav-btn';
     }
@@ -412,13 +424,11 @@
       container.innerHTML = '';
 
       tabelaPrecos.forEach((item, index) => {
-        // Opção do Dropdown
         const opt = document.createElement('option');
         opt.value = item.id;
         opt.innerText = `${item.nome} — R$ ${item.preco},00`;
         select.appendChild(opt);
 
-        // Card da Lista de Itens Cadastrados
         const div = document.createElement('div');
         div.className = 'mdf-item';
         div.innerHTML = `
@@ -499,7 +509,7 @@
       const statusEl = document.getElementById('status');
 
       if (!apiKey) {
-        alert('Por favor, cadastre sua Chave de API do Google Gemini na aba "⚙️ Configurações" antes de continuar.');
+        alert('Por favor, cadastre sua Chave de API do Google Gemini na aba "⚙️ Config." antes de continuar.');
         mudarVisaoPrincipal('config');
         return;
       }
@@ -514,8 +524,13 @@
       const folgaGaveta = document.getElementById('folgaGaveta').value;
       const margemLucro = parseFloat(document.getElementById('margemLucro').value);
       const itemAtivo = obterItemAtivo();
+      
+      // NOVA INSTRUÇÃO DO TEXTO DO USUÁRIO PARA REDUZIR ERROS DA IA
+      const descUsuario = document.getElementById('descricaoMovel').value.trim();
+      const regraDescricao = descUsuario ? `\nINSTRUÇÕES DO MARCENEIRO (PRIORIDADE MÁXIMA): "${descUsuario}"\nBaseie-se primeiramente nesta descrição acima para definir medidas (Altura, Largura, Profundidade) e as quantidades de gavetas/prateleiras/portas. A imagem serve como apoio secundário ao texto.\n` : '';
 
       const prompt = `Você é um mestre marceneiro e orçamentista. Analise o croqui/desenho fornecido.
+${regraDescricao}
 Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e a estrutura interna.
 
 Siga rigorosamente estas REGRAS FÍSICAS DE MARCENARIA:
@@ -933,9 +948,9 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       ultimoResultado = p.resultado;
 
       document.getElementById('nomeCliente').value = p.cliente;
-      const margemLucro = parseFloat(document.getElementById('margemLucro').value);
-
-      exibirResultado(ultimoResultado, margemLucro);
+      
+      // Recupera o valor que foi calculado originalmente ou mantém os campos atuais se desejar refazer
+      exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value));
       desenharPranchaSVG(ultimoResultado);
 
       mudarVisaoPrincipal('projeto');
