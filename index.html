@@ -76,9 +76,12 @@
     .info-medidas p { margin-bottom: 4px; }
     .info-medidas strong { color: #0f172a; }
 
-    /* CARDS DE HISTÓRICO E MDF */
+    /* CARDS DE HISTÓRICO E MEMÓRIA DE CÁLCULO */
     .mdf-item, .proj-card { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
     .proj-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
+    .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
     .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
     .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
     .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
@@ -150,11 +153,53 @@
 
         <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento no Histórico</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
+        <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
       </div>
 
-      <!-- ABA TÉCNICA -->
+      <!-- ABA TÉCNICA / CORTE E MEMÓRIA DE CÁLCULO -->
       <div id="abaTecnica" style="display: none;">
+        
+        <!-- PAINEL DE MEMÓRIA DE CÁLCULO E SIMULAÇÃO DE VALORES -->
+        <div class="calc-box">
+          <h4>🧮 Memória de Cálculo & Simulação do Preço</h4>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:10px;">
+            Altere qualquer valor abaixo para simular e recalcular o preço final em tempo real:
+          </p>
+
+          <div class="grid-2">
+            <div>
+              <label>Qtd. Chapas Estimada</label>
+              <input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()">
+            </div>
+            <div>
+              <label>Preço p/ Chapa (R$)</label>
+              <input type="number" id="inpEditPrecoChapa" step="1" min="0" oninput="recalcularPrecoManual()">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Ferragens & Insumos (R$)</label>
+              <input type="number" id="inpEditOutrosCustos" step="10" min="0" oninput="recalcularPrecoManual()">
+            </div>
+            <div>
+              <label>Margem / Lucro (%)</label>
+              <input type="number" id="inpEditMargem" step="5" min="0" oninput="recalcularPrecoManual()">
+            </div>
+          </div>
+
+          <div style="margin-top:12px; background:#1b2436; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:0.75rem; color:var(--text-dim);">Custo Total Material:</span><br>
+              <strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:0.75rem; color:var(--text-dim);">Valor Final com Margem:</span><br>
+              <strong id="lblValorFinalTecnico" style="font-size:1.1rem; color:var(--accent);">R$ 0,00</strong>
+            </div>
+          </div>
+        </div>
+
         <h3>Lista de Peças Estimada</h3>
         <table id="tabelaPecas">
           <thead>
@@ -424,9 +469,8 @@
       document.getElementById('lblMdfAtual').innerText = `${activeMdf.nome} (R$ ${activeMdf.preco}/chapa)`;
 
       if (ultimoResultado) {
-        const margemLucro = parseFloat(document.getElementById('margemLucro').value);
-        exibirResultado(ultimoResultado, margemLucro);
-        desenharPranchaSVG(ultimoResultado);
+        document.getElementById('inpEditPrecoChapa').value = activeMdf.preco;
+        recalcularPrecoManual();
       }
     }
 
@@ -504,7 +548,8 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
     "1 Chapa MDF 15mm",
     "12 metros de fita de borda"
   ],
-  "chapasEstimadas": 0.5
+  "chapasEstimadas": 0.5,
+  "custoOutros": 120
 }`;
 
       const modelos = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
@@ -573,14 +618,18 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       document.getElementById('resumoTexto').innerText = data.resumoComercial;
 
       const mdfAtivo = obterMdfAtivo();
-      const custoMaterial = data.custoMaterial || (data.chapasEstimadas * mdfAtivo.preco);
-      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
+      const chapas = data.chapasEstimadas || 1;
+      const precoChapa = mdfAtivo.preco || 250;
+      const outrosCustos = data.custoOutros || 150;
 
-      document.getElementById('valorTotal').innerText = valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('inpEditChapas').value = chapas;
+      document.getElementById('inpEditPrecoChapa').value = precoChapa;
+      document.getElementById('inpEditOutrosCustos').value = outrosCustos;
+      document.getElementById('inpEditMargem').value = margemLucro;
 
-      const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${data.resumoComercial}\n\n*Padrão de MDF:* ${mdfAtivo.nome}\n*Valor Total Estimado:* ${valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
-      document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
+      recalcularPrecoManual();
 
+      // Preencher Tabela de Peças
       const tbody = document.querySelector('#tabelaPecas tbody');
       tbody.innerHTML = '';
       data.pecas.forEach(p => {
@@ -589,6 +638,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         tbody.appendChild(tr);
       });
 
+      // Preencher Lista de Insumos
       const ulInsumos = document.getElementById('listaInsumos');
       ulInsumos.innerHTML = '';
       data.insumos.forEach(item => {
@@ -596,6 +646,34 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         li.innerText = item;
         ulInsumos.appendChild(li);
       });
+    }
+
+    // --- RECALCULAR PREÇO EM TEMPO REAL AO EDITAR CAMPOS TÉCNICOS ---
+    function recalcularPrecoManual() {
+      if (!ultimoResultado) return;
+
+      const chapas = parseFloat(document.getElementById('inpEditChapas').value) || 0;
+      const precoChapa = parseFloat(document.getElementById('inpEditPrecoChapa').value) || 0;
+      const outrosInsumos = parseFloat(document.getElementById('inpEditOutrosCustos').value) || 0;
+      const margem = parseFloat(document.getElementById('inpEditMargem').value) || 0;
+
+      const custoMaterialTotal = (chapas * precoChapa) + outrosInsumos;
+      const valorFinal = custoMaterialTotal * (1 + (margem / 100));
+
+      ultimoResultado.chapasEstimadas = chapas;
+      ultimoResultado.custoMaterial = custoMaterialTotal;
+      ultimoResultado.custoOutros = outrosInsumos;
+
+      const valorFormatado = valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      const custoFormatado = custoMaterialTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      document.getElementById('lblCustoMaterialTotal').innerText = custoFormatado;
+      document.getElementById('lblValorFinalTecnico').innerText = valorFormatado;
+      document.getElementById('valorTotal').innerText = valorFormatado;
+
+      const mdfAtivo = obterMdfAtivo();
+      const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${ultimoResultado.resumoComercial}\n\n*Padrão de MDF:* ${mdfAtivo.nome}\n*Valor Total Estimado:* ${valorFormatado}`);
+      document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
     }
 
     // --- DESENHO VETORIAL CAD PROPORCIONAL E GERADOR DE PROMPT GEMINI ---
@@ -714,7 +792,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       </svg>`;
       document.getElementById('svgTopContainer').innerHTML = topSVG;
 
-      // GERAR PROMPT E PREENCHER NO CAMPO
       const promptTexto = gerarPromptGemini(data);
       document.getElementById('promptGeminiBox').value = promptTexto;
     }
@@ -786,10 +863,10 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       const nomeClienteInput = document.getElementById('nomeCliente');
       const nomeCliente = nomeClienteInput.value.trim() || ('Projeto ' + new Date().toLocaleDateString('pt-BR'));
-      const margemLucro = parseFloat(document.getElementById('margemLucro').value);
+      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
       const mdfAtivo = obterMdfAtivo();
 
-      const custoMaterial = ultimoResultado.custoMaterial || (ultimoResultado.chapasEstimadas * mdfAtivo.preco);
+      const custoMaterial = ultimoResultado.custoMaterial || 0;
       const valorFinal = custoMaterial * (1 + (margemLucro / 100));
 
       const novoProjeto = {
