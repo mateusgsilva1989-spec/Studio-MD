@@ -14,14 +14,20 @@
       --border: #2d3748;
       --danger: #ef4444;
       --warning: #f59e0b;
+      --blue: #3b82f6;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 40px; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 50px; }
 
-    header { text-align: center; margin-bottom: 20px; }
+    header { text-align: center; margin-bottom: 16px; }
     header h1 { font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 8px; }
     header p { font-size: 0.85rem; color: var(--text-dim); }
+
+    /* NAVEGAÇÃO PRINCIPAL DO TOPO */
+    .main-nav { display: flex; gap: 6px; margin-bottom: 16px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); }
+    .main-nav-btn { flex: 1; padding: 12px 4px; text-align: center; background: transparent; color: var(--text-dim); border: none; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .main-nav-btn.active { background: var(--accent); color: #000; }
 
     .card { background-color: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
     .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
@@ -33,13 +39,16 @@
 
     .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 14px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-sec { background-color: #3b82f6; color: #fff; margin-top: 12px; }
-    .btn-approve { background-color: #10b981; color: #000; font-size: 1rem; padding: 14px; margin-top: 14px; }
-    
+    .btn-sec { background-color: var(--blue); color: #fff; margin-top: 12px; }
+    .btn-approve { background-color: var(--accent); color: #000; font-size: 1rem; padding: 14px; margin-top: 14px; }
+    .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+    .btn-danger { background-color: var(--danger); color: #fff; }
+
     .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
+    /* SUB-ABAS DOS RESULTADOS */
     .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; }
     .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
@@ -57,7 +66,7 @@
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
     .btn-download { background-color: #6366f1; color: #fff; margin-top: 10px; text-decoration: none; display: none; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
-    /* ESTILOS DA PRANCHA TÉCNICA */
+    /* PRANCHA TÉCNICA ESTILO PROMOB */
     .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
     .prancha-header { text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
     .prancha-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -65,7 +74,6 @@
     
     .cad-box { background: #ffffff; border: 2px solid #334155; border-radius: 4px; padding: 12px; position: relative; }
     .cad-title { font-size: 0.75rem; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
-    
     .svg-cad { width: 100%; height: auto; max-height: 380px; display: block; margin: 0 auto; }
     
     .info-medidas { background: #f1f5f9; border-left: 4px solid #10b981; padding: 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; }
@@ -73,6 +81,13 @@
     .info-medidas strong { color: #0f172a; }
 
     .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+
+    /* CARDS DE HISTÓRICO E MDF */
+    .mdf-item, .proj-card { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .proj-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+    .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+    .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
   </style>
 </head>
 <body>
@@ -82,170 +97,220 @@
     <p>Orçamentos Rápidos de Marcenaria</p>
   </header>
 
-  <!-- CONFIGURAÇÕES DE API E PADRÕES -->
-  <div class="card">
-    <h2>⚙️ Suas Regras e Configurações</h2>
+  <!-- BARRA DE NAVEGAÇÃO SUPERIOR -->
+  <nav class="main-nav">
+    <button class="main-nav-btn active" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Novo Projeto</button>
+    <button class="main-nav-btn" id="navHistoricoBtn" onclick="mudarVisaoPrincipal('historico')">📁 Histórico</button>
+    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Configurações</button>
+  </nav>
+
+  <!-- ==================== VISÃO 1: NOVO PROJETO ==================== -->
+  <div id="viewProjeto" class="main-view">
     
-    <label>Sua Chave de API (Google AI Studio)</label>
-    <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
-
-    <div class="grid-2">
-      <div>
-        <label>Caixa MDF (mm)</label>
-        <select id="espCaixa" onchange="salvarConfig()">
-          <option value="15">15 mm</option>
-          <option value="18">18 mm</option>
-        </select>
-      </div>
-      <div>
-        <label>Fundo MDF (mm)</label>
-        <select id="espFundo" onchange="salvarConfig()">
-          <option value="6">6 mm</option>
-          <option value="15">15 mm</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <label>Folga Gavetas (mm total)</label>
-        <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
-      </div>
-      <div>
-        <label>Preço Médio Chapa (R$)</label>
-        <input type="number" id="precoChapa" value="500" onchange="salvarConfig()">
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <label>Padrão/MDF</label>
-        <input type="text" id="padraoMdf" value="Branco / Madeira" onchange="salvarConfig()">
-      </div>
-      <div>
-        <label>Margem/Lucro (%)</label>
-        <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
-      </div>
-    </div>
-  </div>
-
-  <!-- UPLOAD DE FOTO -->
-  <div class="card">
-    <h2>📷 Foto do Esboço / Croqui</h2>
-    
-    <div class="grid-2">
-      <div class="file-input-wrapper" onclick="document.getElementById('fileCam').click()">
-        <span>📷 Tirar Foto</span>
-        <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
-      </div>
+    <!-- UPLOAD DE FOTO -->
+    <div class="card">
+      <h2>📷 Foto do Esboço / Croqui</h2>
       
-      <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
-        <span>🖼️ Galeria / Arquivos</span>
-        <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
-      </div>
-    </div>
-
-    <img id="preview-img" alt="Preview do Croqui">
-
-    <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
-    <div id="status" class="status-msg"></div>
-  </div>
-
-  <!-- RESULTADOS -->
-  <div class="card" id="resultadoCard" style="display: none;">
-    <div class="tabs">
-      <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
-      <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
-      <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha Construtiva</div>
-      <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render 3D</div>
-    </div>
-
-    <!-- ABA COMERCIAL -->
-    <div id="abaComercial">
-      <h3>Resumo para o Cliente</h3>
-      <p id="resumoTexto" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-dim);"></p>
-      
-      <div style="margin-top: 16px; background: #0f172a; padding: 12px; border-radius: 8px;">
-        <span style="font-size: 0.85rem; color: var(--text-dim);">Valor Total Estimado:</span>
-        <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 4px;">R$ 0,00</h2>
+      <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim);">
+        Padrão de MDF selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
       </div>
 
-      <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-      <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha Construtiva</button>
-    </div>
-
-    <!-- ABA TÉCNICA -->
-    <div id="abaTecnica" style="display: none;">
-      <h3>Lista de Peças Estimada</h3>
-      <table id="tabelaPecas">
-        <thead>
-          <tr>
-            <th>Peça</th>
-            <th>Qtd</th>
-            <th>Medidas (mm)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <h3 style="margin-top: 16px;">Insumos Necessários</h3>
-      <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
-
-      <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Avaliar Prancha de Montagem</button>
-    </div>
-
-    <!-- ABA PRANCHA CONSTRUTIVA -->
-    <div id="abaEsboco" style="display: none;">
-      <h3>📐 Prancha Técnica de Projeto</h3>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Desenho proporcional estilo CAD/Promob respeitando a escala real do móvel.</p>
-
-      <div class="prancha-container" id="pranchaArea">
-        <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
+      <div class="grid-2">
+        <div class="file-input-wrapper" onclick="document.getElementById('fileCam').click()">
+          <span>📷 Tirar Foto</span>
+          <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
+        </div>
         
-        <div class="prancha-grid">
-          <div class="cad-box">
-            <div class="cad-title">Distribuição Interna Proporcional</div>
-            <div id="svgContainer"></div>
-          </div>
-
-          <div>
-            <div class="info-medidas">
-              <div class="cad-title" style="text-align:left; margin-bottom:4px;">Medidas do Móvel</div>
-              <p><strong>Largura Total:</strong> <span id="lblLargura">0,00 m</span></p>
-              <p><strong>Altura Total:</strong> <span id="lblAltura">0,00 m</span></p>
-              <p><strong>Profundidade:</strong> <span id="lblProfundidade">00 cm</span></p>
-            </div>
-
-            <div class="cad-box">
-              <div class="cad-title">Vista Superior</div>
-              <div id="svgTopContainer"></div>
-            </div>
-          </div>
+        <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
+          <span>🖼️ Galeria / Arquivos</span>
+          <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
         </div>
       </div>
 
-      <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()">✅ Aprovar Prancha e Gerar Render 3D</button>
+      <img id="preview-img" alt="Preview do Croqui">
+
+      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
+      <div id="status" class="status-msg"></div>
     </div>
 
-    <!-- ABA RENDER 3D -->
-    <div id="abaRender" style="display: none;">
-      <h3>🎨 Maquete 3D / Render Realista</h3>
+    <!-- CARD DE RESULTADOS -->
+    <div class="card" id="resultadoCard" style="display: none;">
+      <div class="tabs">
+        <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
+        <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
+        <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
+        <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render 3D</div>
+      </div>
+
+      <!-- ABA COMERCIAL -->
+      <div id="abaComercial">
+        <label>👤 Nome do Cliente / Identificação do Projeto</label>
+        <input type="text" id="nomeCliente" placeholder="Ex: Cliente João - Armário Cozinha">
+
+        <h3 style="margin-top: 14px;">Resumo para o Cliente</h3>
+        <p id="resumoTexto" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-dim);"></p>
+        
+        <div style="margin-top: 16px; background: #0f172a; padding: 12px; border-radius: 8px;">
+          <span style="font-size: 0.85rem; color: var(--text-dim);">Valor Total Estimado:</span>
+          <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 4px;">R$ 0,00</h2>
+        </div>
+
+        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento no Histórico</button>
+        <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
+        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha Construtiva</button>
+      </div>
+
+      <!-- ABA TÉCNICA -->
+      <div id="abaTecnica" style="display: none;">
+        <h3>Lista de Peças Estimada</h3>
+        <table id="tabelaPecas">
+          <thead>
+            <tr>
+              <th>Peça</th>
+              <th>Qtd</th>
+              <th>Medidas (mm)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <h3 style="margin-top: 16px;">Insumos Necessários</h3>
+        <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
+
+        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Avaliar Prancha de Montagem</button>
+      </div>
+
+      <!-- ABA PRANCHA CONSTRUTIVA -->
+      <div id="abaEsboco" style="display: none;">
+        <h3>📐 Prancha Técnica de Projeto</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Desenho proporcional estilo CAD/Promob respeitando a escala real do móvel.</p>
+
+        <div class="prancha-container" id="pranchaArea">
+          <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
+          
+          <div class="prancha-grid">
+            <div class="cad-box">
+              <div class="cad-title">Distribuição Interna Proporcional</div>
+              <div id="svgContainer"></div>
+            </div>
+
+            <div>
+              <div class="info-medidas">
+                <div class="cad-title" style="text-align:left; margin-bottom:4px;">Medidas do Móvel</div>
+                <p><strong>Largura Total:</strong> <span id="lblLargura">0,00 m</span></p>
+                <p><strong>Altura Total:</strong> <span id="lblAltura">0,00 m</span></p>
+                <p><strong>Profundidade:</strong> <span id="lblProfundidade">00 cm</span></p>
+              </div>
+
+              <div class="cad-box">
+                <div class="cad-title">Vista Superior</div>
+                <div id="svgTopContainer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()">✅ Aprovar Prancha e Gerar Render 3D</button>
+      </div>
+
+      <!-- ABA RENDER 3D -->
+      <div id="abaRender" style="display: none;">
+        <h3>🎨 Maquete 3D / Render Realista</h3>
+        
+        <div id="boxBloqueioRender" class="warning-box">
+          ⚠️ <strong>Prancha não aprovada!</strong><br>Por favor, vá para a aba <strong>📐 Prancha</strong> e confirme a estrutura do móvel antes de gerar o Render 3D.
+          <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Prancha Construtiva</button>
+        </div>
+
+        <div id="conteudoRender3D" style="display: none;">
+          <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Renderização realista gerada com base na estrutura técnica aprovada e no padrão de MDF selecionado.</p>
+
+          <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Outra Opção de Render</button>
+
+          <div id="statusRender" class="status-msg"></div>
+          <img id="imgRender" class="img-preview-box" alt="Render 3D do Móvel">
+
+          <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem em Alta Resolução</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ==================== VISÃO 2: HISTÓRICO ==================== -->
+  <div id="viewHistorico" class="main-view" style="display: none;">
+    <div class="card">
+      <h2>📁 Histórico de Orçamentos Salvos</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Consulte ou reabra orçamentos e projetos salvos anteriormente.</p>
+      <div id="listaHistorico"></div>
+    </div>
+  </div>
+
+  <!-- ==================== VISÃO 3: CONFIGURAÇÕES ==================== -->
+  <div id="viewConfig" class="main-view" style="display: none;">
+    
+    <!-- CREDENCIAIS E API -->
+    <div class="card">
+      <h2>🔑 Chave de Conexão da Inteligência Artificial</h2>
+      <div id="statusApiKeyBadge"></div>
       
-      <div id="boxBloqueioRender" class="warning-box">
-        ⚠️ <strong>Prancha não aprovada!</strong><br>Por favor, vá para a aba <strong>📐 Prancha Construtiva</strong> e confirme a estrutura do móvel antes de gerar o Render 3D.
-        <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Prancha Construtiva</button>
+      <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
+      <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">Sua chave é salva somente no seu navegador e usada para ler fotos e croquis.</p>
+    </div>
+
+    <!-- PARÂMETROS CONSTRUTIVOS -->
+    <div class="card">
+      <h2>⚙️ Regras e Padrões Construtivos</h2>
+      
+      <div class="grid-2">
+        <div>
+          <label>Caixa MDF (mm)</label>
+          <select id="espCaixa" onchange="salvarConfig()">
+            <option value="15">15 mm</option>
+            <option value="18">18 mm</option>
+          </select>
+        </div>
+        <div>
+          <label>Fundo MDF (mm)</label>
+          <select id="espFundo" onchange="salvarConfig()">
+            <option value="6">6 mm</option>
+            <option value="15">15 mm</option>
+          </select>
+        </div>
       </div>
 
-      <div id="conteudoRender3D" style="display: none;">
-        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Renderização realista gerada com base na estrutura técnica aprovada e no padrão de MDF selecionado.</p>
-
-        <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Outra Opção de Render</button>
-
-        <div id="statusRender" class="status-msg"></div>
-        <img id="imgRender" class="img-preview-box" alt="Render 3D do Móvel">
-
-        <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem em Alta Resolução</a>
+      <div class="grid-2">
+        <div>
+          <label>Folga Gavetas (mm)</label>
+          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
+        </div>
+        <div>
+          <label>Margem/Lucro (%)</label>
+          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
+        </div>
       </div>
+    </div>
+
+    <!-- TABELA DE PREÇOS DE MDF -->
+    <div class="card">
+      <h2>🎨 Tabela de Preços de MDF</h2>
+      
+      <label>Padrão de MDF Ativo nos Projetos</label>
+      <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
+
+      <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
+        <label>➕ Cadastrar Novo Padrão de MDF</label>
+        <div class="grid-2">
+          <input type="text" id="novoMdfNome" placeholder="Ex: MDF Louro Freijó">
+          <input type="number" id="novoMdfPreco" placeholder="Preço (R$)">
+        </div>
+        <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarPadraoMdf()">Adicionar à Tabela</button>
+      </div>
+
+      <label style="margin-top: 16px;">📋 Padrões Cadastrados:</label>
+      <div id="listaPadroesMdf"></div>
     </div>
 
   </div>
@@ -255,26 +320,134 @@
     let ultimoResultado = null;
     let esbocoAprovado = false;
 
+    let tabelaMdf = JSON.parse(localStorage.getItem('tabela_mdf')) || [
+      { id: '1', nome: 'MDF Branco TX', preco: 250 },
+      { id: '2', nome: 'MDF Amadeirado (Freijó/Louro)', preco: 380 },
+      { id: '3', nome: 'MDF Grafite / Colorido', preco: 340 },
+      { id: '4', nome: 'MDF Ultra (Resistente à Água)', preco: 420 }
+    ];
+
+    let historicoProjetos = JSON.parse(localStorage.getItem('historico_projetos')) || [];
+
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
       document.getElementById('espCaixa').value = localStorage.getItem('esp_caixa') || '15';
       document.getElementById('espFundo').value = localStorage.getItem('esp_fundo') || '6';
       document.getElementById('folgaGaveta').value = localStorage.getItem('folga_gaveta') || '26';
-      document.getElementById('precoChapa').value = localStorage.getItem('preco_chapa') || '500';
-      document.getElementById('padraoMdf').value = localStorage.getItem('padrao_mdf') || 'Branco / Madeira';
       document.getElementById('margemLucro').value = localStorage.getItem('margem_lucro') || '100';
+
+      renderTabelaMdf();
+      renderHistorico();
+      atualizarBadgeApiKey();
     };
 
+    // --- CONTROLE DE VISÃO DA NAVEGAÇÃO SUPERIOR ---
+    function mudarVisaoPrincipal(visao) {
+      document.getElementById('viewProjeto').style.display = visao === 'projeto' ? 'block' : 'none';
+      document.getElementById('viewHistorico').style.display = visao === 'historico' ? 'block' : 'none';
+      document.getElementById('viewConfig').style.display = visao === 'config' ? 'block' : 'none';
+
+      document.getElementById('navProjetoBtn').className = visao === 'projeto' ? 'main-nav-btn active' : 'main-nav-btn';
+      document.getElementById('navHistoricoBtn').className = visao === 'historico' ? 'main-nav-btn active' : 'main-nav-btn';
+      document.getElementById('navConfigBtn').className = visao === 'config' ? 'main-nav-btn active' : 'main-nav-btn';
+    }
+
     function salvarConfig() {
-      localStorage.setItem('gemini_key', document.getElementById('apiKey').value);
+      const key = document.getElementById('apiKey').value.trim();
+      localStorage.setItem('gemini_key', key);
       localStorage.setItem('esp_caixa', document.getElementById('espCaixa').value);
       localStorage.setItem('esp_fundo', document.getElementById('espFundo').value);
       localStorage.setItem('folga_gaveta', document.getElementById('folgaGaveta').value);
-      localStorage.setItem('preco_chapa', document.getElementById('precoChapa').value);
-      localStorage.setItem('padrao_mdf', document.getElementById('padraoMdf').value);
       localStorage.setItem('margem_lucro', document.getElementById('margemLucro').value);
+      atualizarBadgeApiKey();
     }
 
+    function atualizarBadgeApiKey() {
+      const key = localStorage.getItem('gemini_key') || '';
+      const badgeContainer = document.getElementById('statusApiKeyBadge');
+      if (key) {
+        badgeContainer.innerHTML = '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>';
+      } else {
+        badgeContainer.innerHTML = '<span class="badge-status badge-alert">⚠️ Chave de API Ausente. Cole sua chave do Gemini.</span>';
+      }
+    }
+
+    // --- GERENCIAMENTO DE MDF ---
+    function renderTabelaMdf() {
+      localStorage.setItem('tabela_mdf', JSON.stringify(tabelaMdf));
+
+      const select = document.getElementById('padraoMdfSelect');
+      const container = document.getElementById('listaPadroesMdf');
+      
+      select.innerHTML = '';
+      container.innerHTML = '';
+
+      tabelaMdf.forEach((item, index) => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.innerText = `${item.nome} — R$ ${item.preco}/chapa`;
+        select.appendChild(opt);
+
+        const div = document.createElement('div');
+        div.className = 'mdf-item';
+        div.innerHTML = `
+          <div>
+            <strong style="font-size:0.85rem;">${item.nome}</strong><br>
+            <span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00 / chapa</span>
+          </div>
+          <button class="btn-sm btn-danger" onclick="excluirPadraoMdf(${index})">Excluir</button>
+        `;
+        container.appendChild(div);
+      });
+
+      alterarPadraoAtivo();
+    }
+
+    function adicionarPadraoMdf() {
+      const nomeInput = document.getElementById('novoMdfNome');
+      const precoInput = document.getElementById('novoMdfPreco');
+
+      const nome = nomeInput.value.trim();
+      const preco = parseFloat(precoInput.value);
+
+      if (!nome || isNaN(preco) || preco <= 0) {
+        alert('Por favor, informe um nome e um preço válido para o MDF.');
+        return;
+      }
+
+      tabelaMdf.push({ id: Date.now().toString(), nome, preco });
+      nomeInput.value = '';
+      precoInput.value = '';
+
+      renderTabelaMdf();
+    }
+
+    function excluirPadraoMdf(index) {
+      if (tabelaMdf.length <= 1) {
+        alert('É necessário manter ao menos 1 padrão de MDF na tabela.');
+        return;
+      }
+      tabelaMdf.splice(index, 1);
+      renderTabelaMdf();
+    }
+
+    function obterMdfAtivo() {
+      const select = document.getElementById('padraoMdfSelect');
+      const selectedId = select.value;
+      return tabelaMdf.find(m => m.id === selectedId) || tabelaMdf[0];
+    }
+
+    function alterarPadraoAtivo() {
+      const activeMdf = obterMdfAtivo();
+      document.getElementById('lblMdfAtual').innerText = `${activeMdf.nome} (R$ ${activeMdf.preco}/chapa)`;
+
+      if (ultimoResultado) {
+        const margemLucro = parseFloat(document.getElementById('margemLucro').value);
+        exibirResultado(ultimoResultado, margemLucro);
+      }
+    }
+
+    // --- LEITURA E PROCESSAMENTO DE CROQUI ---
     function carregarImagem(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -291,11 +464,12 @@
     }
 
     async function processarCroqui() {
-      const apiKey = document.getElementById('apiKey').value.trim();
+      const apiKey = (localStorage.getItem('gemini_key') || '').trim();
       const statusEl = document.getElementById('status');
 
       if (!apiKey) {
-        alert('Por favor, insira sua chave da API do Google Gemini antes de continuar.');
+        alert('Por favor, cadastre sua Chave de API do Google Gemini na aba "⚙️ Configurações" antes de continuar.');
+        mudarVisaoPrincipal('config');
         return;
       }
 
@@ -310,17 +484,15 @@
       const espCaixa = document.getElementById('espCaixa').value;
       const espFundo = document.getElementById('espFundo').value;
       const folgaGaveta = document.getElementById('folgaGaveta').value;
-      const precoChapa = parseFloat(document.getElementById('precoChapa').value);
       const margemLucro = parseFloat(document.getElementById('margemLucro').value);
-      const padraoMdf = document.getElementById('padraoMdf').value;
+      const mdfAtivo = obterMdfAtivo();
 
       const prompt = `Você é um mestre marceneiro e orçamentista. Analise o croqui/desenho fornecido.
 Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e a estrutura interna.
 
 Siga rigorosamente estas REGRAS FÍSICAS DE MARCENARIA:
 1. Se a ALTURA for menor que 800mm (0.8m):
-   - NUNCA coloque maleiro nem cabideiro (pois não cabem fisicamente)!
-   - É um móvel baixo/nicho/gaveteiro ou armário aéreo.
+   - NUNCA coloque maleiro nem cabideiro!
 2. Se a ALTURA for entre 800mm e 1500mm:
    - Pode ter prateleiras, gavetas ou portas. Maleiro e cabideiro são proibidos.
 3. Se a ALTURA for acima de 1500mm (guarda-roupa/armário alto):
@@ -330,8 +502,8 @@ Considere as REGRAS CONSTRUTIVAS:
 - Espessura do MDF das caixas: ${espCaixa}mm
 - Espessura do fundo: ${espFundo}mm
 - Desconto total para gavetas: ${folgaGaveta}mm
-- Valor base da chapa de MDF: R$ ${precoChapa}
-- Padrão/Cor: ${padraoMdf}
+- Valor base da chapa de MDF: R$ ${mdfAtivo.preco}
+- Padrão/Cor: ${mdfAtivo.nome}
 
 Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do JSON, seguindo esta estrutura exata:
 {
@@ -349,11 +521,10 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
     {"nome": "Base / Tampo", "qtd": 2, "comprimento": 570, "largura": 600}
   ],
   "insumos": [
-    "1 Chapa MDF 15mm Branco",
+    "1 Chapa MDF 15mm",
     "12 metros de fita de borda"
   ],
-  "chapasEstimadas": 0.5,
-  "custoMaterial": 140
+  "chapasEstimadas": 0.5
 }`;
 
       const modelos = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
@@ -392,7 +563,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       if (!data) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique se sua chave de API está correta.');
+        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique sua chave de API nas Configurações.');
         document.getElementById('btnProcessar').disabled = false;
         return;
       }
@@ -404,7 +575,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
         ultimoResultado = resultado;
 
-        exibirResultado(resultado, precoChapa, margemLucro);
+        exibirResultado(resultado, margemLucro);
         statusEl.style.display = 'none';
 
         desenharPranchaSVG(resultado);
@@ -417,16 +588,17 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       }
     }
 
-    function exibirResultado(data, precoChapa, margemLucro) {
+    function exibirResultado(data, margemLucro) {
       document.getElementById('resultadoCard').style.display = 'block';
       document.getElementById('resumoTexto').innerText = data.resumoComercial;
 
-      const custoMaterial = data.custoMaterial || (data.chapasEstimadas * precoChapa);
+      const mdfAtivo = obterMdfAtivo();
+      const custoMaterial = data.custoMaterial || (data.chapasEstimadas * mdfAtivo.preco);
       const valorFinal = custoMaterial * (1 + (margemLucro / 100));
 
       document.getElementById('valorTotal').innerText = valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-      const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${data.resumoComercial}\n\n*Valor Total Estimado:* ${valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
+      const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${data.resumoComercial}\n\n*Padrão de MDF:* ${mdfAtivo.nome}\n*Valor Total Estimado:* ${valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
       document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
 
       const tbody = document.querySelector('#tabelaPecas tbody');
@@ -446,7 +618,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       });
     }
 
-    // GERADOR DE DESENHO VETORIAL CAD 100% DINÂMICO E PROPORCIONAL
+    // --- DESENHO VETORIAL CAD PROPORCIONAL ---
     function desenharPranchaSVG(data) {
       const altMM = data.alturaMM || 2800;
       const largMM = data.larguraMM || 1200;
@@ -460,16 +632,15 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       document.getElementById('lblAltura').innerText = `${altM.toFixed(2).replace('.', ',')} m`;
       document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
 
-      // Calcular Proporção do Retângulo
       const maxW = 180;
       const maxH = 220;
       const aspect = largMM / altMM;
 
       let boxW, boxH;
-      if (aspect >= 1) { // Móvel quadrado ou mais largo que alto (balcão/nicho)
+      if (aspect >= 1) {
         boxW = maxW;
         boxH = Math.max(70, Math.min(maxH, maxW / aspect));
-      } else { // Móvel mais alto que largo (guarda-roupa)
+      } else {
         boxH = maxH;
         boxW = Math.max(70, Math.min(maxW, maxH * aspect));
       }
@@ -479,7 +650,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       let svgContent = `<rect x="${startX}" y="${startY}" width="${boxW}" height="${boxH}" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>`;
 
-      // Divisória de Módulos
       const modulos = data.numModulos || 1;
       if (modulos > 1) {
         for (let m = 1; m < modulos; m++) {
@@ -491,7 +661,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       let currentY = startY;
       let remainingH = boxH;
 
-      // Maleiro (apenas se for alto e temMaleiro == true)
       if (altMM >= 1500 && data.temMaleiro) {
         let maleiroH = boxH * 0.2;
         currentY += maleiroH;
@@ -500,7 +669,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         remainingH -= maleiroH;
       }
 
-      // Gavetas
       const gavetas = data.numGavetas || 0;
       if (gavetas > 0) {
         let gavetasH = Math.min(remainingH * 0.6, gavetas * 20);
@@ -517,7 +685,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         remainingH -= gavetasH;
       }
 
-      // Cabideiro (apenas se altura >= 1000)
       if (altMM >= 1000 && data.temCabideiro) {
         let cabideiroH = remainingH * 0.7;
         let cabY = currentY + cabideiroH;
@@ -530,7 +697,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         remainingH -= cabideiroH;
       }
 
-      // Prateleiras intermediárias
       const prat = data.numPrateleiras || 0;
       if (prat > 0 && remainingH > 20) {
         let pratGap = remainingH / (prat + 1);
@@ -544,7 +710,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         svgContent += `<text x="${startX + boxW/2}" y="${startY + boxH/2}" font-size="8" font-weight="bold" fill="#64748b" text-anchor="middle">VÃO LIVRE / NICHO</text>`;
       }
 
-      // Cotas de Medidas
       let totalSVG = `<svg viewBox="0 0 250 280" class="svg-cad">
         ${svgContent}
         <line x1="${startX - 12}" y1="${startY}" x2="${startX - 12}" y2="${startY + boxH}" stroke="#64748b" stroke-width="1"/>
@@ -560,7 +725,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       document.getElementById('svgContainer').innerHTML = totalSVG;
 
-      // Vista Superior Proporcional
       let topH = Math.max(15, Math.min(35, (profMM / 1000) * 35));
       let topSVG = `<svg viewBox="0 0 220 65" style="width:100%; max-height:65px;">
         <rect x="${startX}" y="10" width="${boxW}" height="${topH}" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
@@ -607,10 +771,10 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       imgEl.style.display = 'none';
       if (btnDownload) btnDownload.style.display = 'none';
 
-      const padraoMdf = document.getElementById('padraoMdf').value;
+      const mdfAtivo = obterMdfAtivo();
       const tipoMovel = (ultimoResultado.alturaMM < 1000) ? 'small cabinet niche / wall mounted box' : 'wardrobe closet';
       
-      const prompt = `Photorealistic 3D interior design architectural render of custom ${tipoMovel}, ${ultimoResultado.resumoComercial}, built with ${padraoMdf} wood finish, exact dimensions ${ultimoResultado.larguraMM}mm x ${ultimoResultado.alturaMM}mm, professional studio lighting, 8k ultra detailed`;
+      const prompt = `Photorealistic 3D interior design architectural render of custom ${tipoMovel}, ${ultimoResultado.resumoComercial}, built with ${mdfAtivo.nome} wood finish, exact dimensions ${ultimoResultado.larguraMM}mm x ${ultimoResultado.alturaMM}mm, professional studio lighting, 8k ultra detailed`;
 
       const seed = Math.floor(Math.random() * 999999);
       const renderUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
@@ -647,6 +811,101 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         tabRender.className = 'tab active';
       } else {
         tabRender.className = esbocoAprovado ? 'tab' : 'tab locked';
+      }
+    }
+
+    // --- GERENCIAMENTO DO HISTÓRICO ---
+    function salvarProjetoNoHistorico() {
+      if (!ultimoResultado) {
+        alert('Gere um orçamento antes de salvar!');
+        return;
+      }
+
+      const nomeClienteInput = document.getElementById('nomeCliente');
+      const nomeCliente = nomeClienteInput.value.trim() || ('Projeto ' + new Date().toLocaleDateString('pt-BR'));
+      const margemLucro = parseFloat(document.getElementById('margemLucro').value);
+      const mdfAtivo = obterMdfAtivo();
+
+      const custoMaterial = ultimoResultado.custoMaterial || (ultimoResultado.chapasEstimadas * mdfAtivo.preco);
+      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
+
+      const novoProjeto = {
+        id: Date.now().toString(),
+        cliente: nomeCliente,
+        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+        valorTotal: valorFinal,
+        mdfNome: mdfAtivo.nome,
+        mdfPreco: mdfAtivo.preco,
+        resultado: ultimoResultado,
+        esbocoAprovado: esbocoAprovado
+      };
+
+      historicoProjetos.unshift(novoProjeto);
+      
+      try {
+        localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
+        alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso!`);
+        renderHistorico();
+      } catch (err) {
+        alert('Erro ao salvar no histórico: Limite de armazenamento atingido.');
+      }
+    }
+
+    function renderHistorico() {
+      const container = document.getElementById('listaHistorico');
+      container.innerHTML = '';
+
+      if (historicoProjetos.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum orçamento salvo no histórico ainda.</p>';
+        return;
+      }
+
+      historicoProjetos.forEach((p, index) => {
+        const div = document.createElement('div');
+        div.className = 'proj-card';
+        div.innerHTML = `
+          <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <strong style="color:var(--accent); font-size:1rem;">${p.cliente}</strong><br>
+              <span style="font-size:0.75rem; color:var(--text-dim);">${p.data}</span>
+            </div>
+            <strong style="font-size:1.1rem; color:#fff;">${p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-dim);">
+            🎨 ${p.mdfNome} | ${p.resultado.resumoComercial}
+          </div>
+          <div style="display:flex; gap:8px; width:100%; margin-top:4px;">
+            <button class="btn-sm" style="background-color:var(--blue); color:#fff; flex:1;" onclick="carregarProjetoHistorico(${index})">👁️ Abrir Projeto</button>
+            <button class="btn-sm btn-danger" onclick="excluirProjetoHistorico(${index})">🗑️ Excluir</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function carregarProjetoHistorico(index) {
+      const p = historicoProjetos[index];
+      if (!p) return;
+
+      ultimoResultado = p.resultado;
+      esbocoAprovado = p.esbocoAprovado || false;
+
+      document.getElementById('nomeCliente').value = p.cliente;
+      const margemLucro = parseFloat(document.getElementById('margemLucro').value);
+
+      exibirResultado(ultimoResultado, margemLucro);
+      desenharPranchaSVG(ultimoResultado);
+      atualizarAbaRenderState();
+
+      mudarVisaoPrincipal('projeto');
+      mudarAba('comercial');
+    }
+
+    function excluirProjetoHistorico(index) {
+      if (confirm('Deseja realmente apagar este orçamento do histórico?')) {
+        historicoProjetos.splice(index, 1);
+        localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
+        renderHistorico();
       }
     }
   </script>
