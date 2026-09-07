@@ -24,7 +24,7 @@
     header h1 { font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 8px; }
     header p { font-size: 0.85rem; color: var(--text-dim); }
 
-    /* NAVEGAÇÃO PRINCIPAL DO TOPO */
+    /* NAVEGAÇÃO PRINCIPAL */
     .main-nav { display: flex; gap: 6px; margin-bottom: 16px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); }
     .main-nav-btn { flex: 1; padding: 12px 4px; text-align: center; background: transparent; color: var(--text-dim); border: none; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     .main-nav-btn.active { background: var(--accent); color: #000; }
@@ -33,14 +33,13 @@
     .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
 
     label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; margin-bottom: 4px; }
-    input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background-color: #0f172a; color: #fff; font-size: 0.95rem; }
+    input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background-color: #0f172a; color: #fff; font-size: 0.95rem; }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 14px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-sec { background-color: var(--blue); color: #fff; margin-top: 12px; }
-    .btn-approve { background-color: var(--accent); color: #000; font-size: 1rem; padding: 14px; margin-top: 14px; }
     .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
     .btn-danger { background-color: var(--danger); color: #fff; }
 
@@ -49,10 +48,9 @@
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
     /* SUB-ABAS DOS RESULTADOS */
-    .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; }
-    .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
-    .tab.locked { opacity: 0.6; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
     th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -61,10 +59,8 @@
     .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
     .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
     .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
-    .warning-box { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); padding: 12px; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-top: 12px; }
 
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
-    .btn-download { background-color: #6366f1; color: #fff; margin-top: 10px; text-decoration: none; display: none; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
     /* PRANCHA TÉCNICA ESTILO PROMOB */
     .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -79,8 +75,6 @@
     .info-medidas { background: #f1f5f9; border-left: 4px solid #10b981; padding: 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; }
     .info-medidas p { margin-bottom: 4px; }
     .info-medidas strong { color: #0f172a; }
-
-    .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 
     /* CARDS DE HISTÓRICO E MDF */
     .mdf-item, .proj-card { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
@@ -138,8 +132,7 @@
       <div class="tabs">
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
         <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
-        <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
-        <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render 3D</div>
+        <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha Técnica</div>
       </div>
 
       <!-- ABA COMERCIAL -->
@@ -157,7 +150,7 @@
 
         <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento no Histórico</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha Construtiva</button>
+        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
       </div>
 
       <!-- ABA TÉCNICA -->
@@ -177,14 +170,15 @@
         <h3 style="margin-top: 16px;">Insumos Necessários</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
 
-        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Avaliar Prancha de Montagem</button>
+        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
       </div>
 
-      <!-- ABA PRANCHA CONSTRUTIVA -->
+      <!-- ABA PRANCHA CONSTRUTIVA E PROMPT GEMINI -->
       <div id="abaEsboco" style="display: none;">
         <h3>📐 Prancha Técnica de Projeto</h3>
         <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Desenho proporcional estilo CAD/Promob respeitando a escala real do móvel.</p>
 
+        <!-- DESENHO SVG DA PRANCHA -->
         <div class="prancha-container" id="pranchaArea">
           <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
           
@@ -210,28 +204,17 @@
           </div>
         </div>
 
-        <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()">✅ Aprovar Prancha e Gerar Render 3D</button>
-      </div>
+        <!-- CAMPO DE PROMPT PARA O GEMINI -->
+        <div style="margin-top: 16px; background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
+          <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt Fidedigno para Imagem no Gemini</h4>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Copie o texto abaixo e cole no Google Gemini para gerar a imagem 3D realista fiel ao móvel e à cor selecionada:</p>
+          
+          <textarea id="promptGeminiBox" readonly style="width: 100%; height: 160px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
 
-      <!-- ABA RENDER 3D -->
-      <div id="abaRender" style="display: none;">
-        <h3>🎨 Maquete 3D / Render Realista</h3>
-        
-        <div id="boxBloqueioRender" class="warning-box">
-          ⚠️ <strong>Prancha não aprovada!</strong><br>Por favor, vá para a aba <strong>📐 Prancha</strong> e confirme a estrutura do móvel antes de gerar o Render 3D.
-          <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Prancha Construtiva</button>
+          <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt para o Gemini</button>
+          <div id="statusCopia" style="font-size: 0.8rem; color: var(--accent); margin-top: 6px; text-align: center; display: none;"></div>
         </div>
 
-        <div id="conteudoRender3D" style="display: none;">
-          <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Renderização realista gerada com base na estrutura técnica aprovada e no padrão de MDF selecionado.</p>
-
-          <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Outra Opção de Render</button>
-
-          <div id="statusRender" class="status-msg"></div>
-          <img id="imgRender" class="img-preview-box" alt="Render 3D do Móvel">
-
-          <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem em Alta Resolução</a>
-        </div>
       </div>
 
     </div>
@@ -318,7 +301,6 @@
   <script>
     let imagemBase64 = "";
     let ultimoResultado = null;
-    let esbocoAprovado = false;
 
     let tabelaMdf = JSON.parse(localStorage.getItem('tabela_mdf')) || [
       { id: '1', nome: 'MDF Branco TX', preco: 250 },
@@ -444,6 +426,7 @@
       if (ultimoResultado) {
         const margemLucro = parseFloat(document.getElementById('margemLucro').value);
         exibirResultado(ultimoResultado, margemLucro);
+        desenharPranchaSVG(ultimoResultado);
       }
     }
 
@@ -477,9 +460,6 @@
       statusEl.innerText = '⏳ Analisando desenho e calculando lista de peças...';
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
-
-      esbocoAprovado = false;
-      atualizarAbaRenderState();
 
       const espCaixa = document.getElementById('espCaixa').value;
       const espFundo = document.getElementById('espFundo').value;
@@ -618,7 +598,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       });
     }
 
-    // --- DESENHO VETORIAL CAD PROPORCIONAL ---
+    // --- DESENHO VETORIAL CAD PROPORCIONAL E GERADOR DE PROMPT GEMINI ---
     function desenharPranchaSVG(data) {
       const altMM = data.alturaMM || 2800;
       const largMM = data.larguraMM || 1200;
@@ -733,85 +713,68 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         <text x="${startX + boxW/2}" y="${10 + topH + 12}" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>
       </svg>`;
       document.getElementById('svgTopContainer').innerHTML = topSVG;
+
+      // GERAR PROMPT E PREENCHER NO CAMPO
+      const promptTexto = gerarPromptGemini(data);
+      document.getElementById('promptGeminiBox').value = promptTexto;
     }
 
-    function aprovarEsboco() {
-      esbocoAprovado = true;
-      atualizarAbaRenderState();
-      alert('Prancha Construtiva Aprovada! Gerando o Render 3D...');
-      mudarAba('render');
-      gerarRender3D();
-    }
-
-    function atualizarAbaRenderState() {
-      const tabRenderBtn = document.getElementById('tabRenderBtn');
-      if (esbocoAprovado) {
-        tabRenderBtn.className = 'tab';
-        tabRenderBtn.innerHTML = '🎨 Render 3D';
-        document.getElementById('boxBloqueioRender').style.display = 'none';
-        document.getElementById('conteudoRender3D').style.display = 'block';
-      } else {
-        tabRenderBtn.className = 'tab locked';
-        tabRenderBtn.innerHTML = '🔒 Render 3D';
-        document.getElementById('boxBloqueioRender').style.display = 'block';
-        document.getElementById('conteudoRender3D').style.display = 'none';
-      }
-    }
-
-    function gerarRender3D() {
-      if (!ultimoResultado || !esbocoAprovado) return;
-
-      const statusEl = document.getElementById('statusRender');
-      const imgEl = document.getElementById('imgRender');
-      const btnDownload = document.getElementById('btnDownloadRender');
-
-      statusEl.className = 'status-msg loading';
-      statusEl.innerText = '🎨 Criando maquete 3D realista a partir das proporções aprovadas...';
-      statusEl.style.display = 'block';
-      imgEl.style.display = 'none';
-      if (btnDownload) btnDownload.style.display = 'none';
-
+    // --- GERADOR DE PROMPT FIDEDIGNO PARA GEMINI ---
+    function gerarPromptGemini(data) {
       const mdfAtivo = obterMdfAtivo();
-      const tipoMovel = (ultimoResultado.alturaMM < 1000) ? 'small cabinet niche / wall mounted box' : 'wardrobe closet';
+      const altM = ((data.alturaMM || 2800) / 1000).toFixed(2).replace('.', ',');
+      const largM = ((data.larguraMM || 1200) / 1000).toFixed(2).replace('.', ',');
+      const profCM = Math.round((data.profundidadeMM || 600) / 10);
       
-      const prompt = `Photorealistic 3D interior design architectural render of custom ${tipoMovel}, ${ultimoResultado.resumoComercial}, built with ${mdfAtivo.nome} wood finish, exact dimensions ${ultimoResultado.larguraMM}mm x ${ultimoResultado.alturaMM}mm, professional studio lighting, 8k ultra detailed`;
+      let detalhesEstrutura = [];
+      if (data.numModulos > 1) detalhesEstrutura.push(`divisão em ${data.numModulos} módulos/colunas verticais`);
+      if (data.temMaleiro) detalhesEstrutura.push("espaço superior para maleiro");
+      if (data.temCabideiro) detalhesEstrutura.push("vão interno com cabideiro metálico para roupas");
+      if (data.numPrateleiras > 0) detalhesEstrutura.push(`${data.numPrateleiras} prateleira(s) de apoio`);
+      if (data.numGavetas > 0) detalhesEstrutura.push(`bloco inferior com ${data.numGavetas} gavetas com puxadores alinhados`);
+      if (!data.temMaleiro && !data.temCabideiro && data.numGavetas === 0 && data.numPrateleiras === 0) {
+        detalhesEstrutura.push("vão livre/nicho modular");
+      }
 
-      const seed = Math.floor(Math.random() * 999999);
-      const renderUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
+      return `Gere uma imagem fotorrealista em altíssima definição (3D architectural render) de um móvel planejado de marcenaria de alto padrão.
 
-      const tempImg = new Image();
-      tempImg.onload = function() {
-        imgEl.src = renderUrl;
-        imgEl.style.display = 'block';
-        statusEl.style.display = 'none';
-        if (btnDownload) {
-          btnDownload.href = renderUrl;
-          btnDownload.style.display = 'block';
-        }
-      };
-      tempImg.onerror = function() {
-        statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao gerar Render 3D. Tente novamente clicando em "Gerar Outra Opção".';
-      };
-      tempImg.src = renderUrl;
+📐 MEDIDAS E PROPORÇÕES REALISTAS:
+- Descrição do Móvel: ${data.resumoComercial}
+- Dimensões Exatas: Largura de ${largM}m x Altura de ${altM}m x Profundidade de ${profCM}cm.
+- Layout de Montagem: ${detalhesEstrutura.join(', ')}.
+
+🎨 MATERIAL E COR (MUITO IMPORTANTE):
+- Padrão do MDF: ${mdfAtivo.nome}. Representar com fidelidade exata a textura, tonalidade e veios naturais deste padrão de MDF no móvel todo.
+- Acabamento impecável com fita de borda perfeitamente aplicada nos topos.
+
+💡 ILUMINAÇÃO E AMBIENTE:
+- Ângulo de fotografia de estúdio de arquitetura de interiores em perspectiva 3D frontal.
+- Iluminação natural suave e realista valorizando a marcenaria e o ambiente.
+- O móvel deve ser mostrado completo, montado e perfeitamente proporcional às dimensões de ${largM}m x ${altM}m.`;
+    }
+
+    function copiarPromptGemini() {
+      const box = document.getElementById('promptGeminiBox');
+      box.select();
+      box.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(box.value).then(() => {
+        const statusCopia = document.getElementById('statusCopia');
+        statusCopia.innerText = '✅ Prompt copiado! Agora cole no Gemini para gerar sua imagem.';
+        statusCopia.style.display = 'block';
+        setTimeout(() => { statusCopia.style.display = 'none'; }, 4000);
+      }).catch(err => {
+        alert('Erro ao copiar prompt: ' + err);
+      });
     }
 
     function mudarAba(aba) {
       document.getElementById('abaComercial').style.display = aba === 'comercial' ? 'block' : 'none';
       document.getElementById('abaTecnica').style.display = aba === 'tecnica' ? 'block' : 'none';
       document.getElementById('abaEsboco').style.display = aba === 'esboco' ? 'block' : 'none';
-      document.getElementById('abaRender').style.display = aba === 'render' ? 'block' : 'none';
 
       document.getElementById('tabComercialBtn').className = aba === 'comercial' ? 'tab active' : 'tab';
       document.getElementById('tabTecnicaBtn').className = aba === 'tecnica' ? 'tab active' : 'tab';
       document.getElementById('tabEsbocoBtn').className = aba === 'esboco' ? 'tab active' : 'tab';
-      
-      const tabRender = document.getElementById('tabRenderBtn');
-      if (aba === 'render') {
-        tabRender.className = 'tab active';
-      } else {
-        tabRender.className = esbocoAprovado ? 'tab' : 'tab locked';
-      }
     }
 
     // --- GERENCIAMENTO DO HISTÓRICO ---
@@ -836,8 +799,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         valorTotal: valorFinal,
         mdfNome: mdfAtivo.nome,
         mdfPreco: mdfAtivo.preco,
-        resultado: ultimoResultado,
-        esbocoAprovado: esbocoAprovado
+        resultado: ultimoResultado
       };
 
       historicoProjetos.unshift(novoProjeto);
@@ -888,14 +850,12 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       if (!p) return;
 
       ultimoResultado = p.resultado;
-      esbocoAprovado = p.esbocoAprovado || false;
 
       document.getElementById('nomeCliente').value = p.cliente;
       const margemLucro = parseFloat(document.getElementById('margemLucro').value);
 
       exibirResultado(ultimoResultado, margemLucro);
       desenharPranchaSVG(ultimoResultado);
-      atualizarAbaRenderState();
 
       mudarVisaoPrincipal('projeto');
       mudarAba('comercial');
