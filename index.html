@@ -13,6 +13,7 @@
       --text-dim: #9ca3af;
       --border: #2d3748;
       --danger: #ef4444;
+      --warning: #f59e0b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -33,14 +34,16 @@
     .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 14px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-sec { background-color: #3b82f6; color: #fff; margin-top: 12px; }
+    .btn-approve { background-color: #10b981; color: #000; font-size: 1rem; padding: 14px; margin-top: 14px; }
     
     .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
-    .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; }
+    .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
+    .tab.locked { opacity: 0.6; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
     th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -49,11 +52,12 @@
     .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
     .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
     .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+    .warning-box { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); padding: 12px; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-top: 12px; }
 
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
     .btn-download { background-color: #6366f1; color: #fff; margin-top: 10px; text-decoration: none; display: none; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
-    #imgRender { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); background: #000; }
   </style>
 </head>
 <body>
@@ -136,8 +140,9 @@
   <div class="card" id="resultadoCard" style="display: none;">
     <div class="tabs">
       <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
-      <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico / Corte</div>
-      <div class="tab" id="tabRenderBtn" onclick="mudarAba('render')">🎨 Render 3D</div>
+      <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
+      <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">✏️ Esboço</div>
+      <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render 3D</div>
     </div>
 
     <!-- ABA COMERCIAL -->
@@ -151,7 +156,7 @@
       </div>
 
       <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-      <button class="btn btn-sec" onclick="mudarAba('render')">🎨 Ver Render 3D do Móvel</button>
+      <button class="btn btn-sec" onclick="mudarAba('esboco')">✏️ Ver Esboço Construtivo</button>
     </div>
 
     <!-- ABA TÉCNICA -->
@@ -171,20 +176,40 @@
       <h3 style="margin-top: 16px;">Insumos Necessários</h3>
       <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
 
-      <button class="btn btn-sec" onclick="mudarAba('render')">🎨 Visualizar Render 3D do Móvel</button>
+      <button class="btn btn-sec" onclick="mudarAba('esboco')">✏️ Avaliar Esboço de Montagem</button>
+    </div>
+
+    <!-- ABA ESBOÇO CONSTRUTIVO -->
+    <div id="abaEsboco" style="display: none;">
+      <h3>✏️ Esboço Técnico de Construção</h3>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Estrutura linear gerada a partir da lista de peças para conferência do layout do móvel.</p>
+
+      <div id="statusEsboco" class="status-msg"></div>
+      <img id="imgEsboco" class="img-preview-box" alt="Esboço Construtivo">
+
+      <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()" style="display: none;">✅ Aprovar Esboço e Libera Render 3D</button>
+      <button class="btn btn-sec" id="btnRefazerEsboco" onclick="gerarEsbocoConstrutivo()" style="display: none;">🔄 Gerar Outra Opção de Esboço</button>
     </div>
 
     <!-- ABA RENDER 3D -->
     <div id="abaRender" style="display: none;">
-      <h3>🎨 Maquete 3D / Render do Móvel</h3>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Visualização realista estimada a partir do croqui e do padrão de MDF escolhido.</p>
+      <h3>🎨 Maquete 3D / Render Realista</h3>
+      
+      <div id="boxBloqueioRender" class="warning-box">
+        ⚠️ <strong>Esboço não aprovado!</strong><br>Por favor, vá para a aba <strong>✏️ Esboço</strong> e confirme a estrutura do móvel antes de gerar o Render 3D.
+        <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Esboço Construtivo</button>
+      </div>
 
-      <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Outra Opção de Render</button>
+      <div id="conteudoRender3D" style="display: none;">
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Renderização realista gerada com base no esboço estrutural aprovado e no padrão de MDF selecionado.</p>
 
-      <div id="statusRender" class="status-msg"></div>
-      <img id="imgRender" alt="Render 3D do Móvel">
+        <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Outra Opção de Render</button>
 
-      <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem em Alta Resolução</a>
+        <div id="statusRender" class="status-msg"></div>
+        <img id="imgRender" class="img-preview-box" alt="Render 3D do Móvel">
+
+        <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem em Alta Resolução</a>
+      </div>
     </div>
 
   </div>
@@ -192,6 +217,7 @@
   <script>
     let imagemBase64 = "";
     let ultimoResultado = null;
+    let esbocoAprovado = false;
 
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
@@ -238,9 +264,13 @@
       }
 
       statusEl.className = 'status-msg loading';
-      statusEl.innerText = '⏳ Analisando desenho e aplicando padrões construtivos...';
+      statusEl.innerText = '⏳ Analisando desenho e calculando lista de peças...';
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
+
+      // Resetar aprovação de esboço para novo projeto
+      esbocoAprovado = false;
+      atualizarAbaRenderState();
 
       const espCaixa = document.getElementById('espCaixa').value;
       const espFundo = document.getElementById('espFundo').value;
@@ -322,14 +352,13 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
         const resultado = JSON.parse(jsonText);
 
-        ultimoResultado = resultado; // Salva o resultado globalmente para o render 3D
+        ultimoResultado = resultado;
 
         exibirResultado(resultado, precoChapa, margemLucro);
         statusEl.style.display = 'none';
 
-        // Resetar o render anterior se houver
-        document.getElementById('imgRender').style.display = 'none';
-        document.getElementById('btnDownloadRender').style.display = 'none';
+        // Gera automaticamente o Esboço Construtivo inicial
+        gerarEsboçoConstrutivo();
 
       } catch (err) {
         statusEl.className = 'status-msg error';
@@ -368,35 +397,82 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       });
     }
 
-    function mudarAba(aba) {
-      document.getElementById('abaComercial').style.display = aba === 'comercial' ? 'block' : 'none';
-      document.getElementById('abaTecnica').style.display = aba === 'tecnica' ? 'block' : 'none';
-      document.getElementById('abaRender').style.display = aba === 'render' ? 'block' : 'none';
+    function gerarEsboçoConstrutivo() {
+      if (!ultimoResultado) return;
 
-      document.getElementById('tabComercialBtn').className = aba === 'comercial' ? 'tab active' : 'tab';
-      document.getElementById('tabTecnicaBtn').className = aba === 'tecnica' ? 'tab active' : 'tab';
-      document.getElementById('tabRenderBtn').className = aba === 'render' ? 'tab active' : 'tab';
+      const statusEl = document.getElementById('statusEsboco');
+      const imgEl = document.getElementById('imgEsboco');
+      const btnApprove = document.getElementById('btnAprovarEsboco');
+      const btnRefazer = document.getElementById('btnRefazerEsboco');
 
-      if (aba === 'render' && document.getElementById('imgRender').style.display === 'none') {
-        gerarRender3D();
+      statusEl.className = 'status-msg loading';
+      statusEl.innerText = '📐 Desenhando esboço técnico de montagem do móvel...';
+      statusEl.style.display = 'block';
+      imgEl.style.display = 'none';
+      btnApprove.style.display = 'none';
+      btnRefazer.style.display = 'none';
+
+      // Criar o desenho em formato de plantas técnicas / linhas CAD
+      const listaPecasTexto = ultimoResultado.pecas.map(p => `${p.qtd}x ${p.nome}`).join(', ');
+      const prompt = `Black and white technical line art blueprint drawing, carpentry modular furniture construction schema, isometric architectural CAD wireframe draft, showing internal shelves and drawers structure, clear black line diagram on white background, ${ultimoResultado.resumoComercial}, includes ${listaPecasTexto}`;
+
+      const seed = Math.floor(Math.random() * 999999);
+      const esbocoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
+
+      const tempImg = new Image();
+      tempImg.onload = function() {
+        imgEl.src = esbocoUrl;
+        imgEl.style.display = 'block';
+        statusEl.style.display = 'none';
+        btnApprove.style.display = 'block';
+        btnRefazer.style.display = 'block';
+      };
+      tempImg.onerror = function() {
+        statusEl.className = 'status-msg error';
+        statusEl.innerText = '❌ Erro ao desenhar esboço. Clique em "Gerar Outra Opção" para tentar novamente.';
+        btnRefazer.style.display = 'block';
+      };
+      tempImg.src = esbocoUrl;
+    }
+
+    function aprovarEsboco() {
+      esbocoAprovado = true;
+      atualizarAbaRenderState();
+      alert('Esboço Construtivo Aprovado! Direcionando para o Render 3D...');
+      mudarAba('render');
+      gerarRender3D();
+    }
+
+    function atualizarAbaRenderState() {
+      const tabRenderBtn = document.getElementById('tabRenderBtn');
+      if (esbocoAprovado) {
+        tabRenderBtn.className = 'tab';
+        tabRenderBtn.innerHTML = '🎨 Render 3D';
+        document.getElementById('boxBloqueioRender').style.display = 'none';
+        document.getElementById('conteudoRender3D').style.display = 'block';
+      } else {
+        tabRenderBtn.className = 'tab locked';
+        tabRenderBtn.innerHTML = '🔒 Render 3D';
+        document.getElementById('boxBloqueioRender').style.display = 'block';
+        document.getElementById('conteudoRender3D').style.display = 'none';
       }
     }
 
     function gerarRender3D() {
-      if (!ultimoResultado) return;
+      if (!ultimoResultado || !esbocoAprovado) return;
 
       const statusEl = document.getElementById('statusRender');
       const imgEl = document.getElementById('imgRender');
       const btnDownload = document.getElementById('btnDownloadRender');
 
       statusEl.className = 'status-msg loading';
-      statusEl.innerText = '🎨 Criando maquete 3D do móvel com IA... Aguarde alguns segundos.';
+      statusEl.innerText = '🎨 Gerando maquete 3D realista a partir do esboço aprovado...';
       statusEl.style.display = 'block';
       imgEl.style.display = 'none';
       if (btnDownload) btnDownload.style.display = 'none';
 
       const padraoMdf = document.getElementById('padraoMdf').value;
-      const prompt = `Realistic 3D interior design render of custom carpentry furniture, ${ultimoResultado.resumoComercial}, made with ${padraoMdf} wood finish, professional architectural visualization, clean 8k photorealistic studio lighting, high details`;
+      const prompt = `Realistic 3D interior design render of custom carpentry furniture, built according to approved structural blueprint layout, ${ultimoResultado.resumoComercial}, made with ${padraoMdf} wood finish, professional photorealistic studio lighting, high details, 8k architectural visualization`;
 
       const seed = Math.floor(Math.random() * 999999);
       const renderUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
@@ -413,9 +489,27 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       };
       tempImg.onerror = function() {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Não foi possível gerar a imagem no momento. Tente novamente clicando em "Gerar Outra Opção".';
+        statusEl.innerText = '❌ Erro ao gerar Render 3D. Tente novamente clicando em "Gerar Outra Opção".';
       };
       tempImg.src = renderUrl;
+    }
+
+    function mudarAba(aba) {
+      document.getElementById('abaComercial').style.display = aba === 'comercial' ? 'block' : 'none';
+      document.getElementById('abaTecnica').style.display = aba === 'tecnica' ? 'block' : 'none';
+      document.getElementById('abaEsboco').style.display = aba === 'esboco' ? 'block' : 'none';
+      document.getElementById('abaRender').style.display = aba === 'render' ? 'block' : 'none';
+
+      document.getElementById('tabComercialBtn').className = aba === 'comercial' ? 'tab active' : 'tab';
+      document.getElementById('tabTecnicaBtn').className = aba === 'tecnica' ? 'tab active' : 'tab';
+      document.getElementById('tabEsbocoBtn').className = aba === 'esboco' ? 'tab active' : 'tab';
+      
+      const tabRender = document.getElementById('tabRenderBtn');
+      if (aba === 'render') {
+        tabRender.className = 'tab active';
+      } else {
+        tabRender.className = esbocoAprovado ? 'tab' : 'tab locked';
+      }
     }
   </script>
 </body>
