@@ -33,7 +33,7 @@
     .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 14px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; }
+    .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
@@ -109,10 +109,19 @@
   <!-- UPLOAD DE FOTO -->
   <div class="card">
     <h2>📷 Foto do Esboço / Croqui</h2>
-    <div class="file-input-wrapper" onclick="document.getElementById('fileInput').click()">
-      <span>👉 Toque aqui para tirar foto ou selecionar da galeria</span>
-      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="carregarImagem(event)">
+    
+    <div class="grid-2">
+      <div class="file-input-wrapper" onclick="document.getElementById('fileCam').click()">
+        <span>📷 Tirar Foto</span>
+        <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
+      </div>
+      
+      <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
+        <span>🖼️ Galeria / Arquivos</span>
+        <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
+      </div>
     </div>
+
     <img id="preview-img" alt="Preview do Croqui">
 
     <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
@@ -247,7 +256,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 }`;
 
       try {
-        // Chamada limpa via REST API para o Gemini 1.5 Flash (sem conflito de biblioteca)
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -268,7 +276,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         }
 
         const rawText = data.candidates[0].content.parts[0].text;
-        // Limpar possíveis marcações de código markdown caso a IA responda com ```json
         const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
         const resultado = JSON.parse(jsonText);
 
@@ -295,7 +302,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       // Link do WhatsApp
       const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${data.resumoComercial}\n\n*Valor Total Estimado:* ${valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
-      document.getElementById('btnWhatsapp').href = `[https://wa.me/?text=$](https://wa.me/?text=$){textoWsp}`;
+      document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
 
       // Preencher Tabela de Peças
       const tbody = document.querySelector('#tabelaPecas tbody');
