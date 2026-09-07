@@ -170,7 +170,6 @@
   <script>
     let imagemBase64 = "";
 
-    // Carregar configurações do LocalStorage ao abrir
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
       document.getElementById('espCaixa').value = localStorage.getItem('esp_caixa') || '15';
@@ -220,7 +219,6 @@
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
 
-      // Parâmetros do Usuário
       const espCaixa = document.getElementById('espCaixa').value;
       const espFundo = document.getElementById('espFundo').value;
       const folgaGaveta = document.getElementById('folgaGaveta').value;
@@ -255,26 +253,49 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
   "custoMaterial": 500
 }`;
 
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: prompt },
-                { inline_data: { mime_type: "image/jpeg", data: imagemBase64 } }
-              ]
-            }]
-          })
-        });
+      // Lista de modelos que serão testados em sequência
+      const modelos = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      let data = null;
+      let ultimoErro = '';
 
-        const data = await response.json();
+      for (const modelo of modelos) {
+        try {
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: prompt },
+                  { inline_data: { mime_type: "image/jpeg", data: imagemBase64 } }
+                ]
+              }]
+            })
+          });
 
-        if (data.error) {
-          throw new Error(data.error.message || 'Erro na resposta da API');
+          const resData = await response.json();
+          if (resData.error) {
+            ultimoErro = resData.error.message;
+            continue; // Tenta o próximo modelo da lista
+          }
+
+          if (resData.candidates && resData.candidates.length > 0) {
+            data = resData;
+            break; // Conexão bem-sucedida!
+          }
+        } catch (err) {
+          ultimoErro = err.message;
         }
+      }
 
+      if (!data) {
+        statusEl.className = 'status-msg error';
+        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique se sua chave de API está correta.');
+        document.getElementById('btnProcessar').disabled = false;
+        return;
+      }
+
+      try {
         const rawText = data.candidates[0].content.parts[0].text;
         const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
         const resultado = JSON.parse(jsonText);
@@ -284,7 +305,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       } catch (err) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao analisar: ' + err.message;
+        statusEl.innerText = '❌ Erro ao processar resposta: ' + err.message;
       } finally {
         document.getElementById('btnProcessar').disabled = false;
       }
@@ -294,17 +315,14 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       document.getElementById('resultadoCard').style.display = 'block';
       document.getElementById('resumoTexto').innerText = data.resumoComercial;
 
-      // Cálculo de Preço
       const custoMaterial = data.custoMaterial || (data.chapasEstimadas * precoChapa);
       const valorFinal = custoMaterial * (1 + (margemLucro / 100));
 
       document.getElementById('valorTotal').innerText = valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-      // Link do WhatsApp
       const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${data.resumoComercial}\n\n*Valor Total Estimado:* ${valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`);
       document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
 
-      // Preencher Tabela de Peças
       const tbody = document.querySelector('#tabelaPecas tbody');
       tbody.innerHTML = '';
       data.pecas.forEach(p => {
@@ -313,7 +331,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         tbody.appendChild(tr);
       });
 
-      // Preencher Lista de Insumos
       const ulInsumos = document.getElementById('listaInsumos');
       ulInsumos.innerHTML = '';
       data.insumos.forEach(item => {
