@@ -57,7 +57,22 @@
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
     .btn-download { background-color: #6366f1; color: #fff; margin-top: 10px; text-decoration: none; display: none; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
-    .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); background: #000; }
+    /* ESTILOS DA PRANCHA TÉCNICA */
+    .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .prancha-header { text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .prancha-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 600px) { .prancha-grid { grid-template-columns: 1.2fr 0.8fr; } }
+    
+    .cad-box { background: #ffffff; border: 2px solid #334155; border-radius: 4px; padding: 12px; position: relative; }
+    .cad-title { font-size: 0.75rem; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
+    
+    .svg-cad { width: 100%; height: auto; max-height: 380px; display: block; margin: 0 auto; }
+    
+    .info-medidas { background: #f1f5f9; border-left: 4px solid #10b981; padding: 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; }
+    .info-medidas p { margin-bottom: 4px; }
+    .info-medidas strong { color: #0f172a; }
+
+    .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
   </style>
 </head>
 <body>
@@ -141,7 +156,7 @@
     <div class="tabs">
       <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
       <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
-      <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">✏️ Esboço</div>
+      <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha Construtiva</div>
       <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render 3D</div>
     </div>
 
@@ -156,7 +171,7 @@
       </div>
 
       <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-      <button class="btn btn-sec" onclick="mudarAba('esboco')">✏️ Ver Esboço Construtivo</button>
+      <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha Construtiva</button>
     </div>
 
     <!-- ABA TÉCNICA -->
@@ -176,19 +191,43 @@
       <h3 style="margin-top: 16px;">Insumos Necessários</h3>
       <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
 
-      <button class="btn btn-sec" onclick="mudarAba('esboco')">✏️ Avaliar Esboço de Montagem</button>
+      <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Avaliar Prancha de Montagem</button>
     </div>
 
-    <!-- ABA ESBOÇO CONSTRUTIVO -->
+    <!-- ABA PRANCHA CONSTRUTIVA -->
     <div id="abaEsboco" style="display: none;">
-      <h3>✏️ Esboço Técnico de Construção</h3>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Estrutura linear gerada a partir da lista de peças para conferência do layout do móvel.</p>
+      <h3>📐 Prancha Técnica de Projeto</h3>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Desenho de distribuição interna estilo CAD/Promob com cotas de medidas exatas.</p>
 
-      <div id="statusEsboco" class="status-msg"></div>
-      <img id="imgEsboco" class="img-preview-box" alt="Esboço Construtivo">
+      <!-- CARD DA PRANCHA TÉCNICA ESTILO PROMOB -->
+      <div class="prancha-container" id="pranchaArea">
+        <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
+        
+        <div class="prancha-grid">
+          <!-- VISTA FRONTAL COM SVG -->
+          <div class="cad-box">
+            <div class="cad-title">Distribuição Interna</div>
+            <div id="svgContainer"></div>
+          </div>
 
-      <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()" style="display: none;">✅ Aprovar Esboço e Libera Render 3D</button>
-      <button class="btn btn-sec" id="btnRefazerEsboco" onclick="gerarEsbocoConstrutivo()" style="display: none;">🔄 Gerar Outra Opção de Esboço</button>
+          <!-- MEDIDAS E VISTA SUPERIOR -->
+          <div>
+            <div class="info-medidas">
+              <div class="cad-title" style="text-align:left; margin-bottom:4px;">Medidas do Móvel</div>
+              <p><strong>Largura Total:</strong> <span id="lblLargura">0,00 m</span></p>
+              <p><strong>Altura Total:</strong> <span id="lblAltura">0,00 m</span></p>
+              <p><strong>Profundidade:</strong> <span id="lblProfundidade">00 cm</span></p>
+            </div>
+
+            <div class="cad-box">
+              <div class="cad-title">Vista Superior</div>
+              <div id="svgTopContainer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()">✅ Aprovar Prancha e Gerar Render 3D</button>
     </div>
 
     <!-- ABA RENDER 3D -->
@@ -196,12 +235,12 @@
       <h3>🎨 Maquete 3D / Render Realista</h3>
       
       <div id="boxBloqueioRender" class="warning-box">
-        ⚠️ <strong>Esboço não aprovado!</strong><br>Por favor, vá para a aba <strong>✏️ Esboço</strong> e confirme a estrutura do móvel antes de gerar o Render 3D.
-        <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Esboço Construtivo</button>
+        ⚠️ <strong>Prancha não aprovada!</strong><br>Por favor, vá para a aba <strong>📐 Prancha Construtiva</strong> e confirme a estrutura do móvel antes de gerar o Render 3D.
+        <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Prancha Construtiva</button>
       </div>
 
       <div id="conteudoRender3D" style="display: none;">
-        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Renderização realista gerada com base no esboço estrutural aprovado e no padrão de MDF selecionado.</p>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Renderização realista gerada com base na estrutura técnica aprovada e no padrão de MDF selecionado.</p>
 
         <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Outra Opção de Render</button>
 
@@ -268,7 +307,6 @@
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
 
-      // Resetar aprovação de esboço para novo projeto
       esbocoAprovado = false;
       atualizarAbaRenderState();
 
@@ -280,7 +318,7 @@
       const padraoMdf = document.getElementById('padraoMdf').value;
 
       const prompt = `Você é um mestre marceneiro e orçamentista. Analise o croqui/desenho fornecido.
-Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e os módulos.
+Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e a estrutura interna.
 
 Considere as seguintes REGRAS CONSTRUTIVAS:
 - Espessura do MDF das caixas: ${espCaixa}mm
@@ -292,18 +330,24 @@ Considere as seguintes REGRAS CONSTRUTIVAS:
 Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do JSON, seguindo esta estrutura exata:
 {
   "resumoComercial": "Descrição breve do móvel e dimensões identificadas.",
+  "alturaMM": 2800,
+  "larguraMM": 1200,
+  "profundidadeMM": 600,
+  "numModulos": 2,
+  "temMaleiro": true,
+  "temCabideiro": true,
+  "numPrateleiras": 3,
+  "numGavetas": 4,
   "pecas": [
-    {"nome": "Lateral", "qtd": 2, "comprimento": 720, "largura": 580},
-    {"nome": "Base/Tampo", "qtd": 2, "comprimento": 1170, "largura": 580}
+    {"nome": "Lateral", "qtd": 2, "comprimento": 2395, "largura": 600},
+    {"nome": "Base / Tampo", "qtd": 2, "comprimento": 1170, "largura": 600}
   ],
   "insumos": [
-    "1.5 Chapas MDF 15mm Branco",
-    "18 metros de fita de borda",
-    "4 pares de corrediça telescópica"
+    "4 Chapas MDF 15mm Branco",
+    "68 metros de fita de borda"
   ],
-  "chapasEstimadas": 1.5,
-  "fitaMetros": 18,
-  "custoMaterial": 500
+  "chapasEstimadas": 4,
+  "custoMaterial": 1120
 }`;
 
       const modelos = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
@@ -357,8 +401,8 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         exibirResultado(resultado, precoChapa, margemLucro);
         statusEl.style.display = 'none';
 
-        // Gera automaticamente o Esboço Construtivo inicial
-        gerarEsboçoConstrutivo();
+        // Desenhar a Prancha Técnica em Vetor CAD
+        desenharPranchaSVG(resultado);
 
       } catch (err) {
         statusEl.className = 'status-msg error';
@@ -397,48 +441,87 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       });
     }
 
-    function gerarEsboçoConstrutivo() {
-      if (!ultimoResultado) return;
+    // FUNÇÃO QUE DESENHA A PRANCHA TÉCNICA 2D VETORIAL (ESTILO PROMOB)
+    function desenharPranchaSVG(data) {
+      const altM = (data.alturaMM || 2800) / 1000;
+      const largM = (data.larguraMM || 1200) / 1000;
+      const profCM = (data.profundidadeMM || 600) / 10;
+      const modulos = data.numModulos || 2;
+      const gavetas = data.numGavetas || 4;
+      const prateleiras = data.numPrateleiras || 3;
 
-      const statusEl = document.getElementById('statusEsboco');
-      const imgEl = document.getElementById('imgEsboco');
-      const btnApprove = document.getElementById('btnAprovarEsboco');
-      const btnRefazer = document.getElementById('btnRefazerEsboco');
+      document.getElementById('lblLargura').innerText = `${largM.toFixed(2).replace('.', ',')} m`;
+      document.getElementById('lblAltura').innerText = `${altM.toFixed(2).replace('.', ',')} m`;
+      document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
 
-      statusEl.className = 'status-msg loading';
-      statusEl.innerText = '📐 Desenhando esboço técnico de montagem do móvel...';
-      statusEl.style.display = 'block';
-      imgEl.style.display = 'none';
-      btnApprove.style.display = 'none';
-      btnRefazer.style.display = 'none';
+      // Gerar SVG Vista Frontal
+      let svgHTML = `<svg viewBox="0 0 240 320" class="svg-cad">
+        <!-- Caixa Externa -->
+        <rect x="30" y="20" width="180" height="260" fill="#f8fafc" stroke="#0f172a" stroke-width="3"/>
+        
+        <!-- Cotas de Medida -->
+        <line x1="15" y1="20" x2="15" y2="280" stroke="#64748b" stroke-width="1"/>
+        <line x1="10" y1="20" x2="20" y2="20" stroke="#64748b" stroke-width="1"/>
+        <line x1="10" y1="280" x2="20" y2="280" stroke="#64748b" stroke-width="1"/>
+        <text x="8" y="155" font-size="9" font-weight="bold" fill="#0f172a" transform="rotate(-90 8,155)" text-anchor="middle">${altM.toFixed(2)} m</text>
 
-      // Criar o desenho em formato de plantas técnicas / linhas CAD
-      const listaPecasTexto = ultimoResultado.pecas.map(p => `${p.qtd}x ${p.nome}`).join(', ');
-      const prompt = `Black and white technical line art blueprint drawing, carpentry modular furniture construction schema, isometric architectural CAD wireframe draft, showing internal shelves and drawers structure, clear black line diagram on white background, ${ultimoResultado.resumoComercial}, includes ${listaPecasTexto}`;
+        <line x1="30" y1="295" x2="210" y2="295" stroke="#64748b" stroke-width="1"/>
+        <line x1="30" y1="290" x2="30" y2="300" stroke="#64748b" stroke-width="1"/>
+        <line x1="210" y1="290" x2="210" y2="300" stroke="#64748b" stroke-width="1"/>
+        <text x="120" y="310" font-size="9" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>`;
 
-      const seed = Math.floor(Math.random() * 999999);
-      const esbocoUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
+      // Divisória Central de Módulos
+      if (modulos > 1) {
+        svgHTML += `<line x1="120" y1="20" x2="120" y2="280" stroke="#0f172a" stroke-width="2"/>`;
+      }
 
-      const tempImg = new Image();
-      tempImg.onload = function() {
-        imgEl.src = esbocoUrl;
-        imgEl.style.display = 'block';
-        statusEl.style.display = 'none';
-        btnApprove.style.display = 'block';
-        btnRefazer.style.display = 'block';
-      };
-      tempImg.onerror = function() {
-        statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao desenhar esboço. Clique em "Gerar Outra Opção" para tentar novamente.';
-        btnRefazer.style.display = 'block';
-      };
-      tempImg.src = esbocoUrl;
+      // Maleiro (Prateleira Superior)
+      svgHTML += `<line x1="30" y1="65" x2="210" y2="65" stroke="#0f172a" stroke-width="2"/>
+      <text x="120" y="48" font-size="8" font-weight="bold" fill="#475569" text-anchor="middle">MALEIRO</text>`;
+
+      // Cabideiro
+      svgHTML += `<line x1="35" y1="80" x2="205" y2="80" stroke="#64748b" stroke-width="2" stroke-dasharray="3,3"/>
+      <text x="120" y="110" font-size="8" font-weight="bold" fill="#475569" text-anchor="middle">CABIDEIRO</text>`;
+
+      // Prateleiras Intermediárias
+      svgHTML += `<line x1="30" y1="160" x2="210" y2="160" stroke="#0f172a" stroke-width="2"/>
+      <line x1="30" y1="195" x2="210" y2="195" stroke="#0f172a" stroke-width="2"/>
+      <text x="120" y="180" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">${prateleiras} PRATELEIRAS</text>`;
+
+      // Gaveteiro Inferior
+      const altGavetas = 80;
+      const yGavetaStart = 200;
+      const altUmaGaveta = altGavetas / (gavetas / modulos);
+
+      for (let i = 0; i < (gavetas / modulos); i++) {
+        let y = yGavetaStart + (i * altUmaGaveta);
+        svgHTML += `<line x1="30" y1="${y}" x2="210" y2="${y}" stroke="#0f172a" stroke-width="1.5"/>`;
+        // Puxadores
+        svgHTML += `<rect x="65" y="${y + (altUmaGaveta/2) - 1}" width="20" height="2" fill="#0f172a"/>`;
+        if (modulos > 1) {
+          svgHTML += `<rect x="155" y="${y + (altUmaGaveta/2) - 1}" width="20" height="2" fill="#0f172a"/>`;
+        }
+      }
+      svgHTML += `<text x="120" y="272" font-size="7" font-weight="bold" fill="#0f172a" text-anchor="middle">${gavetas} GAVETAS</text>`;
+
+      svgHTML += `</svg>`;
+      document.getElementById('svgContainer').innerHTML = svgHTML;
+
+      // Gerar SVG Vista Superior
+      let topSVG = `<svg viewBox="0 0 200 80" style="width:100%; max-height:80px;">
+        <rect x="20" y="15" width="160" height="45" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+        <line x1="100" y1="15" x2="100" y2="60" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="60" y="42" font-size="8" fill="#475569" text-anchor="middle">${(profCM).toFixed(0)} cm</text>
+        <text x="140" y="42" font-size="8" fill="#475569" text-anchor="middle">${(profCM).toFixed(0)} cm</text>
+        <text x="100" y="73" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>
+      </svg>`;
+      document.getElementById('svgTopContainer').innerHTML = topSVG;
     }
 
     function aprovarEsboco() {
       esbocoAprovado = true;
       atualizarAbaRenderState();
-      alert('Esboço Construtivo Aprovado! Direcionando para o Render 3D...');
+      alert('Prancha Construtiva Aprovada! Gerando o Render 3D do móvel...');
       mudarAba('render');
       gerarRender3D();
     }
@@ -466,13 +549,13 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       const btnDownload = document.getElementById('btnDownloadRender');
 
       statusEl.className = 'status-msg loading';
-      statusEl.innerText = '🎨 Gerando maquete 3D realista a partir do esboço aprovado...';
+      statusEl.innerText = '🎨 Criando maquete 3D realista a partir da estrutura aprovada...';
       statusEl.style.display = 'block';
       imgEl.style.display = 'none';
       if (btnDownload) btnDownload.style.display = 'none';
 
       const padraoMdf = document.getElementById('padraoMdf').value;
-      const prompt = `Realistic 3D interior design render of custom carpentry furniture, built according to approved structural blueprint layout, ${ultimoResultado.resumoComercial}, made with ${padraoMdf} wood finish, professional photorealistic studio lighting, high details, 8k architectural visualization`;
+      const prompt = `Photorealistic 3D interior design architectural render of custom wardrobe closet, ${ultimoResultado.resumoComercial}, built with ${padraoMdf} wood finish, organized clothes hanging and internal drawers, professional studio lighting, 8k ultra detailed`;
 
       const seed = Math.floor(Math.random() * 999999);
       const renderUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
