@@ -17,8 +17,8 @@
     header p { font-size: 0.85rem; color: var(--text-dim); }
 
     /* NAVEGAÇÃO SUPERIOR */
-    .main-nav { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 16px; background: transparent; padding: 0; border: none; }
-    .main-nav-btn { padding: 10px 16px; text-align: center; background: #0f172a; color: var(--text-dim); border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .main-nav { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+    .main-nav-btn { padding: 8px 12px; text-align: center; background: #0f172a; color: var(--text-dim); border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     .main-nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
     .card { background-color: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
@@ -35,16 +35,14 @@
     .btn-sec { background-color: var(--blue); color: #fff; margin-top: 12px; }
     .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
     .btn-danger { background-color: var(--danger); color: #fff; }
-    .btn-approve { background-color: #10b981; color: #000; font-size: 1rem; padding: 14px; margin-top: 14px; }
 
     .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
     .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; }
-    .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; color: #fff; }
     .tab.active { background: var(--accent); color: #000; }
-    .tab.locked { opacity: 0.6; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
     th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -53,10 +51,8 @@
     .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
     .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
     .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
-    .warning-box { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); padding: 12px; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-top: 12px; }
 
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
-    .btn-download { background-color: #6366f1; color: #fff; margin-top: 10px; text-decoration: none; display: none; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
     /* PRANCHA TÉCNICA */
     .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -72,18 +68,13 @@
     .info-medidas p { margin-bottom: 4px; }
     .info-medidas strong { color: #0f172a; }
 
-    .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-
-    /* CARDS */
+    /* ITENS E CARDS */
     .mdf-item { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
     .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
     .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
     .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
     .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
     .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-    
-    .cliente-card-click { background:#0f172a; border:1px solid var(--border); padding:16px; border-radius:8px; margin-bottom:12px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
-    .cliente-card-click:hover { border-color: var(--accent); background: #1b2436; }
   </style>
 </head>
 <body>
@@ -95,91 +86,23 @@
 
   <!-- NAVEGAÇÃO SUPERIOR -->
   <nav class="main-nav">
-    <button class="main-nav-btn active" id="navInicioBtn" onclick="mudarVisaoPrincipal('inicio')">🏠 Início</button>
-    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Configuração</button>
+    <button class="main-nav-btn active" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Novo Projeto</button>
+    <button class="main-nav-btn" id="navHistoricoBtn" onclick="mudarVisaoPrincipal('historico')">📁 Histórico</button>
+    <button class="main-nav-btn" id="navConstrucaoBtn" onclick="mudarVisaoPrincipal('construcao')">🛠️ Construção</button>
+    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Configurações</button>
   </nav>
 
-  <!-- ==================== TELA 1: INÍCIO (DASHBOARD) ==================== -->
-  <div id="viewInicio" class="main-view" style="padding: 10px 0;">
-    <h2 style="text-align: center; color: var(--accent); margin-bottom: 16px;">Painel de Controle</h2>
-    
-    <div class="tabs">
-      <div class="tab active" id="tabAcessoBtn" onclick="mudarAbaInicio('acesso')">🚀 Acesso Rápido</div>
-      <div class="tab" id="tabControleBtn" onclick="mudarAbaInicio('controle')">🎛️ Controle e Preços</div>
-    </div>
-
-    <!-- Aba Acesso Rápido -->
-    <div id="abaAcesso" style="text-align: center; margin-top: 15px;">
-      <div class="card">
-        <p style="color: var(--text-dim); margin-bottom: 20px;">O que você deseja fazer agora?</p>
-        <button class="btn" style="padding: 20px; font-size: 1.1rem;" onclick="mudarVisaoPrincipal('projeto')">📐 Iniciar Novo Projeto</button>
-        <button class="btn btn-sec" style="padding: 20px; font-size: 1.1rem; margin-top: 15px;" onclick="mudarVisaoPrincipal('clientes')">👥 Acessar Meus Clientes</button>
-      </div>
-    </div>
-
-    <!-- Aba Controle e Preços -->
-    <div id="abaControle" style="display: none; margin-top: 15px;">
-      <div class="card">
-        <h2>🛠️ Regras de Construção</h2>
-        <div class="grid-2">
-          <div>
-            <label>Espessura Caixa (mm)</label>
-            <select id="espCaixa" onchange="salvarConfig()">
-              <option value="15">15 mm</option>
-              <option value="18">18 mm</option>
-            </select>
-          </div>
-          <div>
-            <label>Espessura Fundo (mm)</label>
-            <select id="espFundo" onchange="salvarConfig()">
-              <option value="6">6 mm</option>
-              <option value="15">15 mm</option>
-            </select>
-          </div>
-        </div>
-        <div class="grid-2" style="margin-top: 10px;">
-          <div>
-            <label>Folga para Gavetas (mm)</label>
-            <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
-          </div>
-          <div>
-            <label>Margem / Lucro Padrão (%)</label>
-            <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>🏷️ Tabela de Preços Geral (MDF e Insumos)</h2>
-        <label>Material / MDF Principal Selecionado no Projeto</label>
-        <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
-        <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
-          <label>➕ Cadastrar Novo Item na Tabela</label>
-          <div class="grid-2">
-            <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica">
-            <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
-          </div>
-          <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela</button>
-        </div>
-        <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
-        <div id="listaItensTabela"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== TELA 2: NOVO PROJETO ==================== -->
-  <div id="viewProjeto" class="main-view" style="display: none;">
+  <!-- ==================== TELA 1: NOVO PROJETO ==================== -->
+  <div id="viewProjeto" class="main-view">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2 style="margin: 0;">📷 Desenho ou Descrição</h2>
-        <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Cancelar</button>
-      </div>
+      <h2>📷 Desenho e Descrição do Móvel</h2>
       
-      <label for="descricaoMovel">📝 Descrição / Prompt (Obrigatório se não houver foto)</label>
-      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Armário com porta basculante de 600x600x600 com dobradiças comuns puxador cava..." oninput="verificarEntradaProjeto()"></textarea>
+      <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
+      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Armário com porta basculante de 600x600 com dobradiças comuns puxador cava..." oninput="verificarEntradaProjeto()"></textarea>
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura e medidas exatas reduz erros de leitura do croqui.</p>
 
       <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
-        Material Base Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
+        Material Base / MDF Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
       </div>
 
       <div class="grid-2">
@@ -188,7 +111,7 @@
           <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
         </div>
         <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
-          <span>🖼️ Galeria / Arquivo</span>
+          <span>🖼️ Galeria / Arquivos</span>
           <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
         </div>
       </div>
@@ -204,17 +127,14 @@
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
         <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
         <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
-        <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render</div>
       </div>
 
       <!-- Aba Comercial -->
       <div id="abaComercial">
-        <label>👤 Selecione o Cliente para Salvar na Pasta</label>
-        <select id="clienteSelect">
-          <option value="">-- Selecione um cliente cadastrado --</option>
-        </select>
+        <label>👤 Nome do Cliente / Identificação do Projeto</label>
+        <input type="text" id="nomeCliente" placeholder="Ex: Cliente João - Armário Cozinha">
 
-        <h3 style="margin-top: 14px;">Resumo da Proposta</h3>
+        <h3 style="margin-top: 14px;">Resumo para o Cliente</h3>
         <p id="resumoTexto" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-dim);"></p>
         
         <div style="margin-top: 16px; background: #0f172a; padding: 12px; border-radius: 8px;">
@@ -222,24 +142,26 @@
           <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 4px;">R$ 0,00</h2>
         </div>
 
-        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoCliente()">💾 Salvar na Pasta do Cliente</button>
+        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento no Histórico</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
+        <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
       </div>
 
       <!-- Aba Técnica -->
       <div id="abaTecnica" style="display: none;">
         <div class="calc-box">
-          <h4>🧮 Simulação de Custos</h4>
+          <h4>🧮 Simulação do Preço Final</h4>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:10px;">Altere qualquer valor abaixo para recalcular o preço em tempo real:</p>
           <div class="grid-2">
-            <div><label>Qtd. Chapas</label><input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()"></div>
+            <div><label>Qtd. Chapas Estimada</label><input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()"></div>
             <div><label>Preço p/ Chapa (R$)</label><input type="number" id="inpEditPrecoChapa" step="1" min="0" oninput="recalcularPrecoManual()"></div>
           </div>
           <div class="grid-2" style="margin-top:10px;">
-            <div><label>Ferragens & Insumos</label><input type="number" id="inpEditOutrosCustos" step="10" min="0" oninput="recalcularPrecoManual()"></div>
+            <div><label>Ferragens & Insumos (R$)</label><input type="number" id="inpEditOutrosCustos" step="10" min="0" oninput="recalcularPrecoManual()"></div>
             <div><label>Margem / Lucro (%)</label><input type="number" id="inpEditMargem" step="5" min="0" oninput="recalcularPrecoManual()"></div>
           </div>
           <div style="margin-top:12px; background:#1b2436; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-            <div><span style="font-size:0.75rem; color:var(--text-dim);">Custo Material:</span><br><strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong></div>
+            <div><span style="font-size:0.75rem; color:var(--text-dim);">Custo Total Material:</span><br><strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong></div>
             <div style="text-align:right;"><span style="font-size:0.75rem; color:var(--text-dim);">Valor Final:</span><br><strong id="lblValorFinalTecnico" style="font-size:1.1rem; color:var(--accent);">R$ 0,00</strong></div>
           </div>
         </div>
@@ -250,16 +172,17 @@
         </table>
         <h3 style="margin-top: 16px;">Insumos Necessários</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
+        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
       </div>
 
-      <!-- Aba Prancha -->
+      <!-- Aba Prancha & Prompt Gemini -->
       <div id="abaEsboco" style="display: none;">
-        <h3>📐 Prancha Técnica Proporcional</h3>
+        <h3>📐 Prancha Técnica de Projeto</h3>
         <div class="prancha-container" id="pranchaArea">
-          <div class="prancha-header">Distribuição Interna & Medidas</div>
+          <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
           <div class="prancha-grid">
             <div class="cad-box">
-              <div class="cad-title">Vista Frontal</div>
+              <div class="cad-title">Distribuição Interna Proporcional</div>
               <div id="svgContainer"></div>
             </div>
             <div>
@@ -276,83 +199,93 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()">✅ Aprovar Prancha e Gerar Render 3D</button>
-      </div>
 
-      <!-- Aba Render 3D -->
-      <div id="abaRender" style="display: none;">
-        <h3>🎨 Maquete 3D Realista</h3>
-        <div id="boxBloqueioRender" class="warning-box">
-          ⚠️ <strong>Prancha não aprovada!</strong><br>Confirme a estrutura do móvel antes de gerar o Render.
-          <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Prancha Construtiva</button>
-        </div>
-        <div id="conteudoRender3D" style="display: none;">
-          <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Nova Imagem</button>
-          <div id="statusRender" class="status-msg"></div>
-          <img id="imgRender" class="img-preview-box" alt="Render 3D do Móvel">
-          <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem Alta Resolução</a>
+        <div style="margin-top: 16px; background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
+          <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt Fidedigno para Imagem no Gemini</h4>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Copie o texto abaixo e cole no Google Gemini para gerar a imagem 3D realista fiel:</p>
+          <textarea id="promptGeminiBox" readonly style="width: 100%; height: 160px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
+          <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt para o Gemini</button>
+          <div id="statusCopia" style="font-size: 0.8rem; color: var(--accent); margin-top: 6px; text-align: center; display: none;"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== TELA 3: CLIENTES E PASTAS ==================== -->
-  <div id="viewClientes" class="main-view" style="display: none;">
+  <!-- ==================== TELA 2: HISTÓRICO ==================== -->
+  <div id="viewHistorico" class="main-view" style="display: none;">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2 style="margin: 0;">👥 Gestão de Clientes</h2>
-        <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Voltar</button>
-      </div>
-      
-      <!-- Lista Geral -->
-      <div id="containerListaGeral">
-        <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
-          <h4 style="margin-bottom: 12px; color: var(--accent);">➕ Cadastrar Novo Cliente</h4>
-          <div class="grid-2">
-            <div><label>Nome Completo</label><input type="text" id="novoClienteNome" placeholder="Ex: João da Silva"></div>
-            <div><label>Telefone / WhatsApp</label><input type="text" id="novoClienteTel" placeholder="(00) 00000-0000"></div>
-          </div>
-          <div class="grid-2" style="margin-top: 10px;">
-            <div><label>Endereço</label><input type="text" id="novoClienteEnd" placeholder="Rua, Número, Bairro"></div>
-            <div><label>Empresa (Opcional)</label><input type="text" id="novoClienteEmp" placeholder="Nome do Negócio"></div>
-          </div>
-          <button class="btn btn-sec" onclick="cadastrarCliente()">Salvar Cliente no Banco</button>
+      <h2>📁 Histórico de Orçamentos Salvos</h2>
+      <div id="listaHistoricoContainer" style="margin-top: 12px;"></div>
+    </div>
+  </div>
+
+  <!-- ==================== TELA 3: CONSTRUÇÃO ==================== -->
+  <div id="viewConstrucao" class="main-view" style="display: none;">
+    <div class="card">
+      <h2>🛠️ Regras e Padrões de Construção</h2>
+      <div class="grid-2">
+        <div>
+          <label>Espessura Caixa (mm)</label>
+          <select id="espCaixa" onchange="salvarConfig()">
+            <option value="15">15 mm</option>
+            <option value="18">18 mm</option>
+          </select>
         </div>
-        
-        <h3>📂 Seus Clientes (Clique para abrir a pasta)</h3>
-        <div id="listaClientesPastas" style="margin-top: 12px;"></div>
+        <div>
+          <label>Espessura Fundo (mm)</label>
+          <select id="espFundo" onchange="salvarConfig()">
+            <option value="6">6 mm</option>
+            <option value="15">15 mm</option>
+          </select>
+        </div>
       </div>
-
-      <!-- Perfil Individual do Cliente -->
-      <div id="containerPerfilCliente" style="display: none;">
-        <button class="btn-sm" style="background-color: var(--border); color: #fff; margin-bottom: 16px;" onclick="fecharPerfilCliente()">⬅ Voltar para a Lista de Clientes</button>
-        
-        <div id="dadosPerfilCliente" style="background: #0f172a; padding: 16px; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 20px;"></div>
-
-        <h3 style="color: var(--accent); margin-bottom: 12px;">📄 Orçamentos e Projetos Salvos</h3>
-        <div id="listaProjetosCliente"></div>
+      <div class="grid-2" style="margin-top: 10px;">
+        <div>
+          <label>Folga para Gavetas (mm)</label>
+          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
+        </div>
+        <div>
+          <label>Margem / Lucro Padrão (%)</label>
+          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== TELA 4: CONFIGURAÇÕES (API) ==================== -->
+  <!-- ==================== TELA 4: CONFIGURAÇÕES (API & TABELA DE PREÇOS) ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2 style="margin: 0;">🔑 Chave de Conexão (IA)</h2>
-        <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Voltar</button>
-      </div>
+      <h2>🔑 Chave de Conexão (IA)</h2>
       <div id="statusApiKeyBadge"></div>
       <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
       <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
+    </div>
+
+    <div class="card">
+      <h2>🏷️ Tabela de Preços</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Cadastre chapas de MDF, corrediças, dobradiças e outros insumos.</p>
+      
+      <label>Material / MDF Principal Selecionado no Projeto</label>
+      <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
+      
+      <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <label>➕ Cadastrar Novo Item na Tabela</label>
+        <div class="grid-2">
+          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
+          <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
+        </div>
+        <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
+      </div>
+      
+      <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
+      <div id="listaItensTabela"></div>
     </div>
   </div>
 
   <script>
     let imagemBase64 = "";
     let ultimoResultado = null;
-    let esbocoAprovado = false;
-    let clientesCadastrados = JSON.parse(localStorage.getItem('studioDm_clientes')) || [];
+    let historicoProjetos = JSON.parse(localStorage.getItem('studioDm_historico')) || [];
     let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || [
       { id: '1', nome: 'MDF Branco TX (Chapa)', preco: 250 },
       { id: '2', nome: 'MDF Amadeirado (Chapa)', preco: 380 }
@@ -367,25 +300,17 @@
 
       renderTabelaPrecos();
       atualizarBadgeApiKey();
-      atualizarSelectClientes();
-      renderizarListaGeralClientes();
-      
-      mudarVisaoPrincipal('inicio');
+      renderizarHistorico();
+      mudarVisaoPrincipal('projeto');
     };
 
     function mudarVisaoPrincipal(visao) {
       document.querySelectorAll('.main-view').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.main-nav-btn').forEach(el => el.classList.remove('active'));
+      
       document.getElementById('view' + visao.charAt(0).toUpperCase() + visao.slice(1)).style.display = 'block';
       const btn = document.getElementById('nav' + visao.charAt(0).toUpperCase() + visao.slice(1) + 'Btn');
       if(btn) btn.classList.add('active');
-    }
-
-    function mudarAbaInicio(aba) {
-      document.getElementById('abaAcesso').style.display = aba === 'acesso' ? 'block' : 'none';
-      document.getElementById('abaControle').style.display = aba === 'controle' ? 'block' : 'none';
-      document.getElementById('tabAcessoBtn').className = aba === 'acesso' ? 'tab active' : 'tab';
-      document.getElementById('tabControleBtn').className = aba === 'controle' ? 'tab active' : 'tab';
     }
 
     function salvarConfig() {
@@ -402,206 +327,12 @@
       document.getElementById('statusApiKeyBadge').innerHTML = key ? '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>' : '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
     }
 
-    // --- CLIENTES ---
-    function cadastrarCliente() {
-      const nome = document.getElementById('novoClienteNome').value.trim();
-      const tel = document.getElementById('novoClienteTel').value.trim();
-      const end = document.getElementById('novoClienteEnd').value.trim();
-      const emp = document.getElementById('novoClienteEmp').value.trim();
-
-      if (!nome) return alert("Informe o Nome Completo do cliente!");
-      
-      clientesCadastrados.push({ id: Date.now().toString(), nome: nome, telefone: tel, endereco: end, empresa: emp, projetos: [] });
-      localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-      
-      document.getElementById('novoClienteNome').value = ''; document.getElementById('novoClienteTel').value = '';
-      document.getElementById('novoClienteEnd').value = ''; document.getElementById('novoClienteEmp').value = '';
-      
-      atualizarSelectClientes();
-      renderizarListaGeralClientes();
-      alert("Cliente cadastrado com sucesso!");
-    }
-
-    function atualizarSelectClientes() {
-      const select = document.getElementById('clienteSelect');
-      select.innerHTML = '<option value="">-- Selecione o Cliente da Pasta --</option>';
-      clientesCadastrados.forEach(c => { select.innerHTML += `<option value="${c.id}">${c.nome}</option>`; });
-    }
-
-    function renderizarListaGeralClientes() {
-      const container = document.getElementById('listaClientesPastas');
-      container.innerHTML = '';
-      
-      if (clientesCadastrados.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado ainda.</p>';
-        return;
-      }
-
-      clientesCadastrados.forEach((c, index) => {
-        container.innerHTML += `
-          <div class="cliente-card-click" onclick="abrirPerfilCliente(${index})">
-            <div>
-              <h4 style="color:var(--accent); font-size:1.05rem; margin-bottom:4px;">${c.nome}</h4>
-              <p style="font-size:0.75rem; color:var(--text-dim);">
-                ${c.empresa ? '🏢 ' + c.empresa + ' | ' : ''} 📦 ${c.projetos.length} orçamento(s)
-              </p>
-            </div>
-            <span style="color: var(--text-dim);">➔</span>
-          </div>
-        `;
-      });
-    }
-
-    function abrirPerfilCliente(indexCliente) {
-      document.getElementById('containerListaGeral').style.display = 'none';
-      document.getElementById('containerPerfilCliente').style.display = 'block';
-      
-      const c = clientesCadastrados[indexCliente];
-      
-      document.getElementById('dadosPerfilCliente').innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div>
-            <h2 style="color:var(--text); margin-bottom:6px;">${c.nome}</h2>
-            <p style="font-size:0.85rem; color:var(--text-dim); line-height: 1.4;">
-              <strong>📱 Telefone:</strong> ${c.telefone || 'Não informado'}<br>
-              <strong>🏢 Empresa:</strong> ${c.empresa || 'Pessoa Física'}<br>
-              <strong>📍 Endereço:</strong> ${c.endereco || 'Não informado'}
-            </p>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <button class="btn-sm btn-sec" onclick="editarCliente(${indexCliente})">✏️ Editar</button>
-            <button class="btn-sm btn-danger" onclick="excluirCliente(${indexCliente})">🗑️ Excluir</button>
-          </div>
-        </div>
-      `;
-
-      const projContainer = document.getElementById('listaProjetosCliente');
-      projContainer.innerHTML = '';
-
-      if (c.projetos.length === 0) {
-        projContainer.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim);">Nenhum projeto salvo para este cliente.</p>';
-      } else {
-        c.projetos.forEach((p, indexProj) => {
-          projContainer.innerHTML += `
-            <div style="background:#1b2436; border:1px solid #334155; padding:12px; border-radius:8px; margin-bottom:10px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong style="font-size:0.85rem; color:#fff;">🗓️ ${p.data}</strong>
-                <strong style="color:var(--accent); font-size:1.1rem;">${p.valorTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
-              </div>
-              <div style="font-size:0.8rem; color:var(--text-dim); margin:8px 0; border-left: 2px solid var(--accent); padding-left: 8px;">
-                🎨 ${p.mdfNome}<br>${p.resultado.resumoComercial}
-              </div>
-              <div style="display:flex; gap:8px;">
-                <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1; padding: 8px;" onclick="carregarProjetoCliente(${indexCliente}, ${indexProj})">👁️ Reabrir</button>
-                <button class="btn-sm" style="background:var(--warning); color:#000; padding: 8px;" onclick="editarProjetoCliente(${indexCliente}, ${indexProj})">✏️ Editar Info</button>
-                <button class="btn-sm btn-danger" style="padding: 8px;" onclick="excluirProjetoCliente(${indexCliente}, ${indexProj})">🗑️</button>
-              </div>
-            </div>
-          `;
-        });
-      }
-    }
-
-    function editarCliente(index) {
-      const c = clientesCadastrados[index];
-      document.getElementById('dadosPerfilCliente').innerHTML = `
-        <div style="display:flex; flex-direction: column; gap: 10px;">
-          <h3 style="color:var(--accent); margin-bottom: 4px;">✏️ Editar Dados do Cliente</h3>
-          <input type="text" id="editCliNome" value="${c.nome}" placeholder="Nome Completo">
-          <input type="text" id="editCliTel" value="${c.telefone || ''}" placeholder="Telefone / WhatsApp">
-          <input type="text" id="editCliEmp" value="${c.empresa || ''}" placeholder="Empresa">
-          <input type="text" id="editCliEnd" value="${c.endereco || ''}" placeholder="Endereço">
-          <div style="display:flex; gap: 10px; margin-top: 5px;">
-            <button class="btn btn-sec" style="flex:1; padding: 10px;" onclick="salvarEdicaoCliente(${index})">💾 Salvar</button>
-            <button class="btn-sm" style="background:var(--border); color:#fff; flex:1;" onclick="abrirPerfilCliente(${index})">❌ Cancelar</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function salvarEdicaoCliente(index) {
-      const nome = document.getElementById('editCliNome').value.trim();
-      if(!nome) return alert("O Nome é obrigatório!");
-      clientesCadastrados[index].nome = nome;
-      clientesCadastrados[index].telefone = document.getElementById('editCliTel').value.trim();
-      clientesCadastrados[index].empresa = document.getElementById('editCliEmp').value.trim();
-      clientesCadastrados[index].endereco = document.getElementById('editCliEnd').value.trim();
-      localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-      atualizarSelectClientes();
-      renderizarListaGeralClientes();
-      abrirPerfilCliente(index);
-      alert("Atualizado com sucesso!");
-    }
-
-    function editarProjetoCliente(indexCliente, indexProj) {
-      const p = clientesCadastrados[indexCliente].projetos[indexProj];
-      const novoResumo = prompt("Edite a descrição deste orçamento:", p.resultado.resumoComercial);
-      if (novoResumo !== null && novoResumo.trim() !== "") {
-        clientesCadastrados[indexCliente].projetos[indexProj].resultado.resumoComercial = novoResumo.trim();
-        localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-        abrirPerfilCliente(indexCliente);
-      }
-    }
-
-    function fecharPerfilCliente() {
-      document.getElementById('containerPerfilCliente').style.display = 'none';
-      document.getElementById('containerListaGeral').style.display = 'block';
-    }
-
-    function salvarProjetoNoCliente() {
-      const idCliente = document.getElementById('clienteSelect').value;
-      if (!idCliente || !ultimoResultado) return alert("Selecione um cliente e gere um orçamento antes de salvar!");
-
-      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
-      const itemAtivo = obterItemAtivo();
-      const custoMaterial = ultimoResultado.custoMaterial || 0;
-      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
-
-      const idx = clientesCadastrados.findIndex(c => c.id === idCliente);
-      clientesCadastrados[idx].projetos.unshift({
-        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-        valorTotal: valorFinal, mdfNome: itemAtivo.nome, mdfPreco: itemAtivo.preco, resultado: ultimoResultado
-      });
-
-      localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-      alert("Orçamento anexado aos documentos do cliente!");
-      renderizarListaGeralClientes();
-    }
-
-    function carregarProjetoCliente(indexCliente, indexProj) {
-      const p = clientesCadastrados[indexCliente].projetos[indexProj];
-      ultimoResultado = p.resultado;
-      document.getElementById('clienteSelect').value = clientesCadastrados[indexCliente].id;
-      exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value) || 100);
-      desenharPranchaSVG(ultimoResultado);
-      mudarVisaoPrincipal('projeto');
-      mudarAba('comercial');
-    }
-
-    function excluirProjetoCliente(indexCliente, indexProj) {
-      if(confirm("Deseja apagar este orçamento?")) {
-        clientesCadastrados[indexCliente].projetos.splice(indexProj, 1);
-        localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-        renderizarListaGeralClientes();
-        abrirPerfilCliente(indexCliente);
-      }
-    }
-    
-    function excluirCliente(index) {
-      if(confirm("Deseja REALMENTE apagar este cliente e seus documentos?")) {
-        clientesCadastrados.splice(index, 1);
-        localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-        atualizarSelectClientes();
-        renderizarListaGeralClientes();
-        fecharPerfilCliente();
-      }
-    }
-
     // --- TABELA DE PREÇOS ---
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
       const select = document.getElementById('padraoMdfSelect');
       const container = document.getElementById('listaItensTabela');
+      if(!select || !container) return;
       select.innerHTML = ''; container.innerHTML = '';
 
       tabelaPrecos.forEach((item, index) => {
@@ -615,6 +346,7 @@
       });
       alterarPadraoAtivo();
     }
+
     function adicionarItemTabela() {
       const nome = document.getElementById('novoItemNome').value.trim();
       const preco = parseFloat(document.getElementById('novoItemPreco').value);
@@ -623,15 +355,99 @@
       document.getElementById('novoItemNome').value = ''; document.getElementById('novoItemPreco').value = '';
       renderTabelaPrecos();
     }
+
     function excluirItemTabela(index) {
       if (tabelaPrecos.length <= 1) return alert('Mantenha ao menos 1 item na tabela.');
       tabelaPrecos.splice(index, 1); renderTabelaPrecos();
     }
-    function obterItemAtivo() { return tabelaPrecos.find(m => m.id === document.getElementById('padraoMdfSelect').value) || tabelaPrecos[0]; }
+
+    function obterItemAtivo() { 
+      const select = document.getElementById('padraoMdfSelect');
+      if(!select || select.options.length === 0) return tabelaPrecos[0];
+      return tabelaPrecos.find(m => m.id === select.value) || tabelaPrecos[0]; 
+    }
+
     function alterarPadraoAtivo() {
       const i = obterItemAtivo();
-      document.getElementById('lblMdfAtual').innerText = `${i.nome} (R$ ${i.preco},00)`;
-      if (ultimoResultado) { document.getElementById('inpEditPrecoChapa').value = i.preco; recalcularPrecoManual(); }
+      const lbl = document.getElementById('lblMdfAtual');
+      if(lbl) lbl.innerText = `${i.nome} (R$ ${i.preco},00)`;
+      if (ultimoResultado) { 
+        document.getElementById('inpEditPrecoChapa').value = i.preco; 
+        recalcularPrecoManual(); 
+      }
+    }
+
+    // --- HISTÓRICO ---
+    function salvarProjetoNoHistorico() {
+      const nome = document.getElementById('nomeCliente').value.trim() || 'Projeto Sem Nome';
+      if (!ultimoResultado) return alert("Gere um orçamento antes de salvar!");
+
+      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
+      const itemAtivo = obterItemAtivo();
+      const custoMaterial = ultimoResultado.custoMaterial || 0;
+      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
+
+      historicoProjetos.unshift({
+        id: Date.now().toString(),
+        nomeCliente: nome,
+        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+        valorTotal: valorFinal,
+        mdfNome: itemAtivo.nome,
+        resultado: ultimoResultado
+      });
+
+      localStorage.setItem('studioDm_historico', JSON.stringify(historicoProjetos));
+      alert("Orçamento salvo no histórico com sucesso!");
+      renderizarHistorico();
+      mudarVisaoPrincipal('historico');
+    }
+
+    function renderizarHistorico() {
+      const container = document.getElementById('listaHistoricoContainer');
+      if(!container) return;
+      container.innerHTML = '';
+      
+      if (historicoProjetos.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum orçamento salvo no histórico.</p>';
+        return;
+      }
+
+      historicoProjetos.forEach((p, index) => {
+        container.innerHTML += `
+          <div style="background:#0f172a; border:1px solid var(--border); padding:14px; border-radius:8px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h4 style="color:var(--accent); font-size:1rem; margin-bottom:4px;">👤 ${p.nomeCliente}</h4>
+              <strong style="color:var(--accent); font-size:1.1rem;">${p.valorTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">🗓️ ${p.data} | 🏷️ ${p.mdfNome}</p>
+            <div style="font-size:0.82rem; color:var(--text-dim); margin:6px 0; border-left: 2px solid var(--accent); padding-left: 8px;">
+              ${p.resultado.resumoComercial}
+            </div>
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1; padding: 8px;" onclick="carregarProjetoHistorico(${index})">👁️ Reabrir</button>
+              <button class="btn-sm btn-danger" style="padding: 8px;" onclick="excluirProjetoHistorico(${index})">🗑️ Excluir</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function carregarProjetoHistorico(index) {
+      const p = historicoProjetos[index];
+      ultimoResultado = p.resultado;
+      document.getElementById('nomeCliente').value = p.nomeCliente;
+      exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value) || 100);
+      desenharPranchaSVG(ultimoResultado);
+      mudarVisaoPrincipal('projeto');
+      mudarAba('comercial');
+    }
+
+    function excluirProjetoHistorico(index) {
+      if(confirm("Deseja apagar este orçamento do histórico?")) {
+        historicoProjetos.splice(index, 1);
+        localStorage.setItem('studioDm_historico', JSON.stringify(historicoProjetos));
+        renderizarHistorico();
+      }
     }
 
     // --- IA E PROCESSAMENTO ---
@@ -655,7 +471,7 @@
     async function processarCroqui() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
       if (!apiKey) {
-        alert('Cadastre sua Chave de API na aba Configuração.');
+        alert('Cadastre sua Chave de API nas Configurações.');
         mudarVisaoPrincipal('config'); return;
       }
       
@@ -663,11 +479,9 @@
       statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Analisando dados construtivos com Gemini...';
       statusEl.style.display = 'block'; document.getElementById('btnProcessar').disabled = true;
 
-      esbocoAprovado = false; atualizarAbaRenderState();
-
       const itemAtivo = obterItemAtivo();
       const descricao = document.getElementById('descricaoMovel').value.trim();
-      const prompt = `Marcenaria Orçamento. Analise o projeto: ${descricao}.
+      const prompt = `Marcenaria Orçamento. Analise o projeto com base na descrição: "${descricao}".
 Regras Físicas OBRIGATÓRIAS: 
 - Se Altura < 800mm: NÃO tem maleiro/cabideiro (apenas prateleiras/gavetas/nichos).
 - Se Altura entre 800-1500mm: NÃO tem maleiro/cabideiro.
@@ -694,15 +508,14 @@ Retorne estritamente em formato JSON puro, sem markdown extra:
         const parts = [{ text: prompt }];
         if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
         
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        // Atualizado para gemini-3.6-flash conforme solicitação da API
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ contents: [{ parts: parts }] })
         });
         const resData = await response.json();
         
-        if(resData.error) {
-          throw new Error(resData.error.message);
-        }
+        if(resData.error) throw new Error(resData.error.message);
 
         const rawText = resData.candidates[0].content.parts[0].text;
         const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -745,7 +558,7 @@ Retorne estritamente em formato JSON puro, sem markdown extra:
     }
 
     function desenharPranchaSVG(data) {
-      const altM = (data.alturaMM || 2800) / 1000; const largM = (data.larguraMM || 1200) / 1000; const profCM = (data.profundidadeMM || 600) / 10;
+      const altM = (data.alturaMM || 600) / 1000; const largM = (data.larguraMM || 600) / 1000; const profCM = (data.profundidadeMM || 600) / 10;
       document.getElementById('lblLargura').innerText = `${largM.toFixed(2)} m`;
       document.getElementById('lblAltura').innerText = `${altM.toFixed(2)} m`;
       document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
@@ -764,48 +577,27 @@ Retorne estritamente em formato JSON puro, sem markdown extra:
       }
       document.getElementById('svgContainer').innerHTML = `<svg viewBox="0 0 250 280" class="svg-cad">${svg}</svg>`;
       document.getElementById('svgTopContainer').innerHTML = `<svg viewBox="0 0 200 60"><rect x="20" y="10" width="160" height="40" fill="#fff" stroke="#0f172a" stroke-width="2"/></svg>`;
+
+      // Gerar Prompt Gemini
+      const promptText = `Photorealistic 3D interior design of custom carpentry, ${data.resumoComercial}, dimensions: width ${largM}m, height ${altM}m, depth ${profCM}cm, built with ${obterItemAtivo().nome}, professional studio lighting, architectural photography style, clean modern workshop background.`;
+      document.getElementById('promptGeminiBox').value = promptText;
     }
 
-    function aprovarEsboco() {
-      esbocoAprovado = true; atualizarAbaRenderState();
-      alert('Prancha Aprovada! Gerando Maquete 3D...');
-      mudarAba('render'); gerarRender3D();
-    }
-
-    function atualizarAbaRenderState() {
-      const tab = document.getElementById('tabRenderBtn');
-      if (esbocoAprovado) {
-        tab.className = 'tab'; tab.innerHTML = '🎨 Render';
-        document.getElementById('boxBloqueioRender').style.display = 'none';
-        document.getElementById('conteudoRender3D').style.display = 'block';
-      } else {
-        tab.className = 'tab locked'; tab.innerHTML = '🔒 Render';
-        document.getElementById('boxBloqueioRender').style.display = 'block';
-        document.getElementById('conteudoRender3D').style.display = 'none';
-      }
-    }
-
-    function gerarRender3D() {
-      if (!ultimoResultado || !esbocoAprovado) return;
-      const statusEl = document.getElementById('statusRender'), imgEl = document.getElementById('imgRender');
-      statusEl.className = 'status-msg loading'; statusEl.innerText = '🎨 Gerando render...';
-      statusEl.style.display = 'block'; imgEl.style.display = 'none';
-      
-      const seed = Math.floor(Math.random() * 999999);
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(`Photorealistic 3D interior design of custom carpentry, ${ultimoResultado.resumoComercial}, built with ${obterItemAtivo().nome}, professional studio lighting`)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
-      
-      const img = new Image();
-      img.onload = () => { imgEl.src = url; imgEl.style.display = 'block'; statusEl.style.display = 'none'; document.getElementById('btnDownloadRender').href = url; document.getElementById('btnDownloadRender').style.display = 'block'; };
-      img.onerror = () => { statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro no Render.'; };
-      img.src = url;
+    function copiarPromptGemini() {
+      const box = document.getElementById('promptGeminiBox');
+      box.select();
+      navigator.clipboard.writeText(box.value);
+      const status = document.getElementById('statusCopia');
+      status.style.display = 'block';
+      status.innerText = '✅ Prompt copiado com sucesso!';
+      setTimeout(() => { status.style.display = 'none'; }, 3000);
     }
 
     function mudarAba(aba) {
-      ['comercial','tecnica','esboco','render'].forEach(a => {
+      ['comercial','tecnica','esboco'].forEach(a => {
         document.getElementById('aba'+a.charAt(0).toUpperCase()+a.slice(1)).style.display = aba === a ? 'block' : 'none';
         document.getElementById('tab'+a.charAt(0).toUpperCase()+a.slice(1)+'Btn').className = aba === a ? 'tab active' : 'tab';
       });
-      if(aba !== 'render') document.getElementById('tabRenderBtn').className = esbocoAprovado ? 'tab' : 'tab locked';
     }
   </script>
 </body>
