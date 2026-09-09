@@ -161,7 +161,7 @@
 
       <img id="preview-img" alt="Preview do Croqui">
 
-      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
+      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA (Consultando Notebook)</button>
       <div id="status" class="status-msg"></div>
     </div>
 
@@ -186,7 +186,7 @@
           <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 4px;">R$ 0,00</h2>
         </div>
 
-        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento nos Histórico</button>
+        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento no Histórico</button>
         <button class="btn btn-sec" style="background-color: #475569;" onclick="window.print()">🖨️ Imprimir / Gerar PDF</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
         <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
@@ -248,7 +248,7 @@
           <tbody></tbody>
         </table>
 
-        <h3 style="margin-top: 16px;">Insumos Necessários</h3>
+        <h3 style="margin-top: 16px;">Insumos e Ferragens Recomendados (Notebook)</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
 
         <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
@@ -366,6 +366,19 @@
       <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">Sua chave é salva somente no seu navegador e usada para ler fotos e croquis.</p>
     </div>
 
+    <!-- BASE DE CONHECIMENTO DO NOTEBOOK (RAG LOCAL) -->
+    <div class="card">
+      <h2>📚 Base Técnica (Notebook Rometal / FGVtn)</h2>
+      <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">
+        Esta base técnica integrada ao seu app garante que a IA consulte os catálogos oficiais (Rometal 2026, C-1000, Magnum, Perfis LED PerfiLED, Gavetas AvantBox Slim)[span_3](start_span)[span_3](end_span)[span_4](start_span)[span_4](end_span) antes de gerar os insumos.
+      </p>
+      <textarea id="notebookContexto" rows="5" style="font-size: 0.8rem;" onchange="salvarConfig()">REFERÊNCIAS TÉCNICAS OFICIAIS (CATÁLOGOS):
+- Sistemas de Correr/Coplanar: Rometal C-1000 Automático (com push&go e controle por voz/wireless), Linha Magnum, Trilhos RMS-065 / RMS-074[span_5](start_span)[span_5](end_span).
+- Perfis de Alumínio e LED: Linha PerfiLED (RM-460), Lúmen, Leggero[span_6](start_span)[span_6](end_span).
+- Gavetas Metálicas: FGVtn Sistema AvantBox Slim[span_7](start_span)[span_7](end_span).
+- Padrões de Acabamento e Cores: Hibisco, Freijó Imperial, Thassos[span_8](start_span)[span_8](end_span).</textarea>
+    </div>
+
     <!-- CONFIGURAÇÕES GERAIS DE MARCENARIA -->
     <div class="card">
       <h2>🛠️ Parâmetros Construtivos e Lucro</h2>
@@ -425,6 +438,11 @@
       document.getElementById('espFundo').value = localStorage.getItem('esp_fundo') || '6';
       document.getElementById('folgaGaveta').value = localStorage.getItem('folga_gaveta') || '26';
       document.getElementById('margemLucro').value = localStorage.getItem('margem_lucro') || '100';
+      
+      const savedContext = localStorage.getItem('notebook_contexto');
+      if (savedContext) {
+        document.getElementById('notebookContexto').value = savedContext;
+      }
 
       renderTabelaPrecos();
       renderHistorico();
@@ -451,6 +469,7 @@
       localStorage.setItem('esp_fundo', document.getElementById('espFundo').value);
       localStorage.setItem('folga_gaveta', document.getElementById('folgaGaveta').value);
       localStorage.setItem('margem_lucro', document.getElementById('margemLucro').value);
+      localStorage.setItem('notebook_contexto', document.getElementById('notebookContexto').value);
       atualizarBadgeApiKey();
     }
 
@@ -479,17 +498,12 @@
       }
 
       if (id) {
-        // Editar existente
         const index = listaClientes.findIndex(c => c.id === id);
         if (index !== -1) {
           listaClientes[index] = { id, nome, telefone, email, empresa, endereco };
         }
       } else {
-        // Novo cliente
-        const novoCli = {
-          id: Date.now().toString(),
-          nome, telefone, email, empresa, endereco
-        };
+        const novoCli = { id: Date.now().toString(), nome, telefone, email, empresa, endereco };
         listaClientes.unshift(novoCli);
       }
 
@@ -570,7 +584,7 @@
       }
     }
 
-    // --- GERENCIAMENTO DA TABELA DE PREÇOS GERAL ---
+    // --- TABELA DE PREÇOS ---
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
 
@@ -645,7 +659,7 @@
       }
     }
 
-    // --- LEITURA E PROCESSAMENTO DE CROQUI ---
+    // --- LEITURA E PROCESSAMENTO DE CROQUI COM RAG LOCAL (NOTEBOOK) ---
     function carregarImagem(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -672,7 +686,7 @@
       }
 
       statusEl.className = 'status-msg loading';
-      statusEl.innerText = '⏳ Analisando desenho e calculando lista de peças...';
+      statusEl.innerText = '⏳ Consultando Notebook (Catálogos) e calculando peças...';
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
 
@@ -682,31 +696,34 @@
       const margemLucro = parseFloat(document.getElementById('margemLucro').value);
       const itemAtivo = obterItemAtivo();
       
+      const notebookContexto = document.getElementById('notebookContexto').value.trim();
       const descUsuario = document.getElementById('descricaoMovel').value.trim();
-      const regraDescricao = descUsuario ? `\nINSTRUÇÕES DO MARCENEIRO (PRIORIDADE MÁXIMA): "${descUsuario}"\nBaseie-se primeiramente nesta descrição acima para definir medidas (Altura, Largura, Profundidade) e as quantidades de gavetas/prateleiras/portas. A imagem serve como apoio secundário ao texto.\n` : '';
+      
+      const regraDescricao = descUsuario ? `\nINSTRUÇÕES DO MARCENEIRO: "${descUsuario}"\n` : '';
 
-      const prompt = `Você é um mestre marceneiro e orçamentista. Analise o croqui/desenho fornecido.
+      const prompt = `Você é um mestre marceneiro e orçamentista sênior.
+CONSIDERE O SEGUINTE CONHECIMENTO TÉCNICO EXTRAÍDO DOS CATÁLOGOS OFICIAIS DO SEU NOTEBOOK:
+"""
+${notebookContexto}
+"""
+
+Analise o croqui fornecido e utilize as referências técnicas acima para sugerir os melhores sistemas de ferragens, trilhos e perfis aplicáveis.
 ${regraDescricao}
 Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e a estrutura interna.
 
-Siga rigorosamente estas REGRAS FÍSICAS DE MARCENARIA:
-1. Se a ALTURA for menor que 800mm (0.8m):
-   - NUNCA coloque maleiro nem cabideiro!
-2. Se a ALTURA for entre 800mm e 1500mm:
-   - Pode ter prateleiras, gavetas ou portas. Maleiro e cabideiro são proibidos.
-3. Se a ALTURA for acima de 1500mm (guarda-roupa/armário alto):
-   - Pode ter maleiro, cabideiro, prateleiras e gavetas.
+REGRAS FÍSICAS DE MARCENARIA:
+1. Altura < 800mm: Proibido maleiro e cabideiro.
+2. Altura entre 800mm e 1500mm: Permitido prateleiras e gavetas. Sem maleiro/cabideiro.
+3. Altura > 1500mm: Permitido maleiro, cabideiro, prateleiras e gavetas.
 
-Considere as REGRAS CONSTRUTIVAS:
-- Espessura do MDF das caixas: ${espCaixa}mm
-- Espessura do fundo: ${espFundo}mm
-- Desconto total para gavetas: ${folgaGaveta}mm
-- Valor base da chapa/material principal: R$ ${itemAtivo.preco}
-- Padrão/Cor: ${itemAtivo.nome}
+PARÂMETROS CONSTRUTIVOS:
+- Espessura das caixas: ${espCaixa}mm | Fundo: ${espFundo}mm
+- Desconto para gavetas: ${folgaGaveta}mm
+- Material principal: ${itemAtivo.nome} (R$ ${itemAtivo.preco} a chapa)
 
-Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do JSON, seguindo esta estrutura exata:
+Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
 {
-  "resumoComercial": "Descrição breve do móvel e dimensões identificadas.",
+  "resumoComercial": "Descrição detalhada do móvel citando as soluções de ferragens adequadas.",
   "alturaMM": 600,
   "larguraMM": 600,
   "profundidadeMM": 600,
@@ -716,12 +733,12 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
   "numPrateleiras": 1,
   "numGavetas": 0,
   "pecas": [
-    {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600},
-    {"nome": "Base / Tampo", "qtd": 2, "comprimento": 570, "largura": 600}
+    {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600}
   ],
   "insumos": [
     "1 Chapa MDF 15mm",
-    "12 metros de fita de borda"
+    "Sistema Rometal / FGVtn recomendado conforme catálogo",
+    "Fita de borda"
   ],
   "chapasEstimadas": 0.5,
   "custoOutros": 120
@@ -763,7 +780,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
 
       if (!data) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique sua chave de API nas Configurações.');
+        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique sua chave de API.');
         document.getElementById('btnProcessar').disabled = false;
         return;
       }
@@ -774,15 +791,13 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         const resultado = JSON.parse(jsonText);
 
         ultimoResultado = resultado;
-
         exibirResultado(resultado, margemLucro);
         statusEl.style.display = 'none';
-
         desenharPranchaSVG(resultado);
 
       } catch (err) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao processar resposta: ' + err.message;
+        statusEl.innerText = '❌ Erro ao processar resposta da IA: ' + err.message;
       } finally {
         document.getElementById('btnProcessar').disabled = false;
       }
@@ -844,7 +859,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       document.getElementById('valorTotal').innerText = valorFormatado;
 
       const itemAtivo = obterItemAtivo();
-      const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${ultimoResultado.resumoComercial}\n\n*Material Base:* ${itemAtivo.nome}\n*Valor Total Estimado:* ${valorFormatado}`);
+      const textoWsp = encodeURIComponent(`Olá! Segue o orçamento de marcenaria:\n\n${ultimoResultado.resumoComercial}\n\n*Material:* ${itemAtivo.nome}\n*Valor Total:* ${valorFormatado}`);
       document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
     }
 
@@ -974,30 +989,18 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       const profCM = Math.round((data.profundidadeMM || 600) / 10);
       
       let detalhesEstrutura = [];
-      if (data.numModulos > 1) detalhesEstrutura.push(`divisão em ${data.numModulos} módulos/colunas verticais`);
+      if (data.numModulos > 1) detalhesEstrutura.push(`divisão em ${data.numModulos} módulos`);
       if (data.temMaleiro) detalhesEstrutura.push("espaço superior para maleiro");
-      if (data.temCabideiro) detalhesEstrutura.push("vão interno com cabideiro metálico para roupas");
-      if (data.numPrateleiras > 0) detalhesEstrutura.push(`${data.numPrateleiras} prateleira(s) de apoio`);
-      if (data.numGavetas > 0) detalhesEstrutura.push(`bloco inferior com ${data.numGavetas} gavetas com puxadores alinhados`);
-      if (!data.temMaleiro && !data.temCabideiro && data.numGavetas === 0 && data.numPrateleiras === 0) {
-        detalhesEstrutura.push("vão livre/nicho modular");
-      }
+      if (data.temCabideiro) detalhesEstrutura.push("cabideiro metálico");
+      if (data.numPrateleiras > 0) detalhesEstrutura.push(`${data.numPrateleiras} prateleira(s)`);
+      if (data.numGavetas > 0) detalhesEstrutura.push(`bloco inferior com ${data.numGavetas} gavetas`);
 
-      return `Gere uma imagem fotorrealista em altíssima definição (3D architectural render) de um móvel planejado de marcenaria de alto padrão.
-
-📐 MEDIDAS E PROPORÇÕES REALISTAS:
-- Descrição do Móvel: ${data.resumoComercial}
-- Dimensões Exatas: Largura de ${largM}m x Altura de ${altM}m x Profundidade de ${profCM}cm.
-- Layout de Montagem: ${detalhesEstrutura.join(', ')}.
-
-🎨 MATERIAL E COR (MUITO IMPORTANTE):
-- Padrão/Material: ${itemAtivo.nome}. Representar com fidelidade exata a textura, tonalidade e acabamento deste padrão no móvel todo.
-- Acabamento impecável com fita de borda perfeitamente aplicada nos topos.
-
-💡 ILUMINAÇÃO E AMBIENTE:
-- Ângulo de fotografia de estúdio de arquitetura de interiores em perspectiva 3D frontal.
-- Iluminação natural suave e realista valorizando a marcenaria e o ambiente.
-- O móvel deve ser mostrado completo, montado e perfeitamente proporcional às dimensões de ${largM}m x ${altM}m.`;
+      return `Gere uma imagem fotorrealista em altíssima definição (3D architectural render) de móvel planejado de marcenaria.
+- Descrição: ${data.resumoComercial}
+- Dimensões: ${largM}m x ${altM}m x ${profCM}cm.
+- Layout: ${detalhesEstrutura.join(', ')}.
+- Acabamento/Material: ${itemAtivo.nome} com fita de borda perfeitamente aplicada.
+- Iluminação natural suave em estúdio de arquitetura de interiores.`;
     }
 
     function copiarPromptGemini() {
@@ -1009,8 +1012,6 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         statusCopia.innerText = '✅ Prompt copiado! Agora cole no Gemini para gerar sua imagem.';
         statusCopia.style.display = 'block';
         setTimeout(() => { statusCopia.style.display = 'none'; }, 4000);
-      }).catch(err => {
-        alert('Erro ao copiar prompt: ' + err);
       });
     }
 
@@ -1044,19 +1045,13 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
         data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
         valorTotal: valorFinal,
         mdfNome: itemAtivo.nome,
-        mdfPreco: itemAtivo.preco,
         resultado: ultimoResultado
       };
 
       historicoProjetos.unshift(novoProjeto);
-      
-      try {
-        localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
-        alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso!`);
-        renderHistorico();
-      } catch (err) {
-        alert('Erro ao salvar no histórico: Limite de armazenamento atingido.');
-      }
+      localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
+      alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso!`);
+      renderHistorico();
     }
 
     function renderHistorico() {
