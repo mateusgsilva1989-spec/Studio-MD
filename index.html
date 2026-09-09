@@ -18,13 +18,13 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 50px; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 40px; }
 
-    header { text-align: center; margin-bottom: 12px; }
+    header { text-align: center; margin-bottom: 20px; }
     header h1 { font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 8px; }
     header p { font-size: 0.85rem; color: var(--text-dim); }
 
-    /* NAVEGAÇÃO SUPERIOR (Alinhada à direita e simplificada) */
+    /* NAVEGAÇÃO SUPERIOR */
     .main-nav { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 16px; background: transparent; padding: 0; border: none; }
     .main-nav-btn { padding: 10px 16px; text-align: center; background: #0f172a; color: var(--text-dim); border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     .main-nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
@@ -43,15 +43,16 @@
     .btn-sec { background-color: var(--blue); color: #fff; margin-top: 12px; }
     .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
     .btn-danger { background-color: var(--danger); color: #fff; }
+    .btn-approve { background-color: #10b981; color: #000; font-size: 1rem; padding: 14px; margin-top: 14px; }
 
     .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
-    /* SUB-ABAS DOS RESULTADOS E DO PAINEL DE CONTROLE */
-    .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
-    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; }
+    .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
+    .tab.locked { opacity: 0.6; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
     th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -60,10 +61,12 @@
     .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
     .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
     .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+    .warning-box { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid var(--warning); padding: 12px; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-top: 12px; }
 
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
+    .btn-download { background-color: #6366f1; color: #fff; margin-top: 10px; text-decoration: none; display: none; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
-    /* PRANCHA TÉCNICA ESTILO PROMOB */
+    /* PRANCHA TÉCNICA */
     .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
     .prancha-header { text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
     .prancha-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -77,6 +80,8 @@
     .info-medidas p { margin-bottom: 4px; }
     .info-medidas strong { color: #0f172a; }
 
+    .img-preview-box { width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid var(--border); display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+
     /* CARDS DE CLIENTES E CÁLCULO */
     .mdf-item { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
     .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
@@ -84,6 +89,10 @@
     .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
     .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
     .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    
+    /* ESTILIZAÇÃO DO CARD CLIENTE PARA CLIQUE */
+    .cliente-card-click { background:#0f172a; border:1px solid var(--border); padding:16px; border-radius:8px; margin-bottom:12px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
+    .cliente-card-click:hover { border-color: var(--accent); background: #1b2436; }
   </style>
 </head>
 <body>
@@ -103,10 +112,9 @@
   <div id="viewInicio" class="main-view" style="padding: 10px 0;">
     <h2 style="text-align: center; color: var(--accent); margin-bottom: 16px;">Painel de Controle</h2>
     
-    <!-- Sub-abas do Painel de Controle -->
     <div class="tabs">
       <div class="tab active" id="tabAcessoBtn" onclick="mudarAbaInicio('acesso')">🚀 Acesso Rápido</div>
-      <div class="tab" id="tabControleBtn" onclick="mudarAbaInicio('controle')">🎛️ Controle (Regras e Preços)</div>
+      <div class="tab" id="tabControleBtn" onclick="mudarAbaInicio('controle')">🎛️ Controle e Preços</div>
     </div>
 
     <!-- Aba Interna: Acesso Rápido -->
@@ -118,9 +126,8 @@
       </div>
     </div>
 
-    <!-- Aba Interna: Controle (Movido de Configurações) -->
+    <!-- Aba Interna: Controle -->
     <div id="abaControle" style="display: none; margin-top: 15px;">
-      
       <div class="card">
         <h2>🛠️ Regras de Construção</h2>
         <div class="grid-2">
@@ -152,32 +159,33 @@
       </div>
 
       <div class="card">
-        <h2>🏷️ Tabela de Preços (Materiais e Insumos)</h2>
+        <h2>🏷️ Tabela de Preços Geral (MDF e Insumos)</h2>
         <label>Material / MDF Principal Selecionado no Projeto</label>
         <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
         <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
           <label>➕ Cadastrar Novo Item na Tabela</label>
           <div class="grid-2">
-            <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
+            <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica">
             <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
           </div>
-          <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
+          <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela</button>
         </div>
         <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
         <div id="listaItensTabela"></div>
       </div>
-
     </div>
   </div>
 
   <!-- ==================== VISÃO 2: NOVO PROJETO ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
     <div class="card">
-      <h2>📷 Desenho e Descrição do Móvel</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="margin: 0;">📷 Desenho do Móvel</h2>
+        <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Cancelar</button>
+      </div>
       
       <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
       <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..." oninput="verificarEntradaProjeto()"></textarea>
-      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura pode liberar o uso do botão IA sem a necessidade de foto.</p>
 
       <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
         Material Base Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
@@ -188,13 +196,11 @@
           <span>📷 Tirar Foto</span>
           <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
         </div>
-        
         <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
           <span>🖼️ Galeria</span>
           <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
         </div>
       </div>
-
       <img id="preview-img" alt="Preview do Croqui">
 
       <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
@@ -207,6 +213,7 @@
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
         <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
         <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
+        <div class="tab locked" id="tabRenderBtn" onclick="mudarAba('render')">🔒 Render</div>
       </div>
 
       <!-- ABA COMERCIAL -->
@@ -226,13 +233,12 @@
 
         <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoCliente()">💾 Salvar na Pasta do Cliente</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-        <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
       </div>
 
       <!-- ABA TÉCNICA -->
       <div id="abaTecnica" style="display: none;">
         <div class="calc-box">
-          <h4>🧮 Simulação do Preço Final</h4>
+          <h4>🧮 Simulação de Custos</h4>
           <div class="grid-2">
             <div>
               <label>Qtd. Chapas Estimada</label>
@@ -264,7 +270,6 @@
             </div>
           </div>
         </div>
-
         <h3>Lista de Peças Estimada</h3>
         <table id="tabelaPecas">
           <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th></tr></thead>
@@ -276,12 +281,12 @@
 
       <!-- ABA PRANCHA CONSTRUTIVA -->
       <div id="abaEsboco" style="display: none;">
-        <h3>📐 Prancha Técnica de Projeto</h3>
+        <h3>📐 Prancha Técnica</h3>
         <div class="prancha-container" id="pranchaArea">
-          <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
+          <div class="prancha-header">Distribuição Interna & Medidas</div>
           <div class="prancha-grid">
             <div class="cad-box">
-              <div class="cad-title">Distribuição Interna Proporcional</div>
+              <div class="cad-title">Vista Frontal</div>
               <div id="svgContainer"></div>
             </div>
             <div>
@@ -298,15 +303,23 @@
             </div>
           </div>
         </div>
-        
-        <div style="margin-top: 16px; background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
-          <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt Fidedigno para Gemini 3D</h4>
-          <textarea id="promptGeminiBox" readonly style="width: 100%; height: 120px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
-          <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt</button>
-          <div id="statusCopia" style="font-size: 0.8rem; color: var(--accent); margin-top: 6px; text-align: center; display: none;"></div>
-        </div>
+        <button class="btn btn-approve" id="btnAprovarEsboco" onclick="aprovarEsboco()">✅ Aprovar Prancha e Gerar Render 3D</button>
       </div>
 
+      <!-- ABA RENDER 3D -->
+      <div id="abaRender" style="display: none;">
+        <h3>🎨 Maquete 3D Realista</h3>
+        <div id="boxBloqueioRender" class="warning-box">
+          ⚠️ <strong>Prancha não aprovada!</strong><br>Confirme a estrutura do móvel antes de gerar o Render.
+          <button class="btn btn-sec" onclick="mudarAba('esboco')" style="margin-top: 10px;">Ir para Prancha Construtiva</button>
+        </div>
+        <div id="conteudoRender3D" style="display: none;">
+          <button class="btn btn-sec" onclick="gerarRender3D()">🔄 Gerar Nova Imagem</button>
+          <div id="statusRender" class="status-msg"></div>
+          <img id="imgRender" class="img-preview-box" alt="Render 3D do Móvel">
+          <a id="btnDownloadRender" href="#" target="_blank" class="btn-download">📥 Abrir Imagem Alta Resolução</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -314,60 +327,63 @@
   <div id="viewClientes" class="main-view" style="display: none;">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2>👥 Clientes e Pastas</h2>
+        <h2 style="margin: 0;">👥 Gestão de Clientes</h2>
         <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Voltar</button>
       </div>
       
-      <!-- Cadastro Completo -->
-      <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
-        <h4 style="margin-bottom: 12px; color: var(--accent);">➕ Cadastrar Novo Cliente</h4>
-        
-        <div class="grid-2">
-          <div>
-            <label>Nome Completo</label>
-            <input type="text" id="novoClienteNome" placeholder="Ex: João da Silva">
+      <!-- CONTÊINER: LISTA GERAL -->
+      <div id="containerListaGeral">
+        <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
+          <h4 style="margin-bottom: 12px; color: var(--accent);">➕ Cadastrar Novo Cliente</h4>
+          <div class="grid-2">
+            <div><label>Nome Completo</label><input type="text" id="novoClienteNome" placeholder="Ex: João da Silva"></div>
+            <div><label>Telefone / WhatsApp</label><input type="text" id="novoClienteTel" placeholder="(00) 00000-0000"></div>
           </div>
-          <div>
-            <label>Telefone / WhatsApp</label>
-            <input type="text" id="novoClienteTel" placeholder="(00) 00000-0000">
+          <div class="grid-2" style="margin-top: 10px;">
+            <div><label>Endereço</label><input type="text" id="novoClienteEnd" placeholder="Rua, Número, Bairro"></div>
+            <div><label>Empresa (Opcional)</label><input type="text" id="novoClienteEmp" placeholder="Nome do Negócio"></div>
           </div>
+          <button class="btn btn-sec" onclick="cadastrarCliente()">Salvar Cliente no Banco</button>
         </div>
         
-        <div class="grid-2" style="margin-top: 10px;">
-          <div>
-            <label>Endereço de Entrega/Montagem</label>
-            <input type="text" id="novoClienteEnd" placeholder="Rua, Número, Bairro">
-          </div>
-          <div>
-            <label>Empresa (Opcional)</label>
-            <input type="text" id="novoClienteEmp" placeholder="Nome do Negócio">
-          </div>
-        </div>
-        
-        <button class="btn btn-sec" onclick="cadastrarCliente()">Salvar Cliente no Banco</button>
+        <h3>📂 Seus Clientes (Clique para abrir a pasta)</h3>
+        <div id="listaClientesPastas" style="margin-top: 12px;"></div>
       </div>
-      
-      <!-- Lista de Pastas -->
-      <h3>📁 Pastas de Consulta</h3>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Seus orçamentos salvos ficam organizados por cliente aqui.</p>
-      <div id="listaClientesPastas"></div>
+
+      <!-- CONTÊINER: PERFIL DO CLIENTE (Documentos) -->
+      <div id="containerPerfilCliente" style="display: none;">
+        <button class="btn-sm" style="background-color: var(--border); color: #fff; margin-bottom: 16px;" onclick="fecharPerfilCliente()">⬅ Voltar para a Lista de Clientes</button>
+        
+        <div id="dadosPerfilCliente" style="background: #0f172a; padding: 16px; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 20px;">
+          <!-- Dados do cliente injetados aqui -->
+        </div>
+
+        <h3 style="color: var(--accent); margin-bottom: 12px;">📄 Orçamentos e Projetos Salvos</h3>
+        <div id="listaProjetosCliente">
+          <!-- Projetos do cliente injetados aqui -->
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- ==================== VISÃO 4: CONFIGURAÇÕES (APENAS API) ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
     <div class="card">
-      <h2>🔑 Chave de Conexão (IA)</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="margin: 0;">🔑 Chave de Conexão (IA)</h2>
+        <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Voltar</button>
+      </div>
       <div id="statusApiKeyBadge"></div>
       <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
       <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
-      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">As outras regras de marcenaria foram movidas para a aba "Controle" na tela de Início.</p>
     </div>
   </div>
 
   <script>
     let imagemBase64 = "";
     let ultimoResultado = null;
+    let esbocoAprovado = false;
     let clientesCadastrados = JSON.parse(localStorage.getItem('studioDm_clientes')) || [];
     let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || [
       { id: '1', nome: 'MDF Branco TX (Chapa)', preco: 250 },
@@ -375,7 +391,6 @@
     ];
 
     window.onload = () => {
-      // Carrega os dados salvos
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
       document.getElementById('espCaixa').value = localStorage.getItem('esp_caixa') || '15';
       document.getElementById('espFundo').value = localStorage.getItem('esp_fundo') || '6';
@@ -385,25 +400,20 @@
       renderTabelaPrecos();
       atualizarBadgeApiKey();
       atualizarSelectClientes();
-      renderizarPastasClientes();
+      renderizarListaGeralClientes();
       
-      // Inicia sempre na tela de Início para mostrar o Dashboard
       mudarVisaoPrincipal('inicio');
     };
 
-    // --- CONTROLES DE VISÃO PRINCIPAL ---
+    // --- CONTROLE DE VISÕES GERAIS ---
     function mudarVisaoPrincipal(visao) {
       document.querySelectorAll('.main-view').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.main-nav-btn').forEach(el => el.classList.remove('active'));
-      
       document.getElementById('view' + visao.charAt(0).toUpperCase() + visao.slice(1)).style.display = 'block';
-      
-      // Botões do Menu Superior
       const btn = document.getElementById('nav' + visao.charAt(0).toUpperCase() + visao.slice(1) + 'Btn');
       if(btn) btn.classList.add('active');
     }
 
-    // --- CONTROLE DAS SUB-ABAS DO DASHBOARD (INÍCIO) ---
     function mudarAbaInicio(aba) {
       document.getElementById('abaAcesso').style.display = aba === 'acesso' ? 'block' : 'none';
       document.getElementById('abaControle').style.display = aba === 'controle' ? 'block' : 'none';
@@ -411,7 +421,6 @@
       document.getElementById('tabControleBtn').className = aba === 'controle' ? 'tab active' : 'tab';
     }
 
-    // --- SALVAMENTO E CONFIGURAÇÕES ---
     function salvarConfig() {
       localStorage.setItem('gemini_key', document.getElementById('apiKey').value.trim());
       localStorage.setItem('esp_caixa', document.getElementById('espCaixa').value);
@@ -423,36 +432,28 @@
 
     function atualizarBadgeApiKey() {
       const key = localStorage.getItem('gemini_key') || '';
-      const badge = document.getElementById('statusApiKeyBadge');
-      badge.innerHTML = key ? '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>' : '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
+      document.getElementById('statusApiKeyBadge').innerHTML = key ? '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>' : '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
     }
 
-    // --- BANCO DE CLIENTES E PASTAS ---
+    // --- BANCO DE CLIENTES E PASTAS (MÓDULO ATUALIZADO) ---
     function cadastrarCliente() {
       const nome = document.getElementById('novoClienteNome').value.trim();
       const tel = document.getElementById('novoClienteTel').value.trim();
       const end = document.getElementById('novoClienteEnd').value.trim();
       const emp = document.getElementById('novoClienteEmp').value.trim();
 
-      if (!nome) { alert("Informe o Nome Completo do cliente para cadastrar!"); return; }
+      if (!nome) return alert("Informe o Nome Completo do cliente!");
       
       clientesCadastrados.push({
-        id: Date.now().toString(),
-        nome: nome,
-        telefone: tel,
-        endereco: end,
-        empresa: emp,
-        projetos: [] // Pasta começa vazia
+        id: Date.now().toString(), nome: nome, telefone: tel, endereco: end, empresa: emp, projetos: []
       });
       localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
       
-      document.getElementById('novoClienteNome').value = '';
-      document.getElementById('novoClienteTel').value = '';
-      document.getElementById('novoClienteEnd').value = '';
-      document.getElementById('novoClienteEmp').value = '';
+      document.getElementById('novoClienteNome').value = ''; document.getElementById('novoClienteTel').value = '';
+      document.getElementById('novoClienteEnd').value = ''; document.getElementById('novoClienteEmp').value = '';
       
       atualizarSelectClientes();
-      renderizarPastasClientes();
+      renderizarListaGeralClientes();
       alert("Cliente cadastrado com sucesso!");
     }
 
@@ -462,61 +463,88 @@
       clientesCadastrados.forEach(c => { select.innerHTML += `<option value="${c.id}">${c.nome}</option>`; });
     }
 
-    function renderizarPastasClientes() {
+    // Renderiza apenas os "cards" para clicar
+    function renderizarListaGeralClientes() {
       const container = document.getElementById('listaClientesPastas');
       container.innerHTML = '';
       
       if (clientesCadastrados.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado.</p>';
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado ainda.</p>';
         return;
       }
 
-      clientesCadastrados.forEach((c, indexCliente) => {
-        let htmlProjetos = '';
-        if (c.projetos && c.projetos.length > 0) {
-          c.projetos.forEach((p, indexProj) => {
-            htmlProjetos += `
-              <div style="background:#1b2436; border:1px solid #334155; padding:10px; border-radius:6px; margin-top:8px;">
-                <div style="display:flex; justify-content:space-between;">
-                  <strong style="font-size:0.85rem; color:#fff;">${p.data}</strong>
-                  <strong style="color:var(--accent); font-size:0.95rem;">${p.valorTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
-                </div>
-                <div style="font-size:0.75rem; color:var(--text-dim); margin:4px 0;">🎨 ${p.mdfNome} - ${p.resultado.resumoComercial}</div>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1;" onclick="carregarProjetoCliente(${indexCliente}, ${indexProj})">👁️ Reabrir</button>
-                  <button class="btn-sm btn-danger" onclick="excluirProjetoCliente(${indexCliente}, ${indexProj})">🗑️</button>
-                </div>
-              </div>
-            `;
-          });
-        } else {
-          htmlProjetos = '<p style="font-size:0.75rem; color:var(--text-dim); margin-top:6px;">Pasta vazia.</p>';
-        }
-
+      clientesCadastrados.forEach((c, index) => {
         container.innerHTML += `
-          <div style="background:#0f172a; border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-              <div>
-                <h4 style="color:var(--accent); margin-bottom:4px;">${c.nome}</h4>
-                <div style="font-size:0.75rem; color:var(--text-dim);">
-                  📱 ${c.telefone || 'S/ Tel'} | 🏢 ${c.empresa || 'PF'} <br>
-                  📍 ${c.endereco || 'S/ End.'}
-                </div>
-              </div>
-              <button class="btn-sm btn-danger" onclick="excluirCliente(${indexCliente})">Excluir</button>
+          <div class="cliente-card-click" onclick="abrirPerfilCliente(${index})">
+            <div>
+              <h4 style="color:var(--accent); font-size:1.05rem; margin-bottom:4px;">${c.nome}</h4>
+              <p style="font-size:0.75rem; color:var(--text-dim);">
+                ${c.empresa ? '🏢 ' + c.empresa + ' | ' : ''} 📦 ${c.projetos.length} orçamento(s)
+              </p>
             </div>
-            <div style="margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
-              <strong style="font-size:0.8rem; color:#fff;">📦 Projetos Salvos:</strong>
-              ${htmlProjetos}
-            </div>
+            <span style="color: var(--text-dim);">➔</span>
           </div>
         `;
       });
     }
 
+    // Abre o perfil individual ocultando a lista geral
+    function abrirPerfilCliente(indexCliente) {
+      document.getElementById('containerListaGeral').style.display = 'none';
+      document.getElementById('containerPerfilCliente').style.display = 'block';
+      
+      const c = clientesCadastrados[indexCliente];
+      
+      // Monta Cabeçalho do Perfil
+      document.getElementById('dadosPerfilCliente').innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <h2 style="color:var(--text); margin-bottom:6px;">${c.nome}</h2>
+            <p style="font-size:0.85rem; color:var(--text-dim); line-height: 1.4;">
+              <strong>📱 Telefone:</strong> ${c.telefone || 'Não informado'}<br>
+              <strong>🏢 Empresa:</strong> ${c.empresa || 'Pessoa Física'}<br>
+              <strong>📍 Endereço:</strong> ${c.endereco || 'Não informado'}
+            </p>
+          </div>
+          <button class="btn-sm btn-danger" onclick="excluirCliente(${indexCliente})">Excluir Cliente</button>
+        </div>
+      `;
+
+      // Monta Lista de Projetos/Documentos
+      const projContainer = document.getElementById('listaProjetosCliente');
+      projContainer.innerHTML = '';
+
+      if (c.projetos.length === 0) {
+        projContainer.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim);">Nenhum projeto salvo para este cliente.</p>';
+      } else {
+        c.projetos.forEach((p, indexProj) => {
+          projContainer.innerHTML += `
+            <div style="background:#1b2436; border:1px solid #334155; padding:12px; border-radius:8px; margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-size:0.85rem; color:#fff;">🗓️ ${p.data}</strong>
+                <strong style="color:var(--accent); font-size:1.1rem;">${p.valorTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
+              </div>
+              <div style="font-size:0.8rem; color:var(--text-dim); margin:8px 0; border-left: 2px solid var(--accent); padding-left: 8px;">
+                🎨 ${p.mdfNome}<br>${p.resultado.resumoComercial}
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1; padding: 8px;" onclick="carregarProjetoCliente(${indexCliente}, ${indexProj})">👁️ Reabrir Documento</button>
+                <button class="btn-sm btn-danger" style="padding: 8px;" onclick="excluirProjetoCliente(${indexCliente}, ${indexProj})">🗑️ Excluir</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function fecharPerfilCliente() {
+      document.getElementById('containerPerfilCliente').style.display = 'none';
+      document.getElementById('containerListaGeral').style.display = 'block';
+    }
+
     function salvarProjetoNoCliente() {
       const idCliente = document.getElementById('clienteSelect').value;
-      if (!idCliente || !ultimoResultado) { alert("Selecione um cliente e gere um orçamento antes de salvar!"); return; }
+      if (!idCliente || !ultimoResultado) return alert("Selecione um cliente e gere um orçamento antes de salvar!");
 
       const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
       const itemAtivo = obterItemAtivo();
@@ -525,13 +553,13 @@
 
       const idx = clientesCadastrados.findIndex(c => c.id === idCliente);
       clientesCadastrados[idx].projetos.unshift({
-        data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
         valorTotal: valorFinal, mdfNome: itemAtivo.nome, mdfPreco: itemAtivo.preco, resultado: ultimoResultado
       });
 
       localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-      alert("Orçamento salvo na pasta do cliente!");
-      renderizarPastasClientes();
+      alert("Orçamento anexado aos documentos do cliente!");
+      renderizarListaGeralClientes();
     }
 
     function carregarProjetoCliente(indexCliente, indexProj) {
@@ -539,9 +567,7 @@
       ultimoResultado = p.resultado;
       
       document.getElementById('clienteSelect').value = clientesCadastrados[indexCliente].id;
-      
-      const margemLucro = parseFloat(document.getElementById('margemLucro').value) || 100;
-      exibirResultado(ultimoResultado, margemLucro);
+      exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value) || 100);
       desenharPranchaSVG(ultimoResultado);
       
       mudarVisaoPrincipal('projeto');
@@ -549,23 +575,25 @@
     }
 
     function excluirProjetoCliente(indexCliente, indexProj) {
-      if(confirm("Apagar orçamento da pasta?")) {
+      if(confirm("Deseja apagar este orçamento da pasta do cliente?")) {
         clientesCadastrados[indexCliente].projetos.splice(indexProj, 1);
         localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-        renderizarPastasClientes();
+        renderizarListaGeralClientes();
+        abrirPerfilCliente(indexCliente); // Atualiza a visão atual
       }
     }
     
     function excluirCliente(index) {
-      if(confirm("Deseja realmente apagar este cliente e TODOS os seus orçamentos?")) {
+      if(confirm("Deseja REALMENTE apagar este cliente e TODOS os seus documentos salvos?")) {
         clientesCadastrados.splice(index, 1);
         localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
         atualizarSelectClientes();
-        renderizarPastasClientes();
+        renderizarListaGeralClientes();
+        fecharPerfilCliente();
       }
     }
 
-    // --- TABELA DE PREÇOS E ITENS ---
+    // --- TABELA DE PREÇOS (GERAL) ---
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
       const select = document.getElementById('padraoMdfSelect');
@@ -602,11 +630,12 @@
       if (ultimoResultado) { document.getElementById('inpEditPrecoChapa').value = i.preco; recalcularPrecoManual(); }
     }
 
-    // --- LÓGICA DE PROJETO (IA, CROQUI E CÁLCULO) ---
+    // --- LÓGICA DE PROJETO E IA ---
     function verificarEntradaProjeto() {
       const texto = document.getElementById('descricaoMovel').value.trim();
       document.getElementById('btnProcessar').disabled = !(texto.length > 5 || imagemBase64 !== "");
     }
+    
     function carregarImagem(e) {
       const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader();
@@ -618,29 +647,27 @@
       };
       reader.readAsDataURL(file);
     }
+
     async function processarCroqui() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
       if (!apiKey) {
         alert('Cadastre sua Chave de API na aba Configuração.');
-        mudarVisaoPrincipal('config');
-        return;
+        mudarVisaoPrincipal('config'); return;
       }
       
       const statusEl = document.getElementById('status');
-      statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Analisando dados estruturais...';
+      statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Analisando dados construtivos...';
       statusEl.style.display = 'block'; document.getElementById('btnProcessar').disabled = true;
+
+      esbocoAprovado = false; atualizarAbaRenderState();
 
       const itemAtivo = obterItemAtivo();
       const prompt = `Marcenaria Orçamento. Analise imagem ou texto: ${document.getElementById('descricaoMovel').value}.
-Regras Físicas OBRIGATÓRIAS: Altura < 800mm NÃO tem maleiro/cabideiro. Entre 800-1500mm NÃO tem maleiro/cabideiro, mas tem gaveta/prateleira/porta. Acima de 1500mm tem maleiro/cabideiro.
+Regras Físicas OBRIGATÓRIAS: Altura < 800mm NÃO tem maleiro/cabideiro. Entre 800-1500mm NÃO tem maleiro/cabideiro. Acima de 1500mm tem maleiro/cabideiro.
 Estrutura: Caixa MDF ${document.getElementById('espCaixa').value}mm, Fundo ${document.getElementById('espFundo').value}mm. Folga gavetas ${document.getElementById('folgaGaveta').value}mm. Preço base chapa: R$ ${itemAtivo.preco}. Cor: ${itemAtivo.nome}.
 JSON estrito:
-{
-  "resumoComercial": "Descrição", "alturaMM": 600, "larguraMM": 600, "profundidadeMM": 600, "numModulos": 1, "temMaleiro": false, "temCabideiro": false, "numPrateleiras": 1, "numGavetas": 0,
-  "pecas": [ {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600} ],
-  "insumos": ["1 Chapa MDF", "Fita de borda"],
-  "chapasEstimadas": 0.5, "custoOutros": 120
-}`;
+{ "resumoComercial": "Descrição", "alturaMM": 600, "larguraMM": 600, "profundidadeMM": 600, "numModulos": 1, "temMaleiro": false, "temCabideiro": false, "numPrateleiras": 1, "numGavetas": 0, "pecas": [{"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600}], "insumos": ["1 Chapa MDF", "Fita"], "chapasEstimadas": 0.5, "custoOutros": 120 }`;
+
       try {
         const parts = [{ text: prompt }];
         if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
@@ -657,7 +684,7 @@ JSON estrito:
         desenharPranchaSVG(ultimoResultado);
         statusEl.style.display = 'none';
       } catch (err) {
-        statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro ao analisar. Verifique sua chave de API.';
+        statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro ao analisar.';
       } finally { document.getElementById('btnProcessar').disabled = false; }
     }
 
@@ -689,13 +716,14 @@ JSON estrito:
       document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${encodeURIComponent(`Olá! Segue resumo da marcenaria:\n\n${ultimoResultado.resumoComercial}\n\n*Valor:* ${tFormat}`)}`;
     }
 
+    // --- DESENHO DA PRANCHA E RENDER 3D ---
     function desenharPranchaSVG(data) {
-      const altMM = data.alturaMM || 2800; const largMM = data.larguraMM || 1200; const profMM = data.profundidadeMM || 600;
-      document.getElementById('lblLargura').innerText = `${(largMM/1000).toFixed(2)} m`;
-      document.getElementById('lblAltura').innerText = `${(altMM/1000).toFixed(2)} m`;
-      document.getElementById('lblProfundidade').innerText = `${(profMM/10).toFixed(0)} cm`;
-      
-      const aspect = largMM / altMM; const maxW = 180; const maxH = 220;
+      const altM = (data.alturaMM || 2800) / 1000; const largM = (data.larguraMM || 1200) / 1000; const profCM = (data.profundidadeMM || 600) / 10;
+      document.getElementById('lblLargura').innerText = `${largM.toFixed(2)} m`;
+      document.getElementById('lblAltura').innerText = `${altM.toFixed(2)} m`;
+      document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
+
+      const aspect = largM / altM; const maxW = 180; const maxH = 220;
       const boxW = aspect >= 1 ? maxW : Math.max(70, Math.min(maxW, maxH * aspect));
       const boxH = aspect >= 1 ? Math.max(70, Math.min(maxH, maxW / aspect)) : maxH;
       const startX = 30 + (maxW - boxW) / 2, startY = 20 + (maxH - boxH) / 2;
@@ -708,22 +736,49 @@ JSON estrito:
         }
       }
       document.getElementById('svgContainer').innerHTML = `<svg viewBox="0 0 250 280" class="svg-cad">${svg}</svg>`;
-      document.getElementById('promptGeminiBox').value = `Móvel de marcenaria de luxo em alta definição (3D architectural render). \nLayout: ${data.resumoComercial}. \nDimensões exatas: ${largMM/1000}m x ${altMM/1000}m. \nMaterial e Cor: ${obterItemAtivo().nome}. Ângulo fotográfico de estúdio.`;
+      document.getElementById('svgTopContainer').innerHTML = `<svg viewBox="0 0 200 60"><rect x="20" y="10" width="160" height="40" fill="#fff" stroke="#0f172a" stroke-width="2"/></svg>`;
     }
 
-    function copiarPromptGemini() {
-      const box = document.getElementById('promptGeminiBox'); box.select(); box.setSelectionRange(0, 99999);
-      navigator.clipboard.writeText(box.value).then(() => {
-        document.getElementById('statusCopia').innerText = '✅ Prompt copiado!'; document.getElementById('statusCopia').style.display = 'block';
-        setTimeout(() => { document.getElementById('statusCopia').style.display = 'none'; }, 3000);
-      });
+    function aprovarEsboco() {
+      esbocoAprovado = true; atualizarAbaRenderState();
+      alert('Prancha Aprovada! Gerando Maquete 3D...');
+      mudarAba('render'); gerarRender3D();
+    }
+
+    function atualizarAbaRenderState() {
+      const tab = document.getElementById('tabRenderBtn');
+      if (esbocoAprovado) {
+        tab.className = 'tab'; tab.innerHTML = '🎨 Render';
+        document.getElementById('boxBloqueioRender').style.display = 'none';
+        document.getElementById('conteudoRender3D').style.display = 'block';
+      } else {
+        tab.className = 'tab locked'; tab.innerHTML = '🔒 Render';
+        document.getElementById('boxBloqueioRender').style.display = 'block';
+        document.getElementById('conteudoRender3D').style.display = 'none';
+      }
+    }
+
+    function gerarRender3D() {
+      if (!ultimoResultado || !esbocoAprovado) return;
+      const statusEl = document.getElementById('statusRender'), imgEl = document.getElementById('imgRender');
+      statusEl.className = 'status-msg loading'; statusEl.innerText = '🎨 Gerando render...';
+      statusEl.style.display = 'block'; imgEl.style.display = 'none';
+      
+      const seed = Math.floor(Math.random() * 999999);
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(`Photorealistic 3D interior design of custom carpentry, ${ultimoResultado.resumoComercial}, built with ${obterItemAtivo().nome}, professional studio lighting`)}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
+      
+      const img = new Image();
+      img.onload = () => { imgEl.src = url; imgEl.style.display = 'block'; statusEl.style.display = 'none'; document.getElementById('btnDownloadRender').href = url; document.getElementById('btnDownloadRender').style.display = 'block'; };
+      img.onerror = () => { statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro no Render.'; };
+      img.src = url;
     }
 
     function mudarAba(aba) {
-      ['comercial','tecnica','esboco'].forEach(a => {
+      ['comercial','tecnica','esboco','render'].forEach(a => {
         document.getElementById('aba'+a.charAt(0).toUpperCase()+a.slice(1)).style.display = aba === a ? 'block' : 'none';
         document.getElementById('tab'+a.charAt(0).toUpperCase()+a.slice(1)+'Btn').className = aba === a ? 'tab active' : 'tab';
       });
+      if(aba !== 'render') document.getElementById('tabRenderBtn').className = esbocoAprovado ? 'tab' : 'tab locked';
     }
   </script>
 </body>
