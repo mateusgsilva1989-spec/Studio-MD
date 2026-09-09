@@ -6,45 +6,84 @@
   <title>Studio DM - Marcenaria</title>
   <style>
     :root {
-      --bg: #121826; --card: #1b2436; --accent: #10b981; --text: #f3f4f6;
-      --text-dim: #9ca3af; --border: #2d3748; --danger: #ef4444; --blue: #3b82f6;
+      --bg: #121826;
+      --card: #1b2436;
+      --accent: #10b981;
+      --text: #f3f4f6;
+      --text-dim: #9ca3af;
+      --border: #2d3748;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --blue: #3b82f6;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 50px; }
-    header { text-align: center; margin-bottom: 16px; }
-    header h1 { font-size: 1.4rem; color: var(--accent); }
+
+    header { text-align: center; margin-bottom: 12px; }
+    header h1 { font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 8px; }
     header p { font-size: 0.85rem; color: var(--text-dim); }
 
-    .main-nav { display: flex; gap: 6px; margin-bottom: 16px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); overflow-x: auto;}
-    .main-nav-btn { flex: 1; padding: 12px 4px; text-align: center; background: transparent; color: var(--text-dim); border: none; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
-    .main-nav-btn.active { background: var(--accent); color: #000; }
+    /* NAVEGAÇÃO SUPERIOR (Alinhada à direita e simplificada) */
+    .main-nav { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 16px; background: transparent; padding: 0; border: none; }
+    .main-nav-btn { padding: 10px 16px; text-align: center; background: #0f172a; color: var(--text-dim); border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .main-nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
     .card { background-color: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
-    .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); }
-    label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; margin-bottom: 4px; }
+    .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
+
+    label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; margin-bottom: 4px; font-weight: 500; }
     input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background-color: #0f172a; color: #fff; font-size: 0.95rem; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    textarea { resize: vertical; }
     
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
     .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 14px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-sec { background-color: var(--blue); color: #fff; }
+    .btn-sec { background-color: var(--blue); color: #fff; margin-top: 12px; }
     .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
     .btn-danger { background-color: var(--danger); color: #fff; }
 
-    .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; font-size: 0.9rem; font-weight: bold; }
+    .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
+    /* SUB-ABAS DOS RESULTADOS */
     .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
-    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
+
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
     th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-dim); }
+
     .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
-    .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
     .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+
+    .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
+
+    /* PRANCHA TÉCNICA ESTILO PROMOB */
+    .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
+    .prancha-header { text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .prancha-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 600px) { .prancha-grid { grid-template-columns: 1.2fr 0.8fr; } }
     
-    .proj-card, .cliente-card { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 8px; }
+    .cad-box { background: #ffffff; border: 2px solid #334155; border-radius: 4px; padding: 12px; position: relative; }
+    .cad-title { font-size: 0.75rem; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
+    .svg-cad { width: 100%; height: auto; max-height: 380px; display: block; margin: 0 auto; }
+    
+    .info-medidas { background: #f1f5f9; border-left: 4px solid #10b981; padding: 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; }
+    .info-medidas p { margin-bottom: 4px; }
+    .info-medidas strong { color: #0f172a; }
+
+    /* CARDS DE CLIENTES E CÁLCULO */
+    .mdf-item { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
+    .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+    .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+    .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
   </style>
 </head>
 <body>
@@ -54,97 +93,258 @@
     <p>Orçamentos Rápidos de Marcenaria</p>
   </header>
 
-  <!-- NAVEGAÇÃO -->
+  <!-- BARRA DE NAVEGAÇÃO SUPERIOR DIREITA -->
   <nav class="main-nav">
     <button class="main-nav-btn active" id="navInicioBtn" onclick="mudarVisaoPrincipal('inicio')">🏠 Início</button>
-    <button class="main-nav-btn" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Projeto</button>
-    <button class="main-nav-btn" id="navClientesBtn" onclick="mudarVisaoPrincipal('clientes')">👥 Clientes</button>
-    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Config</button>
+    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Configuração</button>
   </nav>
 
-  <!-- TELA 1: INÍCIO (DASHBOARD) -->
+  <!-- ==================== VISÃO 1: INÍCIO (DASHBOARD) ==================== -->
   <div id="viewInicio" class="main-view" style="text-align: center; padding: 20px 0;">
     <div class="card">
-      <h2 style="justify-content: center; color: var(--accent);">Bem-vindo ao Studio DM</h2>
+      <h2 style="justify-content: center; color: var(--accent);">Painel de Controle</h2>
       <p style="color: var(--text-dim); margin-bottom: 20px;">O que você deseja fazer agora?</p>
-      <button class="btn" onclick="mudarVisaoPrincipal('projeto')">📐 Iniciar Novo Projeto</button>
-      <button class="btn btn-sec" style="margin-top: 15px;" onclick="mudarVisaoPrincipal('clientes')">👥 Acessar Meus Clientes</button>
+      
+      <button class="btn" style="padding: 20px; font-size: 1.1rem;" onclick="mudarVisaoPrincipal('projeto')">📐 Iniciar Novo Projeto</button>
+      <button class="btn btn-sec" style="padding: 20px; font-size: 1.1rem; margin-top: 15px;" onclick="mudarVisaoPrincipal('clientes')">👥 Acessar Meus Clientes</button>
     </div>
   </div>
 
-  <!-- TELA 2: NOVO PROJETO -->
+  <!-- ==================== VISÃO 2: NOVO PROJETO ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
     <div class="card">
-      <h2>📷 Desenho ou Descrição do Móvel</h2>
+      <h2>📷 Desenho e Descrição do Móvel</h2>
       
-      <label>📝 Descrição / Prompt (Obrigatório se não houver foto)</label>
-      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa L=180cm A=250cm P=60cm com 3 gavetas..." oninput="verificarEntradaProjeto()"></textarea>
-      
+      <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
+      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..." oninput="verificarEntradaProjeto()"></textarea>
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura pode liberar o uso do botão IA sem a necessidade de foto.</p>
+
+      <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
+        Material Base Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
+      </div>
+
       <div class="grid-2">
         <div class="file-input-wrapper" onclick="document.getElementById('fileCam').click()">
           <span>📷 Tirar Foto</span>
           <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
         </div>
+        
         <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
           <span>🖼️ Galeria</span>
           <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
         </div>
       </div>
-      <img id="preview-img" alt="Preview">
 
-      <button class="btn" id="btnProcessar" onclick="processarProjeto()" disabled>⚡ Gerar Orçamento com IA</button>
+      <img id="preview-img" alt="Preview do Croqui">
+
+      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
       <div id="status" class="status-msg"></div>
     </div>
 
-    <!-- RESULTADOS -->
+    <!-- CARD DE RESULTADOS -->
     <div class="card" id="resultadoCard" style="display: none;">
       <div class="tabs">
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
-        <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico</div>
+        <div class="tab" id="tabTecnicaBtn" onclick="mudarAba('tecnica')">Técnico/Corte</div>
+        <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
       </div>
 
+      <!-- ABA COMERCIAL -->
       <div id="abaComercial">
-        <label>👤 Selecione o Cliente para Salvar</label>
-        <select id="clienteSelect"></select>
+        <label>👤 Selecione o Cliente para Salvar a Pasta</label>
+        <select id="clienteSelect">
+          <option value="">-- Selecione um cliente cadastrado --</option>
+        </select>
+
+        <h3 style="margin-top: 14px;">Resumo da Proposta</h3>
+        <p id="resumoTexto" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-dim);"></p>
         
-        <h3 style="margin-top: 14px;">Resumo</h3>
-        <p id="resumoTexto" style="font-size: 0.9rem; color: var(--text-dim);"></p>
-        <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 10px;">R$ 0,00</h2>
-        
-        <button class="btn" onclick="salvarProjetoNoCliente()">💾 Salvar na Pasta do Cliente</button>
+        <div style="margin-top: 16px; background: #0f172a; padding: 12px; border-radius: 8px;">
+          <span style="font-size: 0.85rem; color: var(--text-dim);">Valor Total Estimado:</span>
+          <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 4px;">R$ 0,00</h2>
+        </div>
+
+        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoCliente()">💾 Salvar na Pasta do Cliente</button>
+        <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
+        <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
       </div>
 
+      <!-- ABA TÉCNICA -->
       <div id="abaTecnica" style="display: none;">
-        <h3>Lista de Peças</h3>
+        <div class="calc-box">
+          <h4>🧮 Simulação do Preço Final</h4>
+          <div class="grid-2">
+            <div>
+              <label>Qtd. Chapas Estimada</label>
+              <input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()">
+            </div>
+            <div>
+              <label>Preço p/ Chapa (R$)</label>
+              <input type="number" id="inpEditPrecoChapa" step="1" min="0" oninput="recalcularPrecoManual()">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label>Ferragens & Insumos (R$)</label>
+              <input type="number" id="inpEditOutrosCustos" step="10" min="0" oninput="recalcularPrecoManual()">
+            </div>
+            <div>
+              <label>Margem / Lucro (%)</label>
+              <input type="number" id="inpEditMargem" step="5" min="0" oninput="recalcularPrecoManual()">
+            </div>
+          </div>
+          <div style="margin-top:12px; background:#1b2436; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:0.75rem; color:var(--text-dim);">Custo Total Material:</span><br>
+              <strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:0.75rem; color:var(--text-dim);">Valor Final:</span><br>
+              <strong id="lblValorFinalTecnico" style="font-size:1.1rem; color:var(--accent);">R$ 0,00</strong>
+            </div>
+          </div>
+        </div>
+
+        <h3>Lista de Peças Estimada</h3>
         <table id="tabelaPecas">
-          <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas</th></tr></thead>
+          <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th></tr></thead>
           <tbody></tbody>
         </table>
+        <h3 style="margin-top: 16px;">Insumos Necessários</h3>
+        <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
       </div>
+
+      <!-- ABA PRANCHA CONSTRUTIVA -->
+      <div id="abaEsboco" style="display: none;">
+        <h3>📐 Prancha Técnica de Projeto</h3>
+        <div class="prancha-container" id="pranchaArea">
+          <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
+          <div class="prancha-grid">
+            <div class="cad-box">
+              <div class="cad-title">Distribuição Interna Proporcional</div>
+              <div id="svgContainer"></div>
+            </div>
+            <div>
+              <div class="info-medidas">
+                <div class="cad-title" style="text-align:left; margin-bottom:4px;">Medidas do Móvel</div>
+                <p><strong>Largura Total:</strong> <span id="lblLargura">0,00 m</span></p>
+                <p><strong>Altura Total:</strong> <span id="lblAltura">0,00 m</span></p>
+                <p><strong>Profundidade:</strong> <span id="lblProfundidade">00 cm</span></p>
+              </div>
+              <div class="cad-box">
+                <div class="cad-title">Vista Superior</div>
+                <div id="svgTopContainer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 16px; background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
+          <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt Fidedigno para Gemini 3D</h4>
+          <textarea id="promptGeminiBox" readonly style="width: 100%; height: 120px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
+          <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt</button>
+          <div id="statusCopia" style="font-size: 0.8rem; color: var(--accent); margin-top: 6px; text-align: center; display: none;"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- TELA 3: CLIENTES -->
+  <!-- ==================== VISÃO 3: CLIENTES E PASTAS ==================== -->
   <div id="viewClientes" class="main-view" style="display: none;">
     <div class="card">
-      <h2>👥 Gestão de Clientes</h2>
-      <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <h4 style="margin-bottom: 10px; color: var(--accent);">➕ Novo Cliente</h4>
-        <input type="text" id="novoClienteNome" placeholder="Nome do Cliente">
-        <button class="btn btn-sec" onclick="cadastrarCliente()">Salvar Cliente</button>
+      <h2>👥 Gestão de Clientes e Pastas</h2>
+      
+      <!-- Cadastro Completo -->
+      <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
+        <h4 style="margin-bottom: 12px; color: var(--accent);">➕ Cadastrar Novo Cliente</h4>
+        
+        <div class="grid-2">
+          <div>
+            <label>Nome Completo</label>
+            <input type="text" id="novoClienteNome" placeholder="Ex: João da Silva">
+          </div>
+          <div>
+            <label>Telefone / WhatsApp</label>
+            <input type="text" id="novoClienteTel" placeholder="(00) 00000-0000">
+          </div>
+        </div>
+        
+        <div class="grid-2" style="margin-top: 10px;">
+          <div>
+            <label>Endereço de Entrega/Montagem</label>
+            <input type="text" id="novoClienteEnd" placeholder="Rua, Número, Bairro">
+          </div>
+          <div>
+            <label>Empresa (Opcional)</label>
+            <input type="text" id="novoClienteEmp" placeholder="Nome do Negócio">
+          </div>
+        </div>
+        
+        <button class="btn btn-sec" onclick="cadastrarCliente()">Salvar Cliente no Banco</button>
       </div>
       
+      <!-- Lista de Pastas -->
       <h3>📁 Pastas de Consulta</h3>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Seus orçamentos salvos ficam organizados por cliente aqui.</p>
       <div id="listaClientesPastas"></div>
     </div>
   </div>
 
-  <!-- TELA 4: CONFIGURAÇÕES -->
+  <!-- ==================== VISÃO 4: CONFIGURAÇÕES ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
+    
     <div class="card">
-      <h2>🔑 Configurações</h2>
-      <label>Chave de API Gemini</label>
-      <input type="password" id="apiKey" placeholder="Cole sua API Key" onchange="salvarConfig()">
+      <h2>🔑 Chave de Conexão (IA)</h2>
+      <div id="statusApiKeyBadge"></div>
+      <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
+      <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Regras de Construção</h2>
+      <div class="grid-2">
+        <div>
+          <label>Espessura Caixa (mm)</label>
+          <select id="espCaixa" onchange="salvarConfig()">
+            <option value="15">15 mm</option>
+            <option value="18">18 mm</option>
+          </select>
+        </div>
+        <div>
+          <label>Espessura Fundo (mm)</label>
+          <select id="espFundo" onchange="salvarConfig()">
+            <option value="6">6 mm</option>
+            <option value="15">15 mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top: 10px;">
+        <div>
+          <label>Folga para Gavetas (mm)</label>
+          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
+        </div>
+        <div>
+          <label>Margem / Lucro Padrão (%)</label>
+          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏷️ Tabela de Preços (Materiais e Insumos)</h2>
+      <label>Material / MDF Principal Selecionado no Projeto</label>
+      <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
+      <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
+        <label>➕ Cadastrar Novo Item na Tabela</label>
+        <div class="grid-2">
+          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
+          <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
+        </div>
+        <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
+      </div>
+      <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
+      <div id="listaItensTabela"></div>
     </div>
   </div>
 
@@ -152,93 +352,233 @@
     let imagemBase64 = "";
     let ultimoResultado = null;
     let clientesCadastrados = JSON.parse(localStorage.getItem('studioDm_clientes')) || [];
+    let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || [
+      { id: '1', nome: 'MDF Branco TX (Chapa)', preco: 250 },
+      { id: '2', nome: 'MDF Amadeirado (Chapa)', preco: 380 }
+    ];
 
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
+      document.getElementById('espCaixa').value = localStorage.getItem('esp_caixa') || '15';
+      document.getElementById('espFundo').value = localStorage.getItem('esp_fundo') || '6';
+      document.getElementById('folgaGaveta').value = localStorage.getItem('folga_gaveta') || '26';
+      document.getElementById('margemLucro').value = localStorage.getItem('margem_lucro') || '100';
+
+      renderTabelaPrecos();
+      atualizarBadgeApiKey();
       atualizarSelectClientes();
       renderizarPastasClientes();
     };
 
+    // --- CONTROLE DE VISÃO ---
     function mudarVisaoPrincipal(visao) {
       document.querySelectorAll('.main-view').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.main-nav-btn').forEach(el => el.classList.remove('active'));
       
       document.getElementById('view' + visao.charAt(0).toUpperCase() + visao.slice(1)).style.display = 'block';
-      document.getElementById('nav' + visao.charAt(0).toUpperCase() + visao.slice(1) + 'Btn').classList.add('active');
-    }
-
-    function mudarAba(aba) {
-      document.getElementById('abaComercial').style.display = aba === 'comercial' ? 'block' : 'none';
-      document.getElementById('abaTecnica').style.display = aba === 'tecnica' ? 'block' : 'none';
-      document.getElementById('tabComercialBtn').className = aba === 'comercial' ? 'tab active' : 'tab';
-      document.getElementById('tabTecnicaBtn').className = aba === 'tecnica' ? 'tab active' : 'tab';
+      
+      // Botões do Menu Superior (apenas 2 existem)
+      const btn = document.getElementById('nav' + visao.charAt(0).toUpperCase() + visao.slice(1) + 'Btn');
+      if(btn) btn.classList.add('active');
     }
 
     function salvarConfig() {
       localStorage.setItem('gemini_key', document.getElementById('apiKey').value.trim());
-      alert("Configurações salvas!");
+      localStorage.setItem('esp_caixa', document.getElementById('espCaixa').value);
+      localStorage.setItem('esp_fundo', document.getElementById('espFundo').value);
+      localStorage.setItem('folga_gaveta', document.getElementById('folgaGaveta').value);
+      localStorage.setItem('margem_lucro', document.getElementById('margemLucro').value);
+      atualizarBadgeApiKey();
     }
 
-    // LÓGICA DE CLIENTES
+    function atualizarBadgeApiKey() {
+      const key = localStorage.getItem('gemini_key') || '';
+      const badge = document.getElementById('statusApiKeyBadge');
+      badge.innerHTML = key ? '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>' : '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
+    }
+
+    // --- BANCO DE CLIENTES E PASTAS ---
     function cadastrarCliente() {
       const nome = document.getElementById('novoClienteNome').value.trim();
-      if (!nome) { alert("Informe o nome do cliente!"); return; }
+      const tel = document.getElementById('novoClienteTel').value.trim();
+      const end = document.getElementById('novoClienteEnd').value.trim();
+      const emp = document.getElementById('novoClienteEmp').value.trim();
+
+      if (!nome) { alert("Informe o Nome Completo do cliente para cadastrar!"); return; }
       
-      clientesCadastrados.push({ id: Date.now().toString(), nome: nome, projetos: [] });
+      clientesCadastrados.push({
+        id: Date.now().toString(),
+        nome: nome,
+        telefone: tel,
+        endereco: end,
+        empresa: emp,
+        projetos: [] // Pasta começa vazia
+      });
       localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
+      
       document.getElementById('novoClienteNome').value = '';
+      document.getElementById('novoClienteTel').value = '';
+      document.getElementById('novoClienteEnd').value = '';
+      document.getElementById('novoClienteEmp').value = '';
       
       atualizarSelectClientes();
       renderizarPastasClientes();
-      alert("Cliente cadastrado!");
+      alert("Cliente cadastrado com sucesso!");
     }
 
     function atualizarSelectClientes() {
       const select = document.getElementById('clienteSelect');
-      select.innerHTML = '<option value="">-- Selecione o Cliente --</option>';
-      clientesCadastrados.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
-      });
+      select.innerHTML = '<option value="">-- Selecione o Cliente da Pasta --</option>';
+      clientesCadastrados.forEach(c => { select.innerHTML += `<option value="${c.id}">${c.nome}</option>`; });
     }
 
     function renderizarPastasClientes() {
       const container = document.getElementById('listaClientesPastas');
       container.innerHTML = '';
-      clientesCadastrados.forEach(c => {
+      
+      if (clientesCadastrados.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado.</p>';
+        return;
+      }
+
+      clientesCadastrados.forEach((c, indexCliente) => {
+        let htmlProjetos = '';
+        if (c.projetos && c.projetos.length > 0) {
+          c.projetos.forEach((p, indexProj) => {
+            htmlProjetos += `
+              <div style="background:#1b2436; border:1px solid #334155; padding:10px; border-radius:6px; margin-top:8px;">
+                <div style="display:flex; justify-content:space-between;">
+                  <strong style="font-size:0.85rem; color:#fff;">${p.data}</strong>
+                  <strong style="color:var(--accent); font-size:0.95rem;">${p.valorTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-dim); margin:4px 0;">🎨 ${p.mdfNome} - ${p.resultado.resumoComercial}</div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1;" onclick="carregarProjetoCliente(${indexCliente}, ${indexProj})">👁️ Reabrir</button>
+                  <button class="btn-sm btn-danger" onclick="excluirProjetoCliente(${indexCliente}, ${indexProj})">🗑️</button>
+                </div>
+              </div>
+            `;
+          });
+        } else {
+          htmlProjetos = '<p style="font-size:0.75rem; color:var(--text-dim); margin-top:6px;">Pasta vazia.</p>';
+        }
+
         container.innerHTML += `
-          <div class="cliente-card">
-            <h4 style="color: var(--accent);">${c.nome}</h4>
-            <p style="font-size: 0.8rem; color: var(--text-dim);">${c.projetos.length} orçamento(s) salvo(s)</p>
+          <div style="background:#0f172a; border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <h4 style="color:var(--accent); margin-bottom:4px;">${c.nome}</h4>
+                <div style="font-size:0.75rem; color:var(--text-dim);">
+                  📱 ${c.telefone || 'S/ Tel'} | 🏢 ${c.empresa || 'PF'} <br>
+                  📍 ${c.endereco || 'S/ End.'}
+                </div>
+              </div>
+              <button class="btn-sm btn-danger" onclick="excluirCliente(${indexCliente})">Excluir</button>
+            </div>
+            <div style="margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+              <strong style="font-size:0.8rem; color:#fff;">📦 Projetos Salvos:</strong>
+              ${htmlProjetos}
+            </div>
           </div>
         `;
       });
     }
 
     function salvarProjetoNoCliente() {
-      const clienteId = document.getElementById('clienteSelect').value;
-      if (!clienteId || !ultimoResultado) { alert("Selecione um cliente e gere um orçamento primeiro!"); return; }
-      
-      const clienteIndex = clientesCadastrados.findIndex(c => c.id === clienteId);
-      clientesCadastrados[clienteIndex].projetos.push({
-        data: new Date().toLocaleDateString('pt-BR'),
-        resultado: ultimoResultado
+      const idCliente = document.getElementById('clienteSelect').value;
+      if (!idCliente || !ultimoResultado) { alert("Selecione um cliente e gere um orçamento antes de salvar!"); return; }
+
+      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
+      const itemAtivo = obterItemAtivo();
+      const custoMaterial = ultimoResultado.custoMaterial || 0;
+      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
+
+      const idx = clientesCadastrados.findIndex(c => c.id === idCliente);
+      clientesCadastrados[idx].projetos.unshift({
+        data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+        valorTotal: valorFinal, mdfNome: itemAtivo.nome, mdfPreco: itemAtivo.preco, resultado: ultimoResultado
       });
-      
+
       localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
-      alert("Salvo na pasta do cliente com sucesso!");
+      alert("Orçamento salvo na pasta do cliente!");
       renderizarPastasClientes();
     }
 
-    // LÓGICA DE PROJETO (TEXTO OU FOTO)
-    function verificarEntradaProjeto() {
-      const texto = document.getElementById('descricaoMovel').value.trim();
-      const btn = document.getElementById('btnProcessar');
-      btn.disabled = !(texto.length > 5 || imagemBase64 !== "");
+    function carregarProjetoCliente(indexCliente, indexProj) {
+      const p = clientesCadastrados[indexCliente].projetos[indexProj];
+      ultimoResultado = p.resultado;
+      
+      document.getElementById('clienteSelect').value = clientesCadastrados[indexCliente].id;
+      
+      const margemLucro = parseFloat(document.getElementById('margemLucro').value) || 100;
+      exibirResultado(ultimoResultado, margemLucro);
+      desenharPranchaSVG(ultimoResultado);
+      
+      mudarVisaoPrincipal('projeto');
+      mudarAba('comercial');
     }
 
+    function excluirProjetoCliente(indexCliente, indexProj) {
+      if(confirm("Apagar orçamento da pasta?")) {
+        clientesCadastrados[indexCliente].projetos.splice(indexProj, 1);
+        localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
+        renderizarPastasClientes();
+      }
+    }
+    
+    function excluirCliente(index) {
+      if(confirm("Deseja realmente apagar este cliente e TODOS os seus orçamentos?")) {
+        clientesCadastrados.splice(index, 1);
+        localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
+        atualizarSelectClientes();
+        renderizarPastasClientes();
+      }
+    }
+
+    // --- TABELA DE PREÇOS E ITENS ---
+    function renderTabelaPrecos() {
+      localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
+      const select = document.getElementById('padraoMdfSelect');
+      const container = document.getElementById('listaItensTabela');
+      select.innerHTML = ''; container.innerHTML = '';
+
+      tabelaPrecos.forEach((item, index) => {
+        const opt = document.createElement('option');
+        opt.value = item.id; opt.innerText = `${item.nome} — R$ ${item.preco},00`;
+        select.appendChild(opt);
+
+        const div = document.createElement('div'); div.className = 'mdf-item';
+        div.innerHTML = `<div><strong style="font-size:0.85rem;">${item.nome}</strong><br><span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span></div><button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">Excluir</button>`;
+        container.appendChild(div);
+      });
+      alterarPadraoAtivo();
+    }
+    function adicionarItemTabela() {
+      const nome = document.getElementById('novoItemNome').value.trim();
+      const preco = parseFloat(document.getElementById('novoItemPreco').value);
+      if (!nome || isNaN(preco) || preco < 0) return alert('Informe um nome e preço válidos.');
+      tabelaPrecos.push({ id: Date.now().toString(), nome, preco });
+      document.getElementById('novoItemNome').value = ''; document.getElementById('novoItemPreco').value = '';
+      renderTabelaPrecos();
+    }
+    function excluirItemTabela(index) {
+      if (tabelaPrecos.length <= 1) return alert('Mantenha ao menos 1 item na tabela.');
+      tabelaPrecos.splice(index, 1); renderTabelaPrecos();
+    }
+    function obterItemAtivo() { return tabelaPrecos.find(m => m.id === document.getElementById('padraoMdfSelect').value) || tabelaPrecos[0]; }
+    function alterarPadraoAtivo() {
+      const i = obterItemAtivo();
+      document.getElementById('lblMdfAtual').innerText = `${i.nome} (R$ ${i.preco},00)`;
+      if (ultimoResultado) { document.getElementById('inpEditPrecoChapa').value = i.preco; recalcularPrecoManual(); }
+    }
+
+    // --- LÓGICA DE PROJETO (IA, CROQUI E CÁLCULO) ---
+    function verificarEntradaProjeto() {
+      const texto = document.getElementById('descricaoMovel').value.trim();
+      document.getElementById('btnProcessar').disabled = !(texto.length > 5 || imagemBase64 !== "");
+    }
     function carregarImagem(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+      const file = e.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(evt) {
         imagemBase64 = evt.target.result.split(',')[1];
@@ -248,53 +588,109 @@
       };
       reader.readAsDataURL(file);
     }
-
-    async function processarProjeto() {
-      const apiKey = localStorage.getItem('gemini_key');
-      if (!apiKey) { alert('Cadastre a Chave API na aba Configurações.'); return; }
-
-      const descricao = document.getElementById('descricaoMovel').value;
-      const statusEl = document.getElementById('status');
+    async function processarCroqui() {
+      const apiKey = (localStorage.getItem('gemini_key') || '').trim();
+      if (!apiKey) return alert('Cadastre sua Chave de API na aba Configuração.');
       
-      statusEl.className = 'status-msg loading';
-      statusEl.innerText = '⏳ Analisando dados...';
-      statusEl.style.display = 'block';
-      document.getElementById('btnProcessar').disabled = true;
+      const statusEl = document.getElementById('status');
+      statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Analisando dados estruturais...';
+      statusEl.style.display = 'block'; document.getElementById('btnProcessar').disabled = true;
 
-      const prompt = `Atue como orçamentista. Baseado nas informações: ${descricao}.
-Retorne OBRIGATORIAMENTE um JSON:
-{ "resumo": "Descrição", "valor": 1500, "pecas": [{"nome": "Lateral", "qtd": 2, "medidas": "600x400"}] }`;
-
+      const itemAtivo = obterItemAtivo();
+      const prompt = `Marcenaria Orçamento. Analise imagem ou texto: ${document.getElementById('descricaoMovel').value}.
+Regras Físicas OBRIGATÓRIAS: Altura < 800mm NÃO tem maleiro/cabideiro. Entre 800-1500mm NÃO tem maleiro/cabideiro, mas tem gaveta/prateleira/porta. Acima de 1500mm tem maleiro/cabideiro.
+Estrutura: Caixa MDF ${document.getElementById('espCaixa').value}mm, Fundo ${document.getElementById('espFundo').value}mm. Folga gavetas ${document.getElementById('folgaGaveta').value}mm. Preço base chapa: R$ ${itemAtivo.preco}. Cor: ${itemAtivo.nome}.
+JSON estrito:
+{
+  "resumoComercial": "Descrição", "alturaMM": 600, "larguraMM": 600, "profundidadeMM": 600, "numModulos": 1, "temMaleiro": false, "temCabideiro": false, "numPrateleiras": 1, "numGavetas": 0,
+  "pecas": [ {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600} ],
+  "insumos": ["1 Chapa MDF", "Fita de borda"],
+  "chapasEstimadas": 0.5, "custoOutros": 120
+}`;
       try {
         const parts = [{ text: prompt }];
         if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
-
+        
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ contents: [{ parts: parts }] })
         });
-        
         const resData = await response.json();
         const jsonText = resData.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
         ultimoResultado = JSON.parse(jsonText);
-
-        document.getElementById('resultadoCard').style.display = 'block';
-        document.getElementById('resumoTexto').innerText = ultimoResultado.resumo;
-        document.getElementById('valorTotal').innerText = "R$ " + ultimoResultado.valor + ",00";
         
-        const tbody = document.querySelector('#tabelaPecas tbody');
-        tbody.innerHTML = '';
-        ultimoResultado.pecas.forEach(p => {
-          tbody.innerHTML += `<tr><td>${p.nome}</td><td>${p.qtd}</td><td>${p.medidas}</td></tr>`;
-        });
+        exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value));
+        desenharPranchaSVG(ultimoResultado);
         statusEl.style.display = 'none';
-
       } catch (err) {
-        statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao analisar. Tente novamente.';
-      } finally {
-        document.getElementById('btnProcessar').disabled = false;
+        statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro ao analisar.';
+      } finally { document.getElementById('btnProcessar').disabled = false; }
+    }
+
+    function exibirResultado(data, margemLucro) {
+      document.getElementById('resultadoCard').style.display = 'block';
+      document.getElementById('resumoTexto').innerText = data.resumoComercial;
+      document.getElementById('inpEditChapas').value = data.chapasEstimadas || 1;
+      document.getElementById('inpEditPrecoChapa').value = obterItemAtivo().preco;
+      document.getElementById('inpEditOutrosCustos').value = data.custoOutros || 150;
+      document.getElementById('inpEditMargem').value = margemLucro;
+      recalcularPrecoManual();
+      
+      const tbody = document.querySelector('#tabelaPecas tbody'); tbody.innerHTML = '';
+      data.pecas.forEach(p => tbody.innerHTML += `<tr><td>${p.nome}</td><td>${p.qtd}</td><td>${p.comprimento}x${p.largura} mm</td></tr>`);
+      const ulInsumos = document.getElementById('listaInsumos'); ulInsumos.innerHTML = '';
+      data.insumos.forEach(i => { const li = document.createElement('li'); li.innerText = i; ulInsumos.appendChild(li); });
+    }
+
+    function recalcularPrecoManual() {
+      if (!ultimoResultado) return;
+      const ch = parseFloat(document.getElementById('inpEditChapas').value)||0, pr = parseFloat(document.getElementById('inpEditPrecoChapa').value)||0;
+      const out = parseFloat(document.getElementById('inpEditOutrosCustos').value)||0, mg = parseFloat(document.getElementById('inpEditMargem').value)||0;
+      const custo = (ch * pr) + out; const total = custo * (1 + (mg / 100));
+      ultimoResultado.chapasEstimadas = ch; ultimoResultado.custoMaterial = custo; ultimoResultado.custoOutros = out;
+      
+      const tFormat = total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      document.getElementById('lblCustoMaterialTotal').innerText = custo.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      document.getElementById('lblValorFinalTecnico').innerText = tFormat; document.getElementById('valorTotal').innerText = tFormat;
+      document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${encodeURIComponent(`Olá! Segue resumo da marcenaria:\n\n${ultimoResultado.resumoComercial}\n\n*Valor:* ${tFormat}`)}`;
+    }
+
+    function desenharPranchaSVG(data) {
+      // (Mantido idêntico ao anterior para desenhar a prancha proporcional estilo CAD)
+      const altMM = data.alturaMM || 2800; const largMM = data.larguraMM || 1200; const profMM = data.profundidadeMM || 600;
+      document.getElementById('lblLargura').innerText = `${(largMM/1000).toFixed(2)} m`;
+      document.getElementById('lblAltura').innerText = `${(altMM/1000).toFixed(2)} m`;
+      document.getElementById('lblProfundidade').innerText = `${(profMM/10).toFixed(0)} cm`;
+      
+      const aspect = largMM / altMM; const maxW = 180; const maxH = 220;
+      const boxW = aspect >= 1 ? maxW : Math.max(70, Math.min(maxW, maxH * aspect));
+      const boxH = aspect >= 1 ? Math.max(70, Math.min(maxH, maxW / aspect)) : maxH;
+      const startX = 30 + (maxW - boxW) / 2, startY = 20 + (maxH - boxH) / 2;
+
+      let svg = `<rect x="${startX}" y="${startY}" width="${boxW}" height="${boxH}" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>`;
+      if(data.numModulos > 1) {
+        for(let m=1; m<data.numModulos; m++) {
+          let modX = startX + (boxW/data.numModulos)*m;
+          svg += `<line x1="${modX}" y1="${startY}" x2="${modX}" y2="${startY+boxH}" stroke="#0f172a" stroke-width="1.5"/>`;
+        }
       }
+      document.getElementById('svgContainer').innerHTML = `<svg viewBox="0 0 250 280" class="svg-cad">${svg}</svg>`;
+      document.getElementById('promptGeminiBox').value = `Móvel de marcenaria de luxo em alta definição (3D architectural render). \nLayout: ${data.resumoComercial}. \nDimensões exatas: ${largMM/1000}m x ${altMM/1000}m. \nMaterial e Cor: ${obterItemAtivo().nome}. Ângulo fotográfico de estúdio.`;
+    }
+
+    function copiarPromptGemini() {
+      const box = document.getElementById('promptGeminiBox'); box.select(); box.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(box.value).then(() => {
+        document.getElementById('statusCopia').innerText = '✅ Prompt copiado!'; document.getElementById('statusCopia').style.display = 'block';
+        setTimeout(() => { document.getElementById('statusCopia').style.display = 'none'; }, 3000);
+      });
+    }
+
+    function mudarAba(aba) {
+      ['comercial','tecnica','esboco'].forEach(a => {
+        document.getElementById('aba'+a.charAt(0).toUpperCase()+a.slice(1)).style.display = aba === a ? 'block' : 'none';
+        document.getElementById('tab'+a.charAt(0).toUpperCase()+a.slice(1)+'Btn').className = aba === a ? 'tab active' : 'tab';
+      });
     }
   </script>
 </body>
