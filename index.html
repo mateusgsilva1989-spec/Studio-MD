@@ -327,7 +327,7 @@
   <div id="viewClientes" class="main-view" style="display: none;">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h2 style="margin: 0;">👥 Gestão de Clientes</h2>
+        <h2 style="margin: 0;">👥 Clientes e Pastas</h2>
         <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Voltar</button>
       </div>
       
@@ -350,12 +350,12 @@
         <div id="listaClientesPastas" style="margin-top: 12px;"></div>
       </div>
 
-      <!-- CONTÊINER: PERFIL DO CLIENTE (Documentos) -->
+      <!-- CONTÊINER: PERFIL DO CLIENTE (Documentos e Edição) -->
       <div id="containerPerfilCliente" style="display: none;">
         <button class="btn-sm" style="background-color: var(--border); color: #fff; margin-bottom: 16px;" onclick="fecharPerfilCliente()">⬅ Voltar para a Lista de Clientes</button>
         
         <div id="dadosPerfilCliente" style="background: #0f172a; padding: 16px; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 20px;">
-          <!-- Dados do cliente injetados aqui -->
+          <!-- Dados do cliente (ou form de edição) injetados aqui -->
         </div>
 
         <h3 style="color: var(--accent); margin-bottom: 12px;">📄 Orçamentos e Projetos Salvos</h3>
@@ -435,7 +435,7 @@
       document.getElementById('statusApiKeyBadge').innerHTML = key ? '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>' : '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
     }
 
-    // --- BANCO DE CLIENTES E PASTAS (MÓDULO ATUALIZADO) ---
+    // --- BANCO DE CLIENTES E PASTAS ---
     function cadastrarCliente() {
       const nome = document.getElementById('novoClienteNome').value.trim();
       const tel = document.getElementById('novoClienteTel').value.trim();
@@ -463,7 +463,6 @@
       clientesCadastrados.forEach(c => { select.innerHTML += `<option value="${c.id}">${c.nome}</option>`; });
     }
 
-    // Renderiza apenas os "cards" para clicar
     function renderizarListaGeralClientes() {
       const container = document.getElementById('listaClientesPastas');
       container.innerHTML = '';
@@ -488,14 +487,12 @@
       });
     }
 
-    // Abre o perfil individual ocultando a lista geral
     function abrirPerfilCliente(indexCliente) {
       document.getElementById('containerListaGeral').style.display = 'none';
       document.getElementById('containerPerfilCliente').style.display = 'block';
       
       const c = clientesCadastrados[indexCliente];
       
-      // Monta Cabeçalho do Perfil
       document.getElementById('dadosPerfilCliente').innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
@@ -506,11 +503,13 @@
               <strong>📍 Endereço:</strong> ${c.endereco || 'Não informado'}
             </p>
           </div>
-          <button class="btn-sm btn-danger" onclick="excluirCliente(${indexCliente})">Excluir Cliente</button>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="btn-sm btn-sec" onclick="editarCliente(${indexCliente})">✏️ Editar</button>
+            <button class="btn-sm btn-danger" onclick="excluirCliente(${indexCliente})">🗑️ Excluir</button>
+          </div>
         </div>
       `;
 
-      // Monta Lista de Projetos/Documentos
       const projContainer = document.getElementById('listaProjetosCliente');
       projContainer.innerHTML = '';
 
@@ -528,14 +527,62 @@
                 🎨 ${p.mdfNome}<br>${p.resultado.resumoComercial}
               </div>
               <div style="display:flex; gap:8px;">
-                <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1; padding: 8px;" onclick="carregarProjetoCliente(${indexCliente}, ${indexProj})">👁️ Reabrir Documento</button>
-                <button class="btn-sm btn-danger" style="padding: 8px;" onclick="excluirProjetoCliente(${indexCliente}, ${indexProj})">🗑️ Excluir</button>
+                <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1; padding: 8px;" onclick="carregarProjetoCliente(${indexCliente}, ${indexProj})">👁️ Reabrir</button>
+                <button class="btn-sm" style="background:var(--warning); color:#000; padding: 8px;" onclick="editarProjetoCliente(${indexCliente}, ${indexProj})">✏️ Editar Info</button>
+                <button class="btn-sm btn-danger" style="padding: 8px;" onclick="excluirProjetoCliente(${indexCliente}, ${indexProj})">🗑️</button>
               </div>
             </div>
           `;
         });
       }
     }
+
+    // --- FUNÇÕES DE EDIÇÃO DE CADASTRO E DOCUMENTO ---
+    function editarCliente(index) {
+      const c = clientesCadastrados[index];
+      document.getElementById('dadosPerfilCliente').innerHTML = `
+        <div style="display:flex; flex-direction: column; gap: 10px;">
+          <h3 style="color:var(--accent); margin-bottom: 4px;">✏️ Editar Dados do Cliente</h3>
+          <input type="text" id="editCliNome" value="${c.nome}" placeholder="Nome Completo">
+          <input type="text" id="editCliTel" value="${c.telefone || ''}" placeholder="Telefone / WhatsApp">
+          <input type="text" id="editCliEmp" value="${c.empresa || ''}" placeholder="Empresa (Opcional)">
+          <input type="text" id="editCliEnd" value="${c.endereco || ''}" placeholder="Endereço de Entrega">
+          
+          <div style="display:flex; gap: 10px; margin-top: 5px;">
+            <button class="btn btn-sec" style="flex:1; padding: 10px;" onclick="salvarEdicaoCliente(${index})">💾 Salvar Alterações</button>
+            <button class="btn-sm" style="background:var(--border); color:#fff; flex:1;" onclick="abrirPerfilCliente(${index})">❌ Cancelar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function salvarEdicaoCliente(index) {
+      const nome = document.getElementById('editCliNome').value.trim();
+      if(!nome) return alert("O Nome do cliente é obrigatório!");
+      
+      clientesCadastrados[index].nome = nome;
+      clientesCadastrados[index].telefone = document.getElementById('editCliTel').value.trim();
+      clientesCadastrados[index].empresa = document.getElementById('editCliEmp').value.trim();
+      clientesCadastrados[index].endereco = document.getElementById('editCliEnd').value.trim();
+      
+      localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
+      atualizarSelectClientes();
+      renderizarListaGeralClientes();
+      abrirPerfilCliente(index); 
+      alert("Cadastro atualizado com sucesso!");
+    }
+
+    function editarProjetoCliente(indexCliente, indexProj) {
+      const p = clientesCadastrados[indexCliente].projetos[indexProj];
+      const novoResumo = prompt("Edite o nome ou a descrição deste orçamento:", p.resultado.resumoComercial);
+      
+      if (novoResumo !== null && novoResumo.trim() !== "") {
+        clientesCadastrados[indexCliente].projetos[indexProj].resultado.resumoComercial = novoResumo.trim();
+        localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
+        abrirPerfilCliente(indexCliente);
+      }
+    }
+    // ---------------------------------------------------
 
     function fecharPerfilCliente() {
       document.getElementById('containerPerfilCliente').style.display = 'none';
@@ -579,7 +626,7 @@
         clientesCadastrados[indexCliente].projetos.splice(indexProj, 1);
         localStorage.setItem('studioDm_clientes', JSON.stringify(clientesCadastrados));
         renderizarListaGeralClientes();
-        abrirPerfilCliente(indexCliente); // Atualiza a visão atual
+        abrirPerfilCliente(indexCliente); 
       }
     }
     
@@ -722,7 +769,7 @@ JSON estrito:
       document.getElementById('lblLargura').innerText = `${largM.toFixed(2)} m`;
       document.getElementById('lblAltura').innerText = `${altM.toFixed(2)} m`;
       document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
-
+      
       const aspect = largM / altM; const maxW = 180; const maxH = 220;
       const boxW = aspect >= 1 ? maxW : Math.max(70, Math.min(maxW, maxH * aspect));
       const boxH = aspect >= 1 ? Math.max(70, Math.min(maxH, maxW / aspect)) : maxH;
