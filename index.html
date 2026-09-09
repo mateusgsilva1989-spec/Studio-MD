@@ -6,9 +6,17 @@
   <title>Studio DM - Marcenaria</title>
   <style>
     :root {
-      --bg: #121826; --card: #1b2436; --accent: #10b981; --text: #f3f4f6;
-      --text-dim: #9ca3af; --border: #2d3748; --danger: #ef4444; --warning: #f59e0b; --blue: #3b82f6;
+      --bg: #121826;
+      --card: #1b2436;
+      --accent: #10b981;
+      --text: #f3f4f6;
+      --text-dim: #9ca3af;
+      --border: #2d3748;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --blue: #3b82f6;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 50px; }
 
@@ -16,10 +24,10 @@
     header h1 { font-size: 1.4rem; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 8px; }
     header p { font-size: 0.85rem; color: var(--text-dim); }
 
-    /* NAVEGAÇÃO SUPERIOR */
-    .main-nav { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
-    .main-nav-btn { padding: 8px 12px; text-align: center; background: #0f172a; color: var(--text-dim); border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-    .main-nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    /* NAVEGAÇÃO PRINCIPAL */
+    .main-nav { display: flex; gap: 4px; margin-bottom: 16px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
+    .main-nav-btn { flex: 1; padding: 10px 2px; text-align: center; background: transparent; color: var(--text-dim); border: none; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; min-width: 75px; }
+    .main-nav-btn.active { background: var(--accent); color: #000; }
 
     .card { background-color: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
     .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
@@ -40,8 +48,9 @@
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
-    .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; }
-    .tab { flex: 1; min-width: 80px; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; color: #fff; }
+    /* SUB-ABAS DOS RESULTADOS */
+    .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
@@ -54,7 +63,7 @@
 
     .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
 
-    /* PRANCHA TÉCNICA */
+    /* PRANCHA TÉCNICA ESTILO PROMOB */
     .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
     .prancha-header { text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
     .prancha-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -68,10 +77,12 @@
     .info-medidas p { margin-bottom: 4px; }
     .info-medidas strong { color: #0f172a; }
 
-    /* ITENS E CARDS */
-    .mdf-item { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+    /* CARDS DE HISTÓRICO E ITENS */
+    .mdf-item, .proj-card { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .proj-card { flex-direction: column; align-items: flex-start; gap: 8px; }
     .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
     .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
     .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
     .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
     .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
@@ -84,22 +95,24 @@
     <p>Orçamentos Rápidos de Marcenaria</p>
   </header>
 
-  <!-- NAVEGAÇÃO SUPERIOR -->
+  <!-- BARRA DE NAVEGAÇÃO SUPERIOR -->
   <nav class="main-nav">
-    <button class="main-nav-btn active" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Novo Projeto</button>
-    <button class="main-nav-btn" id="navHistoricoBtn" onclick="mudarVisaoPrincipal('historico')">📁 Histórico</button>
+    <button class="main-nav-btn active" id="navProjetoBtn" onclick="mudarVisaoPrincipal('projeto')">📐 Projeto</button>
     <button class="main-nav-btn" id="navConstrucaoBtn" onclick="mudarVisaoPrincipal('construcao')">🛠️ Construção</button>
-    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Configurações</button>
+    <button class="main-nav-btn" id="navHistoricoBtn" onclick="mudarVisaoPrincipal('historico')">📁 Histórico</button>
+    <button class="main-nav-btn" id="navConfigBtn" onclick="mudarVisaoPrincipal('config')">⚙️ Config.</button>
   </nav>
 
-  <!-- ==================== TELA 1: NOVO PROJETO ==================== -->
+  <!-- ==================== VISÃO 1: NOVO PROJETO ==================== -->
   <div id="viewProjeto" class="main-view">
+    
+    <!-- UPLOAD DE FOTO E DESCRIÇÃO -->
     <div class="card">
       <h2>📷 Desenho e Descrição do Móvel</h2>
       
       <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
-      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Armário com porta basculante de 600x600 com dobradiças comuns puxador cava..." oninput="verificarEntradaProjeto()"></textarea>
-      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura e medidas exatas reduz erros de leitura do croqui.</p>
+      <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..."></textarea>
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura e medidas exatas reduz muito a chance da Inteligência Artificial errar a leitura do croqui.</p>
 
       <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
         Material Base / MDF Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
@@ -110,18 +123,20 @@
           <span>📷 Tirar Foto</span>
           <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
         </div>
+        
         <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
           <span>🖼️ Galeria / Arquivos</span>
           <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
         </div>
       </div>
+
       <img id="preview-img" alt="Preview do Croqui">
 
       <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
       <div id="status" class="status-msg"></div>
     </div>
 
-    <!-- RESULTADOS -->
+    <!-- CARD DE RESULTADOS -->
     <div class="card" id="resultadoCard" style="display: none;">
       <div class="tabs">
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
@@ -129,7 +144,7 @@
         <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
       </div>
 
-      <!-- Aba Comercial -->
+      <!-- ABA COMERCIAL -->
       <div id="abaComercial">
         <label>👤 Nome do Cliente / Identificação do Projeto</label>
         <input type="text" id="nomeCliente" placeholder="Ex: Cliente João - Armário Cozinha">
@@ -147,44 +162,83 @@
         <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
       </div>
 
-      <!-- Aba Técnica -->
+      <!-- ABA TÉCNICA / CORTE E MEMÓRIA DE CÁLCULO -->
       <div id="abaTecnica" style="display: none;">
+        
+        <!-- PAINEL DE MEMÓRIA DE CÁLCULO E SIMULAÇÃO DE VALORES -->
         <div class="calc-box">
           <h4>🧮 Simulação do Preço Final</h4>
-          <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:10px;">Altere qualquer valor abaixo para recalcular o preço em tempo real:</p>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:10px;">
+            Altere qualquer valor abaixo para simular e recalcular o preço em tempo real:
+          </p>
+
           <div class="grid-2">
-            <div><label>Qtd. Chapas Estimada</label><input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()"></div>
-            <div><label>Preço p/ Chapa (R$)</label><input type="number" id="inpEditPrecoChapa" step="1" min="0" oninput="recalcularPrecoManual()"></div>
+            <div>
+              <label>Qtd. Chapas Estimada</label>
+              <input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()">
+            </div>
+            <div>
+              <label>Preço p/ Chapa (R$)</label>
+              <input type="number" id="inpEditPrecoChapa" step="1" min="0" oninput="recalcularPrecoManual()">
+            </div>
           </div>
-          <div class="grid-2" style="margin-top:10px;">
-            <div><label>Ferragens & Insumos (R$)</label><input type="number" id="inpEditOutrosCustos" step="10" min="0" oninput="recalcularPrecoManual()"></div>
-            <div><label>Margem / Lucro (%)</label><input type="number" id="inpEditMargem" step="5" min="0" oninput="recalcularPrecoManual()"></div>
+
+          <div class="grid-2">
+            <div>
+              <label>Ferragens & Insumos (R$)</label>
+              <input type="number" id="inpEditOutrosCustos" step="10" min="0" oninput="recalcularPrecoManual()">
+            </div>
+            <div>
+              <label>Margem / Lucro (%)</label>
+              <input type="number" id="inpEditMargem" step="5" min="0" oninput="recalcularPrecoManual()">
+            </div>
           </div>
+
           <div style="margin-top:12px; background:#1b2436; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-            <div><span style="font-size:0.75rem; color:var(--text-dim);">Custo Total Material:</span><br><strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong></div>
-            <div style="text-align:right;"><span style="font-size:0.75rem; color:var(--text-dim);">Valor Final:</span><br><strong id="lblValorFinalTecnico" style="font-size:1.1rem; color:var(--accent);">R$ 0,00</strong></div>
+            <div>
+              <span style="font-size:0.75rem; color:var(--text-dim);">Custo Total Material:</span><br>
+              <strong id="lblCustoMaterialTotal" style="font-size:1rem; color:#fff;">R$ 0,00</strong>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:0.75rem; color:var(--text-dim);">Valor Final:</span><br>
+              <strong id="lblValorFinalTecnico" style="font-size:1.1rem; color:var(--accent);">R$ 0,00</strong>
+            </div>
           </div>
         </div>
+
         <h3>Lista de Peças Estimada</h3>
         <table id="tabelaPecas">
-          <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Peça</th>
+              <th>Qtd</th>
+              <th>Medidas (mm)</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
+
         <h3 style="margin-top: 16px;">Insumos Necessários</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
+
         <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
       </div>
 
-      <!-- Aba Prancha & Prompt Gemini -->
+      <!-- ABA PRANCHA CONSTRUTIVA E PROMPT GEMINI -->
       <div id="abaEsboco" style="display: none;">
         <h3>📐 Prancha Técnica de Projeto</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Desenho proporcional estilo CAD/Promob respeitando a escala real do móvel.</p>
+
+        <!-- DESENHO SVG DA PRANCHA -->
         <div class="prancha-container" id="pranchaArea">
           <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
+          
           <div class="prancha-grid">
             <div class="cad-box">
               <div class="cad-title">Distribuição Interna Proporcional</div>
               <div id="svgContainer"></div>
             </div>
+
             <div>
               <div class="info-medidas">
                 <div class="cad-title" style="text-align:left; margin-bottom:4px;">Medidas do Móvel</div>
@@ -192,6 +246,7 @@
                 <p><strong>Altura Total:</strong> <span id="lblAltura">0,00 m</span></p>
                 <p><strong>Profundidade:</strong> <span id="lblProfundidade">00 cm</span></p>
               </div>
+
               <div class="cad-box">
                 <div class="cad-title">Vista Superior</div>
                 <div id="svgTopContainer"></div>
@@ -200,29 +255,29 @@
           </div>
         </div>
 
+        <!-- CAMPO DE PROMPT PARA O GEMINI -->
         <div style="margin-top: 16px; background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
           <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt Fidedigno para Imagem no Gemini</h4>
-          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Copie o texto abaixo e cole no Google Gemini para gerar a imagem 3D realista fiel:</p>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Copie o texto abaixo e cole no Google Gemini para gerar a imagem 3D realista fiel ao móvel e à cor selecionada:</p>
+          
           <textarea id="promptGeminiBox" readonly style="width: 100%; height: 160px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
+
           <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt para o Gemini</button>
           <div id="statusCopia" style="font-size: 0.8rem; color: var(--accent); margin-top: 6px; text-align: center; display: none;"></div>
         </div>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- ==================== TELA 2: HISTÓRICO ==================== -->
-  <div id="viewHistorico" class="main-view" style="display: none;">
-    <div class="card">
-      <h2>📁 Histórico de Orçamentos Salvos</h2>
-      <div id="listaHistoricoContainer" style="margin-top: 12px;"></div>
-    </div>
-  </div>
-
-  <!-- ==================== TELA 3: CONSTRUÇÃO ==================== -->
+  <!-- ==================== VISÃO 2: CONSTRUÇÃO ==================== -->
   <div id="viewConstrucao" class="main-view" style="display: none;">
     <div class="card">
-      <h2>🛠️ Regras e Padrões de Construção</h2>
+      <h2>🛠️ Regras e Padrões Construtivos</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 16px;">Configure aqui os padrões estruturais da sua marcenaria. A IA usará essas espessuras e folgas para calcular a lista de peças do móvel.</p>
+      
       <div class="grid-2">
         <div>
           <label>Espessura Caixa (mm)</label>
@@ -239,36 +294,51 @@
           </select>
         </div>
       </div>
+
       <div class="grid-2" style="margin-top: 10px;">
         <div>
           <label>Folga para Gavetas (mm)</label>
-          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
+          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()" placeholder="Ex: 26">
         </div>
         <div>
           <label>Margem / Lucro Padrão (%)</label>
-          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
+          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()" placeholder="Ex: 100">
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== TELA 4: CONFIGURAÇÕES (API & TABELA DE PREÇOS) ==================== -->
-  <div id="viewConfig" class="main-view" style="display: none;">
+  <!-- ==================== VISÃO 3: HISTÓRICO ==================== -->
+  <div id="viewHistorico" class="main-view" style="display: none;">
     <div class="card">
-      <h2>🔑 Chave de Conexão (IA)</h2>
+      <h2>📁 Histórico de Orçamentos Salvos</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Consulte ou reabra orçamentos e projetos salvos anteriormente.</p>
+      <div id="listaHistorico"></div>
+    </div>
+  </div>
+
+  <!-- ==================== VISÃO 4: CONFIGURAÇÕES E PREÇOS ==================== -->
+  <div id="viewConfig" class="main-view" style="display: none;">
+    
+    <!-- CREDENCIAIS E API -->
+    <div class="card">
+      <h2>🔑 Chave de Conexão (Inteligência Artificial)</h2>
       <div id="statusApiKeyBadge"></div>
+      
       <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
       <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">Sua chave é salva somente no seu navegador e usada para ler fotos e croquis.</p>
     </div>
 
+    <!-- TABELA DE PREÇOS GERAL -->
     <div class="card">
-      <h2>🏷️ Tabela de Preços</h2>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Cadastre chapas de MDF, corrediças, dobradiças e outros insumos.</p>
-      
+      <h2>🏷️ Tabela de Preços (MDF e Insumos)</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Cadastre chapas de MDF, corrediças, dobradiças e outros materiais.</p>
+
       <label>Material / MDF Principal Selecionado no Projeto</label>
       <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
-      
-      <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
+
+      <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
         <label>➕ Cadastrar Novo Item na Tabela</label>
         <div class="grid-2">
           <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
@@ -276,20 +346,27 @@
         </div>
         <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
       </div>
-      
+
       <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
       <div id="listaItensTabela"></div>
     </div>
+
   </div>
 
   <script>
     let imagemBase64 = "";
     let ultimoResultado = null;
-    let historicoProjetos = JSON.parse(localStorage.getItem('studioDm_historico')) || [];
-    let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || [
+
+    // Tabela de Preços de Itens Geral
+    let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || JSON.parse(localStorage.getItem('tabela_mdf')) || [
       { id: '1', nome: 'MDF Branco TX (Chapa)', preco: 250 },
-      { id: '2', nome: 'MDF Amadeirado (Chapa)', preco: 380 }
+      { id: '2', nome: 'MDF Amadeirado Louro Freijó (Chapa)', preco: 380 },
+      { id: '3', nome: 'Corrediça Telescópica 45cm (Par)', preco: 35 },
+      { id: '4', nome: 'Dobradiça 35mm Amortecedor (Unid.)', preco: 12 },
+      { id: '5', nome: 'Fita de Borda 22mm (Rolo 20m)', preco: 45 }
     ];
+
+    let historicoProjetos = JSON.parse(localStorage.getItem('historico_projetos')) || [];
 
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
@@ -299,22 +376,26 @@
       document.getElementById('margemLucro').value = localStorage.getItem('margem_lucro') || '100';
 
       renderTabelaPrecos();
+      renderHistorico();
       atualizarBadgeApiKey();
-      renderizarHistorico();
-      mudarVisaoPrincipal('projeto');
     };
 
+    // --- CONTROLE DE VISÃO DA NAVEGAÇÃO SUPERIOR ---
     function mudarVisaoPrincipal(visao) {
-      document.querySelectorAll('.main-view').forEach(el => el.style.display = 'none');
-      document.querySelectorAll('.main-nav-btn').forEach(el => el.classList.remove('active'));
-      
-      document.getElementById('view' + visao.charAt(0).toUpperCase() + visao.slice(1)).style.display = 'block';
-      const btn = document.getElementById('nav' + visao.charAt(0).toUpperCase() + visao.slice(1) + 'Btn');
-      if(btn) btn.classList.add('active');
+      document.getElementById('viewProjeto').style.display = visao === 'projeto' ? 'block' : 'none';
+      document.getElementById('viewConstrucao').style.display = visao === 'construcao' ? 'block' : 'none';
+      document.getElementById('viewHistorico').style.display = visao === 'historico' ? 'block' : 'none';
+      document.getElementById('viewConfig').style.display = visao === 'config' ? 'block' : 'none';
+
+      document.getElementById('navProjetoBtn').className = visao === 'projeto' ? 'main-nav-btn active' : 'main-nav-btn';
+      document.getElementById('navConstrucaoBtn').className = visao === 'construcao' ? 'main-nav-btn active' : 'main-nav-btn';
+      document.getElementById('navHistoricoBtn').className = visao === 'historico' ? 'main-nav-btn active' : 'main-nav-btn';
+      document.getElementById('navConfigBtn').className = visao === 'config' ? 'main-nav-btn active' : 'main-nav-btn';
     }
 
     function salvarConfig() {
-      localStorage.setItem('gemini_key', document.getElementById('apiKey').value.trim());
+      const key = document.getElementById('apiKey').value.trim();
+      localStorage.setItem('gemini_key', key);
       localStorage.setItem('esp_caixa', document.getElementById('espCaixa').value);
       localStorage.setItem('esp_fundo', document.getElementById('espFundo').value);
       localStorage.setItem('folga_gaveta', document.getElementById('folgaGaveta').value);
@@ -324,172 +405,152 @@
 
     function atualizarBadgeApiKey() {
       const key = localStorage.getItem('gemini_key') || '';
-      document.getElementById('statusApiKeyBadge').innerHTML = key ? '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>' : '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
+      const badgeContainer = document.getElementById('statusApiKeyBadge');
+      if (key) {
+        badgeContainer.innerHTML = '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>';
+      } else {
+        badgeContainer.innerHTML = '<span class="badge-status badge-alert">⚠️ Chave de API Ausente. Cole sua chave do Gemini.</span>';
+      }
     }
 
-    // --- TABELA DE PREÇOS ---
+    // --- GERENCIAMENTO DA TABELA DE PREÇOS GERAL ---
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
+
       const select = document.getElementById('padraoMdfSelect');
       const container = document.getElementById('listaItensTabela');
-      if(!select || !container) return;
-      select.innerHTML = ''; container.innerHTML = '';
+      
+      select.innerHTML = '';
+      container.innerHTML = '';
 
       tabelaPrecos.forEach((item, index) => {
         const opt = document.createElement('option');
-        opt.value = item.id; opt.innerText = `${item.nome} — R$ ${item.preco},00`;
+        opt.value = item.id;
+        opt.innerText = `${item.nome} — R$ ${item.preco},00`;
         select.appendChild(opt);
 
-        const div = document.createElement('div'); div.className = 'mdf-item';
-        div.innerHTML = `<div><strong style="font-size:0.85rem;">${item.nome}</strong><br><span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span></div><button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">Excluir</button>`;
+        const div = document.createElement('div');
+        div.className = 'mdf-item';
+        div.innerHTML = `
+          <div>
+            <strong style="font-size:0.85rem;">${item.nome}</strong><br>
+            <span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span>
+          </div>
+          <button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">Excluir</button>
+        `;
         container.appendChild(div);
       });
+
       alterarPadraoAtivo();
     }
 
     function adicionarItemTabela() {
-      const nome = document.getElementById('novoItemNome').value.trim();
-      const preco = parseFloat(document.getElementById('novoItemPreco').value);
-      if (!nome || isNaN(preco) || preco < 0) return alert('Informe um nome e preço válidos.');
+      const nomeInput = document.getElementById('novoItemNome');
+      const precoInput = document.getElementById('novoItemPreco');
+
+      const nome = nomeInput.value.trim();
+      const preco = parseFloat(precoInput.value);
+
+      if (!nome || isNaN(preco) || preco < 0) {
+        alert('Por favor, informe um nome e um preço válido para o item.');
+        return;
+      }
+
       tabelaPrecos.push({ id: Date.now().toString(), nome, preco });
-      document.getElementById('novoItemNome').value = ''; document.getElementById('novoItemPreco').value = '';
+      nomeInput.value = '';
+      precoInput.value = '';
+
       renderTabelaPrecos();
     }
 
     function excluirItemTabela(index) {
-      if (tabelaPrecos.length <= 1) return alert('Mantenha ao menos 1 item na tabela.');
-      tabelaPrecos.splice(index, 1); renderTabelaPrecos();
+      if (tabelaPrecos.length <= 1) {
+        alert('É necessário manter ao menos 1 item na tabela de preços.');
+        return;
+      }
+      tabelaPrecos.splice(index, 1);
+      renderTabelaPrecos();
     }
 
-    function obterItemAtivo() { 
+    function obterItemAtivo() {
       const select = document.getElementById('padraoMdfSelect');
-      if(!select || select.options.length === 0) return tabelaPrecos[0];
-      return tabelaPrecos.find(m => m.id === select.value) || tabelaPrecos[0]; 
+      const selectedId = select.value;
+      return tabelaPrecos.find(m => m.id === selectedId) || tabelaPrecos[0];
     }
 
     function alterarPadraoAtivo() {
-      const i = obterItemAtivo();
-      const lbl = document.getElementById('lblMdfAtual');
-      if(lbl) lbl.innerText = `${i.nome} (R$ ${i.preco},00)`;
-      if (ultimoResultado) { 
-        document.getElementById('inpEditPrecoChapa').value = i.preco; 
-        recalcularPrecoManual(); 
-      }
-    }
-
-    // --- HISTÓRICO ---
-    function salvarProjetoNoHistorico() {
-      const nome = document.getElementById('nomeCliente').value.trim() || 'Projeto Sem Nome';
-      if (!ultimoResultado) return alert("Gere um orçamento antes de salvar!");
-
-      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
       const itemAtivo = obterItemAtivo();
-      const custoMaterial = ultimoResultado.custoMaterial || 0;
-      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
+      document.getElementById('lblMdfAtual').innerText = `${itemAtivo.nome} (R$ ${itemAtivo.preco},00)`;
 
-      historicoProjetos.unshift({
-        id: Date.now().toString(),
-        nomeCliente: nome,
-        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-        valorTotal: valorFinal,
-        mdfNome: itemAtivo.nome,
-        resultado: ultimoResultado
-      });
-
-      localStorage.setItem('studioDm_historico', JSON.stringify(historicoProjetos));
-      alert("Orçamento salvo no histórico com sucesso!");
-      renderizarHistorico();
-      mudarVisaoPrincipal('historico');
-    }
-
-    function renderizarHistorico() {
-      const container = document.getElementById('listaHistoricoContainer');
-      if(!container) return;
-      container.innerHTML = '';
-      
-      if (historicoProjetos.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum orçamento salvo no histórico.</p>';
-        return;
-      }
-
-      historicoProjetos.forEach((p, index) => {
-        container.innerHTML += `
-          <div style="background:#0f172a; border:1px solid var(--border); padding:14px; border-radius:8px; margin-bottom:10px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <h4 style="color:var(--accent); font-size:1rem; margin-bottom:4px;">👤 ${p.nomeCliente}</h4>
-              <strong style="color:var(--accent); font-size:1.1rem;">${p.valorTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
-            </div>
-            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">🗓️ ${p.data} | 🏷️ ${p.mdfNome}</p>
-            <div style="font-size:0.82rem; color:var(--text-dim); margin:6px 0; border-left: 2px solid var(--accent); padding-left: 8px;">
-              ${p.resultado.resumoComercial}
-            </div>
-            <div style="display:flex; gap:8px; margin-top:10px;">
-              <button class="btn-sm" style="background:var(--blue); color:#fff; flex:1; padding: 8px;" onclick="carregarProjetoHistorico(${index})">👁️ Reabrir</button>
-              <button class="btn-sm btn-danger" style="padding: 8px;" onclick="excluirProjetoHistorico(${index})">🗑️ Excluir</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function carregarProjetoHistorico(index) {
-      const p = historicoProjetos[index];
-      ultimoResultado = p.resultado;
-      document.getElementById('nomeCliente').value = p.nomeCliente;
-      exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value) || 100);
-      desenharPranchaSVG(ultimoResultado);
-      mudarVisaoPrincipal('projeto');
-      mudarAba('comercial');
-    }
-
-    function excluirProjetoHistorico(index) {
-      if(confirm("Deseja apagar este orçamento do histórico?")) {
-        historicoProjetos.splice(index, 1);
-        localStorage.setItem('studioDm_historico', JSON.stringify(historicoProjetos));
-        renderizarHistorico();
+      if (ultimoResultado) {
+        document.getElementById('inpEditPrecoChapa').value = itemAtivo.preco;
+        recalcularPrecoManual();
       }
     }
 
-    // --- IA E PROCESSAMENTO ---
-    function verificarEntradaProjeto() {
-      const texto = document.getElementById('descricaoMovel').value.trim();
-      document.getElementById('btnProcessar').disabled = !(texto.length > 3 || imagemBase64 !== "");
-    }
-    
+    // --- LEITURA E PROCESSAMENTO DE CROQUI ---
     function carregarImagem(e) {
-      const file = e.target.files[0]; if (!file) return;
+      const file = e.target.files[0];
+      if (!file) return;
+
       const reader = new FileReader();
       reader.onload = function(evt) {
         imagemBase64 = evt.target.result.split(',')[1];
-        document.getElementById('preview-img').src = evt.target.result;
-        document.getElementById('preview-img').style.display = 'block';
-        verificarEntradaProjeto();
+        const imgEl = document.getElementById('preview-img');
+        imgEl.src = evt.target.result;
+        imgEl.style.display = 'block';
+        document.getElementById('btnProcessar').disabled = false;
       };
       reader.readAsDataURL(file);
     }
 
     async function processarCroqui() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
-      if (!apiKey) {
-        alert('Cadastre sua Chave de API nas Configurações.');
-        mudarVisaoPrincipal('config'); return;
-      }
-      
       const statusEl = document.getElementById('status');
-      statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Analisando dados construtivos com Gemini...';
-      statusEl.style.display = 'block'; document.getElementById('btnProcessar').disabled = true;
 
+      if (!apiKey) {
+        alert('Por favor, cadastre sua Chave de API do Google Gemini na aba "⚙️ Config." antes de continuar.');
+        mudarVisaoPrincipal('config');
+        return;
+      }
+
+      statusEl.className = 'status-msg loading';
+      statusEl.innerText = '⏳ Analisando desenho e calculando lista de peças...';
+      statusEl.style.display = 'block';
+      document.getElementById('btnProcessar').disabled = true;
+
+      const espCaixa = document.getElementById('espCaixa').value;
+      const espFundo = document.getElementById('espFundo').value;
+      const folgaGaveta = document.getElementById('folgaGaveta').value;
+      const margemLucro = parseFloat(document.getElementById('margemLucro').value);
       const itemAtivo = obterItemAtivo();
-      const descricao = document.getElementById('descricaoMovel').value.trim();
-      const prompt = `Marcenaria Orçamento. Analise o projeto com base na descrição: "${descricao}".
-Regras Físicas OBRIGATÓRIAS: 
-- Se Altura < 800mm: NÃO tem maleiro/cabideiro (apenas prateleiras/gavetas/nichos).
-- Se Altura entre 800-1500mm: NÃO tem maleiro/cabideiro.
-- Se Altura > 1500mm: Tem maleiro/cabideiro.
-Estrutura: Caixa MDF ${document.getElementById('espCaixa').value}mm, Fundo ${document.getElementById('espFundo').value}mm. Folga gavetas ${document.getElementById('folgaGaveta').value}mm. Preço base chapa: R$ ${itemAtivo.preco}. Cor: ${itemAtivo.nome}.
-Retorne estritamente em formato JSON puro, sem markdown extra:
+      
+      // NOVA INSTRUÇÃO DO TEXTO DO USUÁRIO PARA REDUZIR ERROS DA IA
+      const descUsuario = document.getElementById('descricaoMovel').value.trim();
+      const regraDescricao = descUsuario ? `\nINSTRUÇÕES DO MARCENEIRO (PRIORIDADE MÁXIMA): "${descUsuario}"\nBaseie-se primeiramente nesta descrição acima para definir medidas (Altura, Largura, Profundidade) e as quantidades de gavetas/prateleiras/portas. A imagem serve como apoio secundário ao texto.\n` : '';
+
+      const prompt = `Você é um mestre marceneiro e orçamentista. Analise o croqui/desenho fornecido.
+${regraDescricao}
+Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e a estrutura interna.
+
+Siga rigorosamente estas REGRAS FÍSICAS DE MARCENARIA:
+1. Se a ALTURA for menor que 800mm (0.8m):
+   - NUNCA coloque maleiro nem cabideiro!
+2. Se a ALTURA for entre 800mm e 1500mm:
+   - Pode ter prateleiras, gavetas ou portas. Maleiro e cabideiro são proibidos.
+3. Se a ALTURA for acima de 1500mm (guarda-roupa/armário alto):
+   - Pode ter maleiro, cabideiro, prateleiras e gavetas.
+
+Considere as REGRAS CONSTRUTIVAS:
+- Espessura do MDF das caixas: ${espCaixa}mm
+- Espessura do fundo: ${espFundo}mm
+- Desconto total para gavetas: ${folgaGaveta}mm
+- Valor base da chapa/material principal: R$ ${itemAtivo.preco}
+- Padrão/Cor: ${itemAtivo.nome}
+
+Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do JSON, seguindo esta estrutura exata:
 {
-  "resumoComercial": "Descrição detalhada do móvel",
+  "resumoComercial": "Descrição breve do móvel e dimensões identificadas.",
   "alturaMM": 600,
   "larguraMM": 600,
   "profundidadeMM": 600,
@@ -498,106 +559,410 @@ Retorne estritamente em formato JSON puro, sem markdown extra:
   "temCabideiro": false,
   "numPrateleiras": 1,
   "numGavetas": 0,
-  "pecas": [{"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600}],
-  "insumos": ["1 Chapa MDF", "Fita de borda"],
+  "pecas": [
+    {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600},
+    {"nome": "Base / Tampo", "qtd": 2, "comprimento": 570, "largura": 600}
+  ],
+  "insumos": [
+    "1 Chapa MDF 15mm",
+    "12 metros de fita de borda"
+  ],
   "chapasEstimadas": 0.5,
   "custoOutros": 120
 }`;
 
-      try {
-        const parts = [{ text: prompt }];
-        if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
-        
-        // Atualizado para gemini-3.6-flash conforme solicitação da API
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: parts }] })
-        });
-        const resData = await response.json();
-        
-        if(resData.error) throw new Error(resData.error.message);
+      const modelos = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
+      let data = null;
+      let ultimoErro = '';
 
-        const rawText = resData.candidates[0].content.parts[0].text;
+      for (const modelo of modelos) {
+        try {
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: prompt },
+                  { inline_data: { mime_type: "image/jpeg", data: imagemBase64 } }
+                ]
+              }]
+            })
+          });
+
+          const resData = await response.json();
+          if (resData.error) {
+            ultimoErro = resData.error.message;
+            continue;
+          }
+
+          if (resData.candidates && resData.candidates.length > 0) {
+            data = resData;
+            break;
+          }
+        } catch (err) {
+          ultimoErro = err.message;
+        }
+      }
+
+      if (!data) {
+        statusEl.className = 'status-msg error';
+        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique sua chave de API nas Configurações.');
+        document.getElementById('btnProcessar').disabled = false;
+        return;
+      }
+
+      try {
+        const rawText = data.candidates[0].content.parts[0].text;
         const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-        ultimoResultado = JSON.parse(jsonText);
-        
-        exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value));
-        desenharPranchaSVG(ultimoResultado);
+        const resultado = JSON.parse(jsonText);
+
+        ultimoResultado = resultado;
+
+        exibirResultado(resultado, margemLucro);
         statusEl.style.display = 'none';
+
+        desenharPranchaSVG(resultado);
+
       } catch (err) {
-        statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro ao analisar: ' + err.message;
-      } finally { document.getElementById('btnProcessar').disabled = false; }
+        statusEl.className = 'status-msg error';
+        statusEl.innerText = '❌ Erro ao processar resposta: ' + err.message;
+      } finally {
+        document.getElementById('btnProcessar').disabled = false;
+      }
     }
 
     function exibirResultado(data, margemLucro) {
       document.getElementById('resultadoCard').style.display = 'block';
       document.getElementById('resumoTexto').innerText = data.resumoComercial;
-      document.getElementById('inpEditChapas').value = data.chapasEstimadas || 1;
-      document.getElementById('inpEditPrecoChapa').value = obterItemAtivo().preco;
-      document.getElementById('inpEditOutrosCustos').value = data.custoOutros || 150;
+
+      const itemAtivo = obterItemAtivo();
+      const chapas = data.chapasEstimadas || 1;
+      const precoChapa = itemAtivo.preco || 250;
+      const outrosCustos = data.custoOutros || 150;
+
+      document.getElementById('inpEditChapas').value = chapas;
+      document.getElementById('inpEditPrecoChapa').value = precoChapa;
+      document.getElementById('inpEditOutrosCustos').value = outrosCustos;
       document.getElementById('inpEditMargem').value = margemLucro;
+
       recalcularPrecoManual();
-      
-      const tbody = document.querySelector('#tabelaPecas tbody'); tbody.innerHTML = '';
-      data.pecas.forEach(p => tbody.innerHTML += `<tr><td>${p.nome}</td><td>${p.qtd}</td><td>${p.comprimento}x${p.largura} mm</td></tr>`);
-      const ulInsumos = document.getElementById('listaInsumos'); ulInsumos.innerHTML = '';
-      data.insumos.forEach(i => { const li = document.createElement('li'); li.innerText = i; ulInsumos.appendChild(li); });
+
+      // Preencher Tabela de Peças
+      const tbody = document.querySelector('#tabelaPecas tbody');
+      tbody.innerHTML = '';
+      data.pecas.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.nome}</td><td>${p.qtd}</td><td>${p.comprimento} x ${p.largura} mm</td>`;
+        tbody.appendChild(tr);
+      });
+
+      // Preencher Lista de Insumos
+      const ulInsumos = document.getElementById('listaInsumos');
+      ulInsumos.innerHTML = '';
+      data.insumos.forEach(item => {
+        const li = document.createElement('li');
+        li.innerText = item;
+        ulInsumos.appendChild(li);
+      });
     }
 
+    // --- RECALCULAR PREÇO EM TEMPO REAL AO EDITAR CAMPOS TÉCNICOS ---
     function recalcularPrecoManual() {
       if (!ultimoResultado) return;
-      const ch = parseFloat(document.getElementById('inpEditChapas').value)||0, pr = parseFloat(document.getElementById('inpEditPrecoChapa').value)||0;
-      const out = parseFloat(document.getElementById('inpEditOutrosCustos').value)||0, mg = parseFloat(document.getElementById('inpEditMargem').value)||0;
-      const custo = (ch * pr) + out; const total = custo * (1 + (mg / 100));
-      ultimoResultado.chapasEstimadas = ch; ultimoResultado.custoMaterial = custo; ultimoResultado.custoOutros = out;
-      
-      const tFormat = total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-      document.getElementById('lblCustoMaterialTotal').innerText = custo.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-      document.getElementById('lblValorFinalTecnico').innerText = tFormat; document.getElementById('valorTotal').innerText = tFormat;
-      document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${encodeURIComponent(`Olá! Segue resumo do projeto:\n\n${ultimoResultado.resumoComercial}\n\n*Valor:* ${tFormat}`)}`;
+
+      const chapas = parseFloat(document.getElementById('inpEditChapas').value) || 0;
+      const precoChapa = parseFloat(document.getElementById('inpEditPrecoChapa').value) || 0;
+      const outrosInsumos = parseFloat(document.getElementById('inpEditOutrosCustos').value) || 0;
+      const margem = parseFloat(document.getElementById('inpEditMargem').value) || 0;
+
+      const custoMaterialTotal = (chapas * precoChapa) + outrosInsumos;
+      const valorFinal = custoMaterialTotal * (1 + (margem / 100));
+
+      ultimoResultado.chapasEstimadas = chapas;
+      ultimoResultado.custoMaterial = custoMaterialTotal;
+      ultimoResultado.custoOutros = outrosInsumos;
+
+      const valorFormatado = valorFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      const custoFormatado = custoMaterialTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      document.getElementById('lblCustoMaterialTotal').innerText = custoFormatado;
+      document.getElementById('lblValorFinalTecnico').innerText = valorFormatado;
+      document.getElementById('valorTotal').innerText = valorFormatado;
+
+      const itemAtivo = obterItemAtivo();
+      const textoWsp = encodeURIComponent(`Olá! Segue o resumo do seu orçamento de marcenaria:\n\n${ultimoResultado.resumoComercial}\n\n*Material Base:* ${itemAtivo.nome}\n*Valor Total Estimado:* ${valorFormatado}`);
+      document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
     }
 
+    // --- DESENHO VETORIAL CAD PROPORCIONAL E GERADOR DE PROMPT GEMINI ---
     function desenharPranchaSVG(data) {
-      const altM = (data.alturaMM || 600) / 1000; const largM = (data.larguraMM || 600) / 1000; const profCM = (data.profundidadeMM || 600) / 10;
-      document.getElementById('lblLargura').innerText = `${largM.toFixed(2)} m`;
-      document.getElementById('lblAltura').innerText = `${altM.toFixed(2)} m`;
-      document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
-      
-      const aspect = largM / altM; const maxW = 180; const maxH = 220;
-      const boxW = aspect >= 1 ? maxW : Math.max(70, Math.min(maxW, maxH * aspect));
-      const boxH = aspect >= 1 ? Math.max(70, Math.min(maxH, maxW / aspect)) : maxH;
-      const startX = 30 + (maxW - boxW) / 2, startY = 20 + (maxH - boxH) / 2;
+      const altMM = data.alturaMM || 2800;
+      const largMM = data.larguraMM || 1200;
+      const profMM = data.profundidadeMM || 600;
 
-      let svg = `<rect x="${startX}" y="${startY}" width="${boxW}" height="${boxH}" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>`;
-      if(data.numModulos > 1) {
-        for(let m=1; m<data.numModulos; m++) {
-          let modX = startX + (boxW/data.numModulos)*m;
-          svg += `<line x1="${modX}" y1="${startY}" x2="${modX}" y2="${startY+boxH}" stroke="#0f172a" stroke-width="1.5"/>`;
+      const altM = altMM / 1000;
+      const largM = largMM / 1000;
+      const profCM = profMM / 10;
+
+      document.getElementById('lblLargura').innerText = `${largM.toFixed(2).replace('.', ',')} m`;
+      document.getElementById('lblAltura').innerText = `${altM.toFixed(2).replace('.', ',')} m`;
+      document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
+
+      const maxW = 180;
+      const maxH = 220;
+      const aspect = largMM / altMM;
+
+      let boxW, boxH;
+      if (aspect >= 1) {
+        boxW = maxW;
+        boxH = Math.max(70, Math.min(maxH, maxW / aspect));
+      } else {
+        boxH = maxH;
+        boxW = Math.max(70, Math.min(maxW, maxH * aspect));
+      }
+
+      const startX = 30 + (maxW - boxW) / 2;
+      const startY = 20 + (maxH - boxH) / 2;
+
+      let svgContent = `<rect x="${startX}" y="${startY}" width="${boxW}" height="${boxH}" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>`;
+
+      const modulos = data.numModulos || 1;
+      if (modulos > 1) {
+        for (let m = 1; m < modulos; m++) {
+          let modX = startX + (boxW / modulos) * m;
+          svgContent += `<line x1="${modX}" y1="${startY}" x2="${modX}" y2="${startY + boxH}" stroke="#0f172a" stroke-width="1.5"/>`;
         }
       }
-      document.getElementById('svgContainer').innerHTML = `<svg viewBox="0 0 250 280" class="svg-cad">${svg}</svg>`;
-      document.getElementById('svgTopContainer').innerHTML = `<svg viewBox="0 0 200 60"><rect x="20" y="10" width="160" height="40" fill="#fff" stroke="#0f172a" stroke-width="2"/></svg>`;
 
-      // Gerar Prompt Gemini
-      const promptText = `Photorealistic 3D interior design of custom carpentry, ${data.resumoComercial}, dimensions: width ${largM}m, height ${altM}m, depth ${profCM}cm, built with ${obterItemAtivo().nome}, professional studio lighting, architectural photography style, clean modern workshop background.`;
-      document.getElementById('promptGeminiBox').value = promptText;
+      let currentY = startY;
+      let remainingH = boxH;
+
+      if (altMM >= 1500 && data.temMaleiro) {
+        let maleiroH = boxH * 0.2;
+        currentY += maleiroH;
+        svgContent += `<line x1="${startX}" y1="${currentY}" x2="${startX + boxW}" y2="${currentY}" stroke="#0f172a" stroke-width="1.5"/>`;
+        svgContent += `<text x="${startX + boxW/2}" y="${currentY - maleiroH/2 + 3}" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">MALEIRO</text>`;
+        remainingH -= maleiroH;
+      }
+
+      const gavetas = data.numGavetas || 0;
+      if (gavetas > 0) {
+        let gavetasH = Math.min(remainingH * 0.6, gavetas * 20);
+        let gavYStart = startY + boxH - gavetasH;
+        svgContent += `<line x1="${startX}" y1="${gavYStart}" x2="${startX + boxW}" y2="${gavYStart}" stroke="#0f172a" stroke-width="1.5"/>`;
+        
+        let umaGavH = gavetasH / gavetas;
+        for (let g = 0; g < gavetas; g++) {
+          let gY = gavYStart + g * umaGavH;
+          svgContent += `<line x1="${startX}" y1="${gY}" x2="${startX + boxW}" y2="${gY}" stroke="#0f172a" stroke-width="1"/>`;
+          svgContent += `<rect x="${startX + boxW/2 - 8}" y="${gY + umaGavH/2 - 1}" width="16" height="2" fill="#0f172a"/>`;
+        }
+        svgContent += `<text x="${startX + boxW/2}" y="${gavYStart - 4}" font-size="7" font-weight="bold" fill="#0f172a" text-anchor="middle">${gavetas} GAVETA(S)</text>`;
+        remainingH -= gavetasH;
+      }
+
+      if (altMM >= 1000 && data.temCabideiro) {
+        let cabideiroH = remainingH * 0.7;
+        let cabY = currentY + cabideiroH;
+        svgContent += `<line x1="${startX + 5}" y1="${currentY + 12}" x2="${startX + boxW - 5}" y2="${currentY + 12}" stroke="#64748b" stroke-width="2" stroke-dasharray="3,3"/>`;
+        svgContent += `<text x="${startX + boxW/2}" y="${currentY + cabideiroH/2}" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">CABIDEIRO</text>`;
+        if (remainingH > cabideiroH) {
+          svgContent += `<line x1="${startX}" y1="${cabY}" x2="${startX + boxW}" y2="${cabY}" stroke="#0f172a" stroke-width="1.5"/>`;
+        }
+        currentY = cabY;
+        remainingH -= cabideiroH;
+      }
+
+      const prat = data.numPrateleiras || 0;
+      if (prat > 0 && remainingH > 20) {
+        let pratGap = remainingH / (prat + 1);
+        for (let p = 1; p <= prat; p++) {
+          let pY = currentY + p * pratGap;
+          if (pY < startY + boxH - (gavetas > 0 ? (gavetas * 20) : 0)) {
+            svgContent += `<line x1="${startX}" y1="${pY}" x2="${startX + boxW}" y2="${pY}" stroke="#0f172a" stroke-width="1.5"/>`;
+          }
+        }
+      } else if (gavetas === 0 && !data.temCabideiro && !data.temMaleiro && prat === 0) {
+        svgContent += `<text x="${startX + boxW/2}" y="${startY + boxH/2}" font-size="8" font-weight="bold" fill="#64748b" text-anchor="middle">VÃO LIVRE / NICHO</text>`;
+      }
+
+      let totalSVG = `<svg viewBox="0 0 250 280" class="svg-cad">
+        ${svgContent}
+        <line x1="${startX - 12}" y1="${startY}" x2="${startX - 12}" y2="${startY + boxH}" stroke="#64748b" stroke-width="1"/>
+        <line x1="${startX - 16}" y1="${startY}" x2="${startX - 8}" y2="${startY}" stroke="#64748b" stroke-width="1"/>
+        <line x1="${startX - 16}" y1="${startY + boxH}" x2="${startX - 8}" y2="${startY + boxH}" stroke="#64748b" stroke-width="1"/>
+        <text x="${startX - 18}" y="${startY + boxH/2}" font-size="8" font-weight="bold" fill="#0f172a" transform="rotate(-90 ${startX - 18},${startY + boxH/2})" text-anchor="middle">${altM.toFixed(2)} m</text>
+
+        <line x1="${startX}" y1="${startY + boxH + 12}" x2="${startX + boxW}" y2="${startY + boxH + 12}" stroke="#64748b" stroke-width="1"/>
+        <line x1="${startX}" y1="${startY + boxH + 8}" x2="${startX}" y2="${startY + boxH + 16}" stroke="#64748b" stroke-width="1"/>
+        <line x1="${startX + boxW}" y1="${startY + boxH + 8}" x2="${startX + boxW}" y2="${startY + boxH + 16}" stroke="#64748b" stroke-width="1"/>
+        <text x="${startX + boxW/2}" y="${startY + boxH + 24}" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>
+      </svg>`;
+
+      document.getElementById('svgContainer').innerHTML = totalSVG;
+
+      let topH = Math.max(15, Math.min(35, (profMM / 1000) * 35));
+      let topSVG = `<svg viewBox="0 0 220 65" style="width:100%; max-height:65px;">
+        <rect x="${startX}" y="10" width="${boxW}" height="${topH}" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+        ${modulos > 1 ? `<line x1="${startX + boxW/2}" y1="10" x2="${startX + boxW/2}" y2="${10 + topH}" stroke="#0f172a" stroke-width="1"/>` : ''}
+        <text x="${startX + boxW/2}" y="${10 + topH/2 + 3}" font-size="8" fill="#475569" text-anchor="middle">${profCM.toFixed(0)} cm prof.</text>
+        <text x="${startX + boxW/2}" y="${10 + topH + 12}" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>
+      </svg>`;
+      document.getElementById('svgTopContainer').innerHTML = topSVG;
+
+      const promptTexto = gerarPromptGemini(data);
+      document.getElementById('promptGeminiBox').value = promptTexto;
+    }
+
+    // --- GERADOR DE PROMPT FIDEDIGNO PARA GEMINI ---
+    function gerarPromptGemini(data) {
+      const itemAtivo = obterItemAtivo();
+      const altM = ((data.alturaMM || 2800) / 1000).toFixed(2).replace('.', ',');
+      const largM = ((data.larguraMM || 1200) / 1000).toFixed(2).replace('.', ',');
+      const profCM = Math.round((data.profundidadeMM || 600) / 10);
+      
+      let detalhesEstrutura = [];
+      if (data.numModulos > 1) detalhesEstrutura.push(`divisão em ${data.numModulos} módulos/colunas verticais`);
+      if (data.temMaleiro) detalhesEstrutura.push("espaço superior para maleiro");
+      if (data.temCabideiro) detalhesEstrutura.push("vão interno com cabideiro metálico para roupas");
+      if (data.numPrateleiras > 0) detalhesEstrutura.push(`${data.numPrateleiras} prateleira(s) de apoio`);
+      if (data.numGavetas > 0) detalhesEstrutura.push(`bloco inferior com ${data.numGavetas} gavetas com puxadores alinhados`);
+      if (!data.temMaleiro && !data.temCabideiro && data.numGavetas === 0 && data.numPrateleiras === 0) {
+        detalhesEstrutura.push("vão livre/nicho modular");
+      }
+
+      return `Gere uma imagem fotorrealista em altíssima definição (3D architectural render) de um móvel planejado de marcenaria de alto padrão.
+
+📐 MEDIDAS E PROPORÇÕES REALISTAS:
+- Descrição do Móvel: ${data.resumoComercial}
+- Dimensões Exatas: Largura de ${largM}m x Altura de ${altM}m x Profundidade de ${profCM}cm.
+- Layout de Montagem: ${detalhesEstrutura.join(', ')}.
+
+🎨 MATERIAL E COR (MUITO IMPORTANTE):
+- Padrão/Material: ${itemAtivo.nome}. Representar com fidelidade exata a textura, tonalidade e acabamento deste padrão no móvel todo.
+- Acabamento impecável com fita de borda perfeitamente aplicada nos topos.
+
+💡 ILUMINAÇÃO E AMBIENTE:
+- Ângulo de fotografia de estúdio de arquitetura de interiores em perspectiva 3D frontal.
+- Iluminação natural suave e realista valorizando a marcenaria e o ambiente.
+- O móvel deve ser mostrado completo, montado e perfeitamente proporcional às dimensões de ${largM}m x ${altM}m.`;
     }
 
     function copiarPromptGemini() {
       const box = document.getElementById('promptGeminiBox');
       box.select();
-      navigator.clipboard.writeText(box.value);
-      const status = document.getElementById('statusCopia');
-      status.style.display = 'block';
-      status.innerText = '✅ Prompt copiado com sucesso!';
-      setTimeout(() => { status.style.display = 'none'; }, 3000);
+      box.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(box.value).then(() => {
+        const statusCopia = document.getElementById('statusCopia');
+        statusCopia.innerText = '✅ Prompt copiado! Agora cole no Gemini para gerar sua imagem.';
+        statusCopia.style.display = 'block';
+        setTimeout(() => { statusCopia.style.display = 'none'; }, 4000);
+      }).catch(err => {
+        alert('Erro ao copiar prompt: ' + err);
+      });
     }
 
     function mudarAba(aba) {
-      ['comercial','tecnica','esboco'].forEach(a => {
-        document.getElementById('aba'+a.charAt(0).toUpperCase()+a.slice(1)).style.display = aba === a ? 'block' : 'none';
-        document.getElementById('tab'+a.charAt(0).toUpperCase()+a.slice(1)+'Btn').className = aba === a ? 'tab active' : 'tab';
+      document.getElementById('abaComercial').style.display = aba === 'comercial' ? 'block' : 'none';
+      document.getElementById('abaTecnica').style.display = aba === 'tecnica' ? 'block' : 'none';
+      document.getElementById('abaEsboco').style.display = aba === 'esboco' ? 'block' : 'none';
+
+      document.getElementById('tabComercialBtn').className = aba === 'comercial' ? 'tab active' : 'tab';
+      document.getElementById('tabTecnicaBtn').className = aba === 'tecnica' ? 'tab active' : 'tab';
+      document.getElementById('tabEsbocoBtn').className = aba === 'esboco' ? 'tab active' : 'tab';
+    }
+
+    // --- GERENCIAMENTO DO HISTÓRICO ---
+    function salvarProjetoNoHistorico() {
+      if (!ultimoResultado) {
+        alert('Gere um orçamento antes de salvar!');
+        return;
+      }
+
+      const nomeClienteInput = document.getElementById('nomeCliente');
+      const nomeCliente = nomeClienteInput.value.trim() || ('Projeto ' + new Date().toLocaleDateString('pt-BR'));
+      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
+      const itemAtivo = obterItemAtivo();
+
+      const custoMaterial = ultimoResultado.custoMaterial || 0;
+      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
+
+      const novoProjeto = {
+        id: Date.now().toString(),
+        cliente: nomeCliente,
+        data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+        valorTotal: valorFinal,
+        mdfNome: itemAtivo.nome,
+        mdfPreco: itemAtivo.preco,
+        resultado: ultimoResultado
+      };
+
+      historicoProjetos.unshift(novoProjeto);
+      
+      try {
+        localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
+        alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso!`);
+        renderHistorico();
+      } catch (err) {
+        alert('Erro ao salvar no histórico: Limite de armazenamento atingido.');
+      }
+    }
+
+    function renderHistorico() {
+      const container = document.getElementById('listaHistorico');
+      container.innerHTML = '';
+
+      if (historicoProjetos.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum orçamento salvo no histórico ainda.</p>';
+        return;
+      }
+
+      historicoProjetos.forEach((p, index) => {
+        const div = document.createElement('div');
+        div.className = 'proj-card';
+        div.innerHTML = `
+          <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <strong style="color:var(--accent); font-size:1rem;">${p.cliente}</strong><br>
+              <span style="font-size:0.75rem; color:var(--text-dim);">${p.data}</span>
+            </div>
+            <strong style="font-size:1.1rem; color:#fff;">${p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-dim);">
+            🎨 ${p.mdfNome} | ${p.resultado.resumoComercial}
+          </div>
+          <div style="display:flex; gap:8px; width:100%; margin-top:4px;">
+            <button class="btn-sm" style="background-color:var(--blue); color:#fff; flex:1;" onclick="carregarProjetoHistorico(${index})">👁️ Abrir Projeto</button>
+            <button class="btn-sm btn-danger" onclick="excluirProjetoHistorico(${index})">🗑️ Excluir</button>
+          </div>
+        `;
+        container.appendChild(div);
       });
+    }
+
+    function carregarProjetoHistorico(index) {
+      const p = historicoProjetos[index];
+      if (!p) return;
+
+      ultimoResultado = p.resultado;
+
+      document.getElementById('nomeCliente').value = p.cliente;
+      
+      // Recupera o valor que foi calculado originalmente ou mantém os campos atuais se desejar refazer
+      exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value));
+      desenharPranchaSVG(ultimoResultado);
+
+      mudarVisaoPrincipal('projeto');
+      mudarAba('comercial');
+    }
+
+    function excluirProjetoHistorico(index) {
+      if (confirm('Deseja realmente apagar este orçamento do histórico?')) {
+        historicoProjetos.splice(index, 1);
+        localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
+        renderHistorico();
+      }
     }
   </script>
 </body>
