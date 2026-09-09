@@ -48,7 +48,7 @@
     .file-input-wrapper input { display: none; }
     #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
 
-    /* SUB-ABAS DOS RESULTADOS */
+    /* SUB-ABAS DOS RESULTADOS E DO PAINEL DE CONTROLE */
     .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
     .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .tab.active { background: var(--accent); color: #000; }
@@ -100,13 +100,73 @@
   </nav>
 
   <!-- ==================== VISÃO 1: INÍCIO (DASHBOARD) ==================== -->
-  <div id="viewInicio" class="main-view" style="text-align: center; padding: 20px 0;">
-    <div class="card">
-      <h2 style="justify-content: center; color: var(--accent);">Painel de Controle</h2>
-      <p style="color: var(--text-dim); margin-bottom: 20px;">O que você deseja fazer agora?</p>
+  <div id="viewInicio" class="main-view" style="padding: 10px 0;">
+    <h2 style="text-align: center; color: var(--accent); margin-bottom: 16px;">Painel de Controle</h2>
+    
+    <!-- Sub-abas do Painel de Controle -->
+    <div class="tabs">
+      <div class="tab active" id="tabAcessoBtn" onclick="mudarAbaInicio('acesso')">🚀 Acesso Rápido</div>
+      <div class="tab" id="tabControleBtn" onclick="mudarAbaInicio('controle')">🎛️ Controle (Regras e Preços)</div>
+    </div>
+
+    <!-- Aba Interna: Acesso Rápido -->
+    <div id="abaAcesso" style="text-align: center; margin-top: 15px;">
+      <div class="card">
+        <p style="color: var(--text-dim); margin-bottom: 20px;">O que você deseja fazer agora?</p>
+        <button class="btn" style="padding: 20px; font-size: 1.1rem;" onclick="mudarVisaoPrincipal('projeto')">📐 Iniciar Novo Projeto</button>
+        <button class="btn btn-sec" style="padding: 20px; font-size: 1.1rem; margin-top: 15px;" onclick="mudarVisaoPrincipal('clientes')">👥 Acessar Meus Clientes</button>
+      </div>
+    </div>
+
+    <!-- Aba Interna: Controle (Movido de Configurações) -->
+    <div id="abaControle" style="display: none; margin-top: 15px;">
       
-      <button class="btn" style="padding: 20px; font-size: 1.1rem;" onclick="mudarVisaoPrincipal('projeto')">📐 Iniciar Novo Projeto</button>
-      <button class="btn btn-sec" style="padding: 20px; font-size: 1.1rem; margin-top: 15px;" onclick="mudarVisaoPrincipal('clientes')">👥 Acessar Meus Clientes</button>
+      <div class="card">
+        <h2>🛠️ Regras de Construção</h2>
+        <div class="grid-2">
+          <div>
+            <label>Espessura Caixa (mm)</label>
+            <select id="espCaixa" onchange="salvarConfig()">
+              <option value="15">15 mm</option>
+              <option value="18">18 mm</option>
+            </select>
+          </div>
+          <div>
+            <label>Espessura Fundo (mm)</label>
+            <select id="espFundo" onchange="salvarConfig()">
+              <option value="6">6 mm</option>
+              <option value="15">15 mm</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 10px;">
+          <div>
+            <label>Folga para Gavetas (mm)</label>
+            <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
+          </div>
+          <div>
+            <label>Margem / Lucro Padrão (%)</label>
+            <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🏷️ Tabela de Preços (Materiais e Insumos)</h2>
+        <label>Material / MDF Principal Selecionado no Projeto</label>
+        <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
+        <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
+          <label>➕ Cadastrar Novo Item na Tabela</label>
+          <div class="grid-2">
+            <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
+            <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
+          </div>
+          <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
+        </div>
+        <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
+        <div id="listaItensTabela"></div>
+      </div>
+
     </div>
   </div>
 
@@ -253,7 +313,10 @@
   <!-- ==================== VISÃO 3: CLIENTES E PASTAS ==================== -->
   <div id="viewClientes" class="main-view" style="display: none;">
     <div class="card">
-      <h2>👥 Gestão de Clientes e Pastas</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2>👥 Clientes e Pastas</h2>
+        <button class="btn-sm" style="background-color: var(--border); color: #fff;" onclick="mudarVisaoPrincipal('inicio')">Voltar</button>
+      </div>
       
       <!-- Cadastro Completo -->
       <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
@@ -291,60 +354,14 @@
     </div>
   </div>
 
-  <!-- ==================== VISÃO 4: CONFIGURAÇÕES ==================== -->
+  <!-- ==================== VISÃO 4: CONFIGURAÇÕES (APENAS API) ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
-    
     <div class="card">
       <h2>🔑 Chave de Conexão (IA)</h2>
       <div id="statusApiKeyBadge"></div>
       <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
       <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
-    </div>
-
-    <div class="card">
-      <h2>⚙️ Regras de Construção</h2>
-      <div class="grid-2">
-        <div>
-          <label>Espessura Caixa (mm)</label>
-          <select id="espCaixa" onchange="salvarConfig()">
-            <option value="15">15 mm</option>
-            <option value="18">18 mm</option>
-          </select>
-        </div>
-        <div>
-          <label>Espessura Fundo (mm)</label>
-          <select id="espFundo" onchange="salvarConfig()">
-            <option value="6">6 mm</option>
-            <option value="15">15 mm</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid-2" style="margin-top: 10px;">
-        <div>
-          <label>Folga para Gavetas (mm)</label>
-          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
-        </div>
-        <div>
-          <label>Margem / Lucro Padrão (%)</label>
-          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>🏷️ Tabela de Preços (Materiais e Insumos)</h2>
-      <label>Material / MDF Principal Selecionado no Projeto</label>
-      <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
-      <div style="margin-top: 16px; border-top: 1px stroke var(--border); padding-top: 12px;">
-        <label>➕ Cadastrar Novo Item na Tabela</label>
-        <div class="grid-2">
-          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
-          <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
-        </div>
-        <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
-      </div>
-      <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
-      <div id="listaItensTabela"></div>
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">As outras regras de marcenaria foram movidas para a aba "Controle" na tela de Início.</p>
     </div>
   </div>
 
@@ -358,6 +375,7 @@
     ];
 
     window.onload = () => {
+      // Carrega os dados salvos
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
       document.getElementById('espCaixa').value = localStorage.getItem('esp_caixa') || '15';
       document.getElementById('espFundo').value = localStorage.getItem('esp_fundo') || '6';
@@ -368,20 +386,32 @@
       atualizarBadgeApiKey();
       atualizarSelectClientes();
       renderizarPastasClientes();
+      
+      // Inicia sempre na tela de Início para mostrar o Dashboard
+      mudarVisaoPrincipal('inicio');
     };
 
-    // --- CONTROLE DE VISÃO ---
+    // --- CONTROLES DE VISÃO PRINCIPAL ---
     function mudarVisaoPrincipal(visao) {
       document.querySelectorAll('.main-view').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.main-nav-btn').forEach(el => el.classList.remove('active'));
       
       document.getElementById('view' + visao.charAt(0).toUpperCase() + visao.slice(1)).style.display = 'block';
       
-      // Botões do Menu Superior (apenas 2 existem)
+      // Botões do Menu Superior
       const btn = document.getElementById('nav' + visao.charAt(0).toUpperCase() + visao.slice(1) + 'Btn');
       if(btn) btn.classList.add('active');
     }
 
+    // --- CONTROLE DAS SUB-ABAS DO DASHBOARD (INÍCIO) ---
+    function mudarAbaInicio(aba) {
+      document.getElementById('abaAcesso').style.display = aba === 'acesso' ? 'block' : 'none';
+      document.getElementById('abaControle').style.display = aba === 'controle' ? 'block' : 'none';
+      document.getElementById('tabAcessoBtn').className = aba === 'acesso' ? 'tab active' : 'tab';
+      document.getElementById('tabControleBtn').className = aba === 'controle' ? 'tab active' : 'tab';
+    }
+
+    // --- SALVAMENTO E CONFIGURAÇÕES ---
     function salvarConfig() {
       localStorage.setItem('gemini_key', document.getElementById('apiKey').value.trim());
       localStorage.setItem('esp_caixa', document.getElementById('espCaixa').value);
@@ -590,7 +620,11 @@
     }
     async function processarCroqui() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
-      if (!apiKey) return alert('Cadastre sua Chave de API na aba Configuração.');
+      if (!apiKey) {
+        alert('Cadastre sua Chave de API na aba Configuração.');
+        mudarVisaoPrincipal('config');
+        return;
+      }
       
       const statusEl = document.getElementById('status');
       statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Analisando dados estruturais...';
@@ -623,7 +657,7 @@ JSON estrito:
         desenharPranchaSVG(ultimoResultado);
         statusEl.style.display = 'none';
       } catch (err) {
-        statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro ao analisar.';
+        statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro ao analisar. Verifique sua chave de API.';
       } finally { document.getElementById('btnProcessar').disabled = false; }
     }
 
@@ -656,7 +690,6 @@ JSON estrito:
     }
 
     function desenharPranchaSVG(data) {
-      // (Mantido idêntico ao anterior para desenhar a prancha proporcional estilo CAD)
       const altMM = data.alturaMM || 2800; const largMM = data.larguraMM || 1200; const profMM = data.profundidadeMM || 600;
       document.getElementById('lblLargura').innerText = `${(largMM/1000).toFixed(2)} m`;
       document.getElementById('lblAltura').innerText = `${(altMM/1000).toFixed(2)} m`;
