@@ -74,8 +74,8 @@
     .info-medidas strong { color: #0f172a; }
 
     /* CARDS DE HISTÓRICO E ITENS */
-    .mdf-item, .proj-card { background: #0f172a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .proj-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .mdf-item, .proj-card, .cli-card { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 8px; }
+    .proj-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
     .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
     .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
@@ -186,7 +186,7 @@
           <h2 id="valorTotal" style="color: var(--accent); font-size: 1.6rem; margin-top: 4px;">R$ 0,00</h2>
         </div>
 
-        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento nos Clientes</button>
+        <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento nos Histórico</button>
         <button class="btn btn-sec" style="background-color: #475569;" onclick="window.print()">🖨️ Imprimir / Gerar PDF</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
         <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
@@ -302,13 +302,55 @@
 
   </div>
 
-  <!-- ==================== VISÃO 2: CLIENTES (HISTÓRICO) ==================== -->
+  <!-- ==================== VISÃO 2: CLIENTES (CADASTRO E HISTÓRICO) ==================== -->
   <div id="viewClientes" class="main-view" style="display: none;">
+    
+    <!-- CADASTRO / EDIÇÃO DE CLIENTE -->
     <div class="card">
-      <h2>📁 Histórico de Clientes e Orçamentos</h2>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Consulte, reabra orçamentos ou acompanhe os projetos salvos.</p>
+      <h2 id="tituloFormCliente">👤 Cadastrar Novo Cliente</h2>
+      <input type="hidden" id="editClientId">
+
+      <label>Nome *</label>
+      <input type="text" id="cadNome" placeholder="Nome completo do cliente">
+
+      <div class="grid-2">
+        <div>
+          <label>Telefone / WhatsApp</label>
+          <input type="text" id="cadTelefone" placeholder="(00) 00000-0000">
+        </div>
+        <div>
+          <label>E-mail</label>
+          <input type="email" id="cadEmail" placeholder="cliente@email.com">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label>Empresa</label>
+          <input type="text" id="cadEmpresa" placeholder="Nome da empresa (opcional)">
+        </div>
+        <div>
+          <label>Endereço</label>
+          <input type="text" id="cadEndereco" placeholder="Rua, número, bairro, cidade">
+        </div>
+      </div>
+
+      <button class="btn" id="btnSalvarCliente" onclick="salvarCliente()">💾 Salvar Cliente</button>
+      <button class="btn btn-danger" id="btnCancelarCliente" style="display:none; margin-top:8px;" onclick="limparFormCliente()">❌ Cancelar Edição</button>
+    </div>
+
+    <!-- LISTA DE CLIENTES CADASTRADOS -->
+    <div class="card">
+      <h2>📇 Clientes Cadastrados</h2>
+      <div id="listaClientesCadastrados"></div>
+    </div>
+
+    <!-- HISTÓRICO DE ORÇAMENTOS -->
+    <div class="card">
+      <h2>📁 Histórico de Orçamentos Salvos</h2>
       <div id="listaHistorico"></div>
     </div>
+
   </div>
 
   <!-- ==================== VISÃO 3: CONFIGURAÇÃO ==================== -->
@@ -375,6 +417,7 @@
     ];
 
     let historicoProjetos = JSON.parse(localStorage.getItem('historico_projetos')) || [];
+    let listaClientes = JSON.parse(localStorage.getItem('lista_clientes')) || [];
 
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
@@ -385,6 +428,7 @@
 
       renderTabelaPrecos();
       renderHistorico();
+      renderClientes();
       atualizarBadgeApiKey();
     };
 
@@ -417,6 +461,112 @@
         badgeContainer.innerHTML = '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>';
       } else {
         badgeContainer.innerHTML = '<span class="badge-status badge-alert">⚠️ Chave de API Ausente. Cole sua chave do Gemini.</span>';
+      }
+    }
+
+    // --- GESTÃO DE CLIENTES ---
+    function salvarCliente() {
+      const id = document.getElementById('editClientId').value;
+      const nome = document.getElementById('cadNome').value.trim();
+      const telefone = document.getElementById('cadTelefone').value.trim();
+      const email = document.getElementById('cadEmail').value.trim();
+      const empresa = document.getElementById('cadEmpresa').value.trim();
+      const endereco = document.getElementById('cadEndereco').value.trim();
+
+      if (!nome) {
+        alert('Por favor, informe ao menos o nome do cliente.');
+        return;
+      }
+
+      if (id) {
+        // Editar existente
+        const index = listaClientes.findIndex(c => c.id === id);
+        if (index !== -1) {
+          listaClientes[index] = { id, nome, telefone, email, empresa, endereco };
+        }
+      } else {
+        // Novo cliente
+        const novoCli = {
+          id: Date.now().toString(),
+          nome, telefone, email, empresa, endereco
+        };
+        listaClientes.unshift(novoCli);
+      }
+
+      localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
+      limparFormCliente();
+      renderClientes();
+      alert('✅ Cliente salvo com sucesso!');
+    }
+
+    function renderClientes() {
+      const container = document.getElementById('listaClientesCadastrados');
+      container.innerHTML = '';
+
+      if (listaClientes.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum cliente cadastrado ainda.</p>';
+        return;
+      }
+
+      listaClientes.forEach((cli) => {
+        const div = document.createElement('div');
+        div.className = 'cli-card';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <strong style="color:var(--accent); font-size:1rem;">${cli.nome}</strong>
+              ${cli.empresa ? `<span style="font-size:0.8rem; color:var(--text-dim);"> (${cli.empresa})</span>` : ''}
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarCliente('${cli.id}')">✏️ Editar</button>
+              <button class="btn-sm btn-danger" onclick="excluirCliente('${cli.id}')">🗑️ Excluir</button>
+            </div>
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-dim); margin-top:6px; display:flex; flex-direction:column; gap:2px;">
+            ${cli.telefone ? `<span>📞 ${cli.telefone}</span>` : ''}
+            ${cli.email ? `<span>📧 ${cli.email}</span>` : ''}
+            ${cli.endereco ? `<span>📍 ${cli.endereco}</span>` : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function editarCliente(id) {
+      const cli = listaClientes.find(c => c.id === id);
+      if (!cli) return;
+
+      document.getElementById('editClientId').value = cli.id;
+      document.getElementById('cadNome').value = cli.nome;
+      document.getElementById('cadTelefone').value = cli.telefone || '';
+      document.getElementById('cadEmail').value = cli.email || '';
+      document.getElementById('cadEmpresa').value = cli.empresa || '';
+      document.getElementById('cadEndereco').value = cli.endereco || '';
+
+      document.getElementById('tituloFormCliente').innerText = '✏️ Editar Cliente';
+      document.getElementById('btnSalvarCliente').innerText = '💾 Atualizar Cliente';
+      document.getElementById('btnCancelarCliente').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function limparFormCliente() {
+      document.getElementById('editClientId').value = '';
+      document.getElementById('cadNome').value = '';
+      document.getElementById('cadTelefone').value = '';
+      document.getElementById('cadEmail').value = '';
+      document.getElementById('cadEmpresa').value = '';
+      document.getElementById('cadEndereco').value = '';
+
+      document.getElementById('tituloFormCliente').innerText = '👤 Cadastrar Novo Cliente';
+      document.getElementById('btnSalvarCliente').innerText = '💾 Salvar Cliente';
+      document.getElementById('btnCancelarCliente').style.display = 'none';
+    }
+
+    function excluirCliente(id) {
+      if (confirm('Deseja realmente excluir este cliente do cadastro?')) {
+        listaClientes = listaClientes.filter(c => c.id !== id);
+        localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
+        renderClientes();
       }
     }
 
@@ -671,7 +821,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       });
     }
 
-    function recalcalcularPrecoManual() {
+    function recalcularPrecoManual() {
       if (!ultimoResultado) return;
 
       const chapas = parseFloat(document.getElementById('inpEditChapas').value) || 0;
@@ -902,7 +1052,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       
       try {
         localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
-        alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso nos Clientes!`);
+        alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso!`);
         renderHistorico();
       } catch (err) {
         alert('Erro ao salvar no histórico: Limite de armazenamento atingido.');
@@ -914,7 +1064,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
       container.innerHTML = '';
 
       if (historicoProjetos.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum cliente ou orçamento salvo ainda.</p>';
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum orçamento salvo ainda.</p>';
         return;
       }
 
@@ -956,7 +1106,7 @@ Responda OBRIGATORIAMENTE em formato JSON válido, sem texto explicativo fora do
     }
 
     function excluirProjetoHistorico(index) {
-      if (confirm('Deseja realmente apagar este registro?')) {
+      if (confirm('Deseja realmente apagar este orçamento?')) {
         historicoProjetos.splice(index, 1);
         localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
         renderHistorico();
