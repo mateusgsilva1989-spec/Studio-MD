@@ -123,7 +123,7 @@
     <button class="btn-voltar-home" onclick="mudarVisaoPrincipal('home')">🏠 Início</button>
   </header>
 
-  <!-- ==================== VISÃO 1: ORÇAMENTO (Texto e/ou Imagem) ==================== -->
+  <!-- ==================== VISÃO 1: ORÇAMENTO ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
     <div class="card">
       <h2>📝 Novo Orçamento</h2>
@@ -727,8 +727,6 @@
     }
 
     /* PROCESSAMENTO COM A INTELIGÊNCIA ARTIFICIAL */
-    
-    // Função NOVA para validar se o botão pode ser clicado (Texto e/ou Imagem)
     function validarEntradaOrcamento() {
         const descText = document.getElementById('descricaoMovel').value.trim();
         const btn = document.getElementById('btnProcessar');
@@ -752,7 +750,7 @@
         const imgEl = document.getElementById('preview-img');
         imgEl.src = evt.target.result;
         imgEl.style.display = 'block';
-        validarEntradaOrcamento(); // Valida novamente para liberar o botão
+        validarEntradaOrcamento();
       };
       reader.readAsDataURL(file);
     }
@@ -775,7 +773,6 @@
       const notebookContexto = document.getElementById('notebookContexto').value.trim();
       const descUsuario = document.getElementById('descricaoMovel').value.trim();
       
-      // Adaptando o prompt para aceitar texto sem imagem obrigatoriamente
       const prompt = `Você é um mestre marceneiro e orçamentista sênior.
 CONSIDERE O SEGUINTE CONHECIMENTO TÉCNICO:
 """
@@ -800,14 +797,19 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
   "chapasEstimadas": 0.5, "custoOutros": 120
 }`;
 
-      // Prepara a chamada dinamicamente (com ou sem imagem)
       const parts = [{ text: prompt }];
       if (imagemBase64) {
           parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
       }
 
       let data = null, ultimoErro = '';
-      for (const modelo of ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash']) {
+      
+      // ==========================================
+      // CORREÇÃO APLICADA AQUI ABAIXO:
+      // O modelo 'gemini-2.5-flash' foi descontinuado pela API. 
+      // A chamada foi atualizada para utilizar os modelos mais recentes (gemini-3.6-flash).
+      // ==========================================
+      for (const modelo of ['gemini-3.6-flash']) {
         try {
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`, {
             method: 'POST',
@@ -822,8 +824,8 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
 
       if (!data) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro: ' + (ultimoErro || 'Verifique sua chave.');
-        validarEntradaOrcamento(); // Re-avalia para destravar o botão
+        statusEl.innerText = '❌ Erro: ' + (ultimoErro || 'Verifique sua chave ou modelo indisponível.');
+        validarEntradaOrcamento(); 
         return;
       }
 
@@ -838,7 +840,7 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
         statusEl.className = 'status-msg error';
         statusEl.innerText = '❌ Erro ao processar o formato de resposta da IA.';
       } finally {
-        validarEntradaOrcamento(); // Re-avalia para destravar o botão
+        validarEntradaOrcamento(); 
       }
     }
 
