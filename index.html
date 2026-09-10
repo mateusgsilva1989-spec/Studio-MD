@@ -74,7 +74,7 @@
   <!-- ==================== PÁGINA INICIAL ==================== -->
   <div id="viewHome" class="main-view" style="text-align: center; padding-top: 40px;">
     <h1 style="font-size: 2.2rem; color: var(--accent); margin-bottom: 6px;">Studio DM</h1>
-    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 40px;">Sistema de Engenharia e Orçamento (Fase 1.5)</p>
+    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 40px;">Sistema Paramétrico Confiável (Fase 1.6)</p>
     
     <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
       <button class="btn" style="font-size: 1.1rem; padding: 16px;" onclick="UI.mudarVisao('projeto')">📐 Orçamento Estruturado</button>
@@ -93,8 +93,8 @@
   <!-- ==================== VISÃO 1: ORÇAMENTO ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
     <div class="card" id="inputCard">
-      <h2>📝 Novo Projeto</h2>
-      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Descreva o móvel ou envie foto. A IA extrai os dados, e nosso <b>Motor de Engenharia</b> faz o cálculo.</p>
+      <h2>📝 Novo Projeto Parametrizado</h2>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Descreva o móvel ou envie foto. A IA extrai a intenção e o <strong>Motor Construtivo Paramétrico</strong> faz o cálculo.</p>
       
       <label for="descricaoMovel">Instruções do Marceneiro</label>
       <textarea id="descricaoMovel" rows="4" placeholder="Ex: Roupeiro com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=1800mm A=2500mm P=600mm..." oninput="UI.validarEntradaOrcamento()"></textarea>
@@ -119,11 +119,17 @@
       <div id="status" class="status-msg"></div>
     </div>
 
+    <!-- VALIDAÇÃO DA IA E SELEÇÃO DO SISTEMA CONSTRUTIVO -->
     <div id="confirmacaoIACard" class="card" style="display: none; border-color: var(--accent);">
-      <h2>🤖 Validação de Dados da IA</h2>
-      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">A IA não calcula preços nem peças. Ela apenas extraiu o layout. Confirme os dados abaixo para o Motor de Engenharia agir.</p>
-      <div id="dadosProjetoIA" style="background: #0f172a; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
-      <button class="btn" style="background-color: var(--accent); color: #000; margin-top: 16px;" onclick="App.confirmarEGerarEngenharia()">⚙️ Calcular Engenharia & Preços</button>
+      <h2>🤖 Validação de Dados da IA & Sistema Construtivo</h2>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Confirme os dados extraídos e selecione o Sistema Construtivo que definirá as regras geométricas do móvel:</p>
+      
+      <div id="dadosProjetoIA" style="background: #0f172a; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;"></div>
+
+      <label style="color:var(--accent);">Escolha o Sistema Construtivo:</label>
+      <select id="selectSistemaConstrutivo" style="margin-bottom: 16px;"></select>
+
+      <button class="btn" style="background-color: var(--accent); color: #000;" onclick="App.confirmarEGerarEngenharia()">⚙️ Calcular Engenharia Paramétrica</button>
       <button class="btn btn-danger" style="margin-top: 8px;" onclick="UI.cancelarConfirmacaoIA()">❌ Corrigir Dados</button>
     </div>
 
@@ -159,14 +165,17 @@
             </div>
         </div>
 
-        <button class="btn" style="background-color: #10b981; color:#000;" onclick="App.salvarProjeto()">💾 Salvar Orçamento</button>
+        <button class="btn" style="background-color: #10b981; color:#000;" onclick="App.salvarProjeto()">💾 Salvar Orçamento Parametrizado</button>
         <button class="btn btn-sec" style="background-color: #475569;" onclick="window.print()">🖨️ Imprimir Proposta</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
       </div>
 
       <div id="abaTecnica" style="display: none;">
+        <!-- Relatório de Regras Aplicadas (Req. 35) -->
+        <div id="relatorioRegrasAplicadas" style="background: #1b2436; border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 12px; color: var(--text-dim);"></div>
+
         <div class="calc-box">
-          <h4>🧮 Custos Consolidados <span class="ia-badge">Determinístico</span></h4>
+          <h4>🧮 Custos Baseados no Sistema Construtivo</h4>
           <table style="width:100%; border:none;">
             <tr><td style="border:none; color:var(--text-dim);">Chapas (MDF/Fundo)</td><td style="border:none; text-align:right;" id="tCustoChapas">R$ 0,00</td></tr>
             <tr><td style="border:none; color:var(--text-dim);">Fita de Borda</td><td style="border:none; text-align:right;" id="tCustoFita">R$ 0,00</td></tr>
@@ -178,13 +187,13 @@
           </table>
         </div>
 
-        <h3>Lista de Peças de Corte</h3>
+        <h3>Lista de Peças Parametrizadas</h3>
         <table id="tabelaPecas">
-          <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th><th>Material</th></tr></thead>
+          <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th><th>Origem Construtiva</th></tr></thead>
           <tbody></tbody>
         </table>
 
-        <h3 style="margin-top: 16px;">Ferragens Aplicadas por Regra</h3>
+        <h3 style="margin-top: 16px;">Ferragens Derivadas</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
       </div>
 
@@ -211,30 +220,30 @@
     </div>
   </div>
 
-  <!-- ==================== VISÃO: CADASTROS ==================== -->
+  <!-- ==================== VISÃO: CADASTROS (COM ABA SISTEMAS) ==================== -->
   <div id="viewMetodos" class="main-view" style="display: none;">
     <div class="card">
-      <h2>🏷️ Gestão de Catálogos e Preços</h2>
+      <h2>🏷️ Central de Cadastros e Regras</h2>
       
       <div class="tabs" style="margin-top:12px;">
         <div class="tab active" id="tabCadMat" onclick="UI.mudarAbaCadastro('materiais')">Materiais</div>
         <div class="tab" id="tabCadFer" onclick="UI.mudarAbaCadastro('ferragens')">Ferragens</div>
         <div class="tab" id="tabCadSer" onclick="UI.mudarAbaCadastro('servicos')">Serviços</div>
+        <div class="tab" id="tabCadSis" onclick="UI.mudarAbaCadastro('sistemas')">Sistemas</div>
       </div>
 
-      <div style="margin-top: 16px; border: 1px solid var(--border); padding: 12px; border-radius: 8px; background:#0f172a;">
+      <div id="formCadastroContainer" style="margin-top: 16px; border: 1px solid var(--border); padding: 12px; border-radius: 8px; background:#0f172a;">
         <label id="lblAcaoTabela">➕ Adicionar Novo Item</label>
         <div class="grid-2">
-          <input type="text" id="cadItemNome" placeholder="Nome do Produto">
-          <input type="number" id="cadItemPreco" placeholder="Custo (R$)">
+          <input type="text" id="cadItemNome" placeholder="Nome do Produto / Sistema">
+          <input type="number" id="cadItemPreco" placeholder="Custo / Valor (R$)">
         </div>
-        <div id="extraCadFields"></div>
         <div style="display: flex; gap: 8px; margin-top: 12px;">
             <button class="btn btn-sec" id="btnSalvarItem" style="margin-top: 0; flex: 1;" onclick="App.salvarItemCadastro()">Adicionar</button>
         </div>
       </div>
       
-      <label style="margin-top: 24px;">📋 Itens Ativos na Categoria:</label>
+      <label style="margin-top: 24px;">📋 Itens Ativos:</label>
       <div id="listaItensTabela"></div>
     </div>
   </div>
@@ -242,7 +251,7 @@
   <!-- ==================== VISÃO: CRM ==================== -->
   <div id="viewClientes" class="main-view" style="display: none;">
     <div class="card">
-      <h2>📁 Histórico de Orçamentos (Versões Salvas)</h2>
+      <h2>📁 Histórico de Orçamentos (Versões Construtivas Salvas)</h2>
       <div id="listaHistorico"></div>
     </div>
   </div>
@@ -278,14 +287,13 @@
 
   <script>
     // =========================================================
-    // ESTRUTURA DE DADOS CENTRAL (StorageManager & DB)
+    // ESTRUTURA DE DADOS CENTRAL (StorageManager & DB v3)
     // =========================================================
     const DB = {
         materiais: [],
         ferragens: [],
         servicos: [],
-        regras: [],
-        modulos: [],
+        sistemasConstrutivos: [],
         projetos: [],
         clientes: [],
         perfisPreco: [
@@ -297,8 +305,8 @@
             espCaixa: 15,
             espFundo: 6,
             folgaGaveta: 26,
-            margemFitaBorda: 1.15, // 15% perda
-            rendimentoChapa: 0.70, // 70%
+            margemFitaBorda: 1.15,
+            rendimentoChapa: 0.70,
             apiKey: '',
             contexto: ''
         }
@@ -307,16 +315,17 @@
     const StorageManager = {
         load: function() {
             this.migrarDadosAntigos();
-            const storedDB = localStorage.getItem('StudioDM_DB_v2');
+            const storedDB = localStorage.getItem('StudioDM_DB_v3');
             if (storedDB) {
                 const parsed = JSON.parse(storedDB);
                 Object.assign(DB, parsed);
             } else {
                 this.popularDadosBase();
             }
+            this.garantirSistemasPadrao();
         },
         save: function() {
-            localStorage.setItem('StudioDM_DB_v2', JSON.stringify(DB));
+            localStorage.setItem('StudioDM_DB_v3', JSON.stringify(DB));
         },
         saveConfig: function() {
             DB.configuracoes.apiKey = document.getElementById('apiKey').value;
@@ -338,21 +347,46 @@
             );
             this.save();
         },
-        migrarDadosAntigos: function() {
-            if (localStorage.getItem('migracao_v2_concluida')) return;
-            let velhaTabela = JSON.parse(localStorage.getItem('tabela_precos') || localStorage.getItem('tabela_mdf') || "[]");
-            let velhoHistorico = JSON.parse(localStorage.getItem('historico_projetos') || "[]");
-            
-            if(velhaTabela.length > 0 || velhoHistorico.length > 0) {
-                localStorage.setItem('backupLegacy_DB', JSON.stringify({tabela: velhaTabela, historico: velhoHistorico}));
-                velhaTabela.forEach(item => {
-                    let cat = (item.categoria || '').toUpperCase();
-                    if(cat.includes('MDF') || cat.includes('CHAPA')) DB.materiais.push({ id: `mig-${Date.now()}-${Math.random()}`, categoria: 'MDF', nome: item.nome, preco: item.preco, espessura: item.espessuraMM || 15 });
-                    else DB.ferragens.push({ id: `mig-${Date.now()}-${Math.random()}`, categoria: 'GERAL', nome: item.nome, preco: item.preco, unidade: item.unidade });
-                });
-                velhoHistorico.forEach(hist => { DB.projetos.push(hist); });
+        garantirSistemasPadrao: function() {
+            if (!DB.sistemasConstrutivos || DB.sistemasConstrutivos.length === 0) {
+                DB.sistemasConstrutivos = [
+                    {
+                        id: "caixa-padrao-studio-dm",
+                        nome: "Caixa Padrão Studio DM",
+                        versao: 1,
+                        ativo: true,
+                        caixa: { laterais: "externas", tampo: "entre_laterais", base: "entre_laterais", divisorias: "entre_tampo_base" },
+                        fundo: { tipo: "sobreposto", recuo: 0, espessura: 6 },
+                        prateleiras: { tipo: "entre_laterais", recuoProfundidade: 20 },
+                        portas: { tipo: "sobreposta", folgaSuperior: 2, folgaInferior: 2, folgaLateral: 2, folgaEntrePortas: 3 }
+                    },
+                    {
+                        id: "caixa-tampo-sobreposto",
+                        nome: "Caixa com Tampo Sobreposto",
+                        versao: 1,
+                        ativo: true,
+                        caixa: { laterais: "internas", tampo: "sobreposto", base: "entre_laterais", divisorias: "entre_tampo_base" },
+                        fundo: { tipo: "recuado", recuo: 20, espessura: 6 },
+                        prateleiras: { tipo: "entre_laterais", recuoProfundidade: 20 },
+                        portas: { tipo: "sobreposta", folgaSuperior: 2, folgaInferior: 2, folgaLateral: 2, folgaEntrePortas: 3 }
+                    }
+                ];
+                this.save();
             }
-            localStorage.setItem('migracao_v2_concluida', 'true');
+        },
+        migrarDadosAntigos: function() {
+            if (localStorage.getItem('migracao_v3_concluida')) return;
+            let velhoDB2 = JSON.parse(localStorage.getItem('StudioDM_DB_v2') || "{}");
+            if(velhoDB2.projetos) {
+                localStorage.setItem('backupLegacy_DB3', JSON.stringify(velhoDB2));
+                velhoDB2.projetos.forEach(p => {
+                    if(!p.sistemaConstrutivoAplicado) {
+                        p.sistemaConstrutivoAplicado = { id: "caixa-padrao-studio-dm", nome: "Caixa Padrão Studio DM", versao: 1 };
+                    }
+                    DB.projetos.push(p);
+                });
+            }
+            localStorage.setItem('migracao_v3_concluida', 'true');
         }
     };
 
@@ -366,12 +400,13 @@
             
             const prompt = `Você é um intérprete técnico estruturado de marcenaria.
 Analise a instrução: "${descricao}". 
-Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, peças ou ferragens.
+Retorne OBRIGATORIAMENTE um JSON puro. NÃO calcule preços, peças ou ferragens.
 {
     "tipoMovel": "roupeiro",
     "dimensoes": { "largura": 1800, "altura": 2500, "profundidade": 600 },
     "configuracao": { "modulos": 3, "portas": 3, "gavetas": 3, "prateleiras": 6, "maleiro": true, "cabideiros": 2 },
-    "observacoes": "Resumo"
+    "sistemaConstrutivoSugerido": "caixa-padrao-studio-dm",
+    "observacoes": "Resumo estrutural"
 }`;
             const parts = [{ text: prompt }];
             if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
@@ -389,55 +424,176 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
     };
 
     // =========================================================
-    // MOTOR DE ENGENHARIA (Core Calculador)
+    // MOTOR DE SISTEMA CONSTRUTIVO PARAMÉTRICO (Fase 1.6)
     // =========================================================
+    const SistemaConstrutivoManager = {
+        validar: function(sis) {
+            if (!sis || !sis.id || !sis.nome) throw new Error("Sistema construtivo inválido.");
+            if (sis.portas.folgaEntrePortas < 0 || sis.portas.folgaLateral < 0) throw new Error("Folgas não podem ser negativas.");
+            if (sis.fundo.recuo < 0) throw new Error("Recuo do fundo não pode ser negativo.");
+            return true;
+        },
+
+        resolverModulos: function(larguraTotal, quantidadeModulos, espessuraCaixa, espessuraDivisoria) {
+            let espEsqDir = espessuraCaixa * 2;
+            let espDivTotal = espessuraDivisoria * (quantidadeModulos - 1);
+            let larguraUtilTotal = larguraTotal - espEsqDir - espDivTotal;
+            if (larguraUtilTotal <= 0) throw new Error("Largura total insuficiente para acomodar as laterais e divisórias.");
+            
+            let larguraMod = larguraUtilTotal / quantidadeModulos;
+            let larguras = [];
+            for(let i=0; i<quantidadeModulos; i++) larguras.push(largMod);
+
+            return {
+                larguraExterna: larguraTotal,
+                quantidade: quantidadeModulos,
+                larguraUtilTotal: larguraUtilTotal,
+                larguras: larguras,
+                espessuraDivisoria: espessuraDivisoria
+            };
+        },
+
+        resolverDimensaoPeca: function(tipo, contexto) {
+            const { projeto, moduloLargura, sistema, espCaixa, espFundo } = contexto;
+            const P = projeto.dimensoes.profundidade;
+            const A = projeto.dimensoes.altura;
+            const L = projeto.dimensoes.largura;
+
+            switch(tipo) {
+                case 'lateral':
+                    return { comprimento: A, largura: P, espessura: espCaixa };
+                case 'base':
+                case 'tampo':
+                    let compPeca = (tipo === 'tampo' && sistema.caixa.tampo === 'sobreposto') ? L : moduloLargura;
+                    return { comprimento: compPeca, largura: P, espessura: espCaixa };
+                case 'divisoria':
+                    let altDiv = A - (espCaixa * 2);
+                    let profDiv = P - sistema.prateleiras.recuoProfundidade;
+                    return { comprimento: altDiv, largura: profDiv, espessura: espCaixa };
+                case 'prateleira':
+                    return { comprimento: moduloLargura, largura: P - sistema.prateleiras.recuoProfundidade, espessura: espCaixa };
+                case 'fundo':
+                    let altFundo = A - 10;
+                    let largFundo = sistema.fundo.tipo === 'recuado' ? moduloLargura + 10 : moduloLargura + 10;
+                    return { comprimento: altFundo, largura: largFundo, espessura: sistema.fundo.espessura };
+                case 'porta':
+                    let altPorta = A - (sistema.portas.folgaSuperior + sistema.portas.folgaInferior);
+                    let largPorta = (L / projeto.configuracao.portas) - sistema.portas.folgaEntrePortas;
+                    return { comprimento: altPorta, largura: largPorta, espessura: espCaixa };
+                case 'gaveta_frente':
+                    let largFrente = moduloLargura - (sistema.portas.folgaLateral * 2);
+                    return { comprimento: 200, largura: largFrente, espessura: espCaixa };
+                case 'gaveta_lat':
+                    return { comprimento: P - 50, largura: 150, espessura: espCaixa };
+                default:
+                    return { comprimento: 100, largura: 100, espessura: espCaixa };
+            }
+        }
+    };
+
     const Engenharia = {
         validarProjetoIA: function(jsonProj) {
             if(!jsonProj || !jsonProj.dimensoes) return false;
-            if(jsonProj.dimensoes.largura <= 0 || jsonProj.dimensoes.altura <= 0) return false;
+            if(jsonProj.dimensoes.largura <= 0 || jsonProj.dimensoes.altura <= 0 || jsonProj.dimensoes.profundidade <= 0) return false;
             return true;
         },
         
-        calcularProjeto: function(projetoStruturado) {
-            const L = projetoStruturado.dimensoes.largura;
-            const A = projetoStruturado.dimensoes.altura;
-            const P = projetoStruturado.dimensoes.profundidade;
+        calcularProjeto: function(projetoStruturado, sistemaConstrutivo) {
+            SistemaConstrutivoManager.validar(sistemaConstrutivo);
+
+            const dim = projetoStruturado.dimensoes;
             const config = projetoStruturado.configuracao;
-            const modulos = config.modulos > 0 ? config.modulos : 1;
+            const modulosQtd = config.modulos > 0 ? config.modulos : 1;
             const espCaixa = DB.configuracoes.espCaixa;
-            
+
+            let modulosRes = SistemaConstrutivoManager.resolverModulos(dim.largura, modulosQtd, espCaixa, espCaixa);
             let pecas = [];
-            const addP = (n, q, c, l, esp, matCat) => pecas.push({ nome: n, quantidade: q, comprimento: Math.round(c), largura: Math.round(l), espessura: esp, materialCat: matCat });
-            
-            addP('Lateral Esq/Dir', 2, A, P, espCaixa, 'MDF');
-            addP('Base/Tampo', 2, L - (espCaixa*2), P, espCaixa, 'MDF');
-            if(modulos > 1) addP('Divisória', modulos - 1, A - (espCaixa*2), P - 20, espCaixa, 'MDF');
-            
-            let largMod = (L - (espCaixa * (modulos + 1))) / modulos;
-            if(config.prateleiras > 0) addP('Prateleira', config.prateleiras, largMod, P - 20, espCaixa, 'MDF');
-            addP('Fundo', modulos, A - 10, largMod + 10, DB.configuracoes.espFundo, 'MDF_FUNDO');
-            
-            if(config.portas > 0) {
-                let largPorta = (L / config.portas) - 3;
-                addP('Porta', config.portas, A - 6, largPorta, espCaixa, 'MDF');
-            }
-            if(config.gavetas > 0) {
-                addP('Frente Gaveta', config.gavetas, 200, largMod - 6, espCaixa, 'MDF');
-                addP('Caixa Gaveta (Lat)', config.gavetas * 2, P - 50, 150, espCaixa, 'MDF');
+
+            const addPecaReq = (nome, tipo, qtd, moduloIdx, matCat) => {
+                let dimPeca = SistemaConstrutivoManager.resolverDimensaoPeca(tipo, {
+                    projeto: projetoStruturado,
+                    moduloLargura: modulosRes.larguras[moduloIdx || 0],
+                    sistema: sistemaConstrutivo,
+                    espCaixa: espCaixa,
+                    espFundo: sistemaConstrutivo.fundo.espessura
+                });
+
+                if (dimPeca.comprimento <= 0 || dimPeca.largura <= 0) {
+                    throw new Error(`Erro geométrico: Peça '${nome'}' possui dimensões inválidas (${dimPeca.comprimento}x${dimPeca.largura}).`);
+                }
+
+                pecas.push({
+                    id: `p-${Date.now()}-${Math.random()}`,
+                    nome: nome,
+                    tipo: tipo,
+                    modulo: moduloIdx !== undefined ? (moduloIdx + 1) : 'Geral',
+                    quantidade: qtd,
+                    comprimento: Math.round(dimPeca.comprimento),
+                    largura: Math.round(dimPeca.largura),
+                    espessura: dimPeca.espessura,
+                    materialCat: matCat,
+                    origemRegra: {
+                        sistemaConstrutivo: sistemaConstrutivo.id,
+                        regra: `${tipo}_${sistemaConstrutivo.caixa[tipo] || sistemaConstrutivo.fundo.tipo || 'padrao'}`
+                    }
+                });
+            };
+
+            // 1. Laterais Externas
+            addPecaReq('Lateral Esquerda / Direita', 'lateral', 2, 0, 'MDF');
+
+            // 2. Tampo e Base conforme Sistema Construtivo
+            if(sistemaConstrutivo.caixa.tampo === 'sobreposto') {
+                addPecaReq('Tampo Sobreposto', 'tampo', 1, 0, 'MDF');
+            } else {
+                for(let m=0; m<modulosRes.quantidade; m++) addPecaReq(`Tampo Módulo ${m+1}`, 'tampo', 1, m, 'MDF');
             }
 
-            let ferragens = [];
+            for(let m=0; m<modulosRes.quantidade; m++) {
+                addPecaReq(`Base Módulo ${m+1}`, 'base', 1, m, 'MDF');
+            }
+
+            // 3. Divisórias Verticais
+            if(modulosRes.quantidade > 1) {
+                for(let d=0; d<(modulosRes.quantidade - 1); d++) {
+                    addPecaReq(`Divisória Interna ${d+1}`, 'divisoria', 1, d, 'MDF');
+                }
+            }
+
+            // 4. Prateleiras
+            if(config.prateleiras > 0) {
+                for(let m=0; m<modulosRes.quantidade; m++) {
+                    let pratPorMod = Math.ceil(config.prateleiras / modulosRes.quantidade);
+                    addPecaReq(`Prateleira Módulo ${m+1}`, 'prateleira', pratPorMod, m, 'MDF');
+                }
+            }
+
+            // 5. Fundo
+            for(let m=0; m<modulosRes.quantidade; m++) {
+                addPecaReq(`Fundo Traseiro Módulo ${m+1}`, 'fundo', 1, m, 'MDF_FUNDO');
+            }
+
+            // 6. Portas e Gavetas
             if(config.portas > 0) {
-                let ruleDob = DB.ferragens.find(f => f.categoria === 'DOBRADICA') || {nome: 'Regra técnica não cadastrada (Dobradiça Padrão)', preco: 10};
-                ferragens.push({ item: ruleDob, qtd: config.portas * (A > 1600 ? 4 : 3) });
+                addPecaReq('Porta Principal', 'porta', config.portas, 0, 'MDF');
             }
             if(config.gavetas > 0) {
-                let ruleGav = DB.ferragens.find(f => f.id === 'fgv-av' || f.categoria === 'GAVETA') || {nome: 'Corrediça Telescópica', preco: 35};
-                ferragens.push({ item: ruleGav, qtd: config.gavetas });
+                for(let m=0; m<modulosRes.quantidade; m++) {
+                    let gavPorMod = Math.ceil(config.gavetas / modulosRes.quantidade);
+                    addPecaReq(`Frente de Gaveta Módulo ${m+1}`, 'gaveta_frente', gavPorMod, m, 'MDF');
+                    addPecaReq(`Lateral Caixa Gaveta Módulo ${m+1}`, 'gaveta_lat', gavPorMod * 2, m, 'MDF');
+                }
             }
-            if(config.cabideiros > 0) {
-                let ruleCab = DB.ferragens.find(f => f.categoria === 'CABIDEIRO') || {nome: 'Cabideiro', preco: 25};
-                ferragens.push({ item: ruleCab, qtd: config.cabideiros * (largMod/1000) });
+
+            // Ferragens Derivadas
+            let ferragens = [];
+            if(config.portas > 0) {
+                let ruleDob = DB.ferragens.find(f => f.categoria === 'DOBRADICA') || {nome: 'Dobradiça 35mm', preco: 12};
+                ferragens.push({ item: ruleDob, qtd: config.portas * (dim.altura > 1600 ? 4 : 3) });
+            }
+            if(config.gavetas > 0) {
+                let ruleGav = DB.ferragens.find(f => f.categoria === 'GAVETA') || {nome: 'Corrediça Telescópica', preco: 35};
+                ferragens.push({ item: ruleGav, qtd: config.gavetas });
             }
 
             let chapasRes = this.calcularChapas(pecas);
@@ -445,6 +601,8 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
 
             return {
                 projetoBase: projetoStruturado,
+                sistemaConstrutivoAplicado: sistemaConstrutivo,
+                modulosResolvidos: modulosRes,
                 pecas: pecas,
                 ferragensAplicadas: ferragens,
                 chapasEstimadas: chapasRes,
@@ -479,7 +637,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
     };
 
     // =========================================================
-    // CUSTOS E FORMAÇÃO DE PREÇO
+    // CUSTOS E PRECIFICAÇÃO
     // =========================================================
     const Precificacao = {
         calcularCustos: function(engData) {
@@ -489,11 +647,8 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
 
             let custoChapas = (engData.chapasEstimadas.mdfPrincipal * mdfPrinc.preco) + (engData.chapasEstimadas.mdfFundo * mdfFundo.preco);
             let custoFita = (engData.fitaMetros * fita.preco);
-            
             let custoFerragens = 0;
-            engData.ferragensAplicadas.forEach(f => {
-                custoFerragens += (f.item.preco * f.qtd);
-            });
+            engData.ferragensAplicadas.forEach(f => { custoFerragens += (f.item.preco * f.qtd); });
 
             return { chapas: custoChapas, fita: custoFita, ferragens: custoFerragens, diretoTotal: custoChapas + custoFita + custoFerragens };
         },
@@ -507,7 +662,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
     };
 
     // =========================================================
-    // CONTROLADOR PRINCIPAL DA UI (App & UI)
+    // CONTROLADOR DA APLICAÇÃO
     // =========================================================
     const App = {
         projetoTemporario: null,
@@ -529,7 +684,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
         processarComIA: async function() {
             const desc = document.getElementById('descricaoMovel').value.trim();
             const statusEl = document.getElementById('status');
-            statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Identificando layout (IA Interpretadora)...'; statusEl.style.display = 'block';
+            statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Interpretando projeto com IA...'; statusEl.style.display = 'block';
             document.getElementById('btnProcessar').disabled = true;
 
             try {
@@ -540,7 +695,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
                     this.projetoTemporario = jsonIA;
                     UI.mostrarValidacaoIA(jsonIA);
                 } else {
-                    throw new Error("Dimensões inválidas retornadas. Detalhe melhor o pedido.");
+                    throw new Error("Dimensões inválidas retornadas pela IA.");
                 }
             } catch (err) {
                 statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro: ' + err.message;
@@ -552,10 +707,18 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             document.getElementById('confirmacaoIACard').style.display = 'none';
             document.getElementById('inputCard').style.display = 'block';
 
-            this.engenhariaCalculada = Engenharia.calcularProjeto(this.projetoTemporario);
-            this.custosAtuais = Precificacao.calcularCustos(this.engenhariaCalculada);
+            const sistemaId = document.getElementById('selectSistemaConstrutivo').value;
+            const sistemaEscolhido = DB.sistemasConstrutivos.find(s => s.id === sistemaId) || DB.sistemasConstrutivos[0];
 
-            UI.exibirResultadosEngenharia(this.engenhariaCalculada, this.custosAtuais);
+            try {
+                this.engenhariaCalculada = Engenharia.calcularProjeto(this.projetoTemporario, sistemaEscolhido);
+                this.custosAtuais = Precificacao.calcularCustos(this.engenhariaCalculada);
+                UI.exibirResultadosEngenharia(this.engenhariaCalculada, this.custosAtuais);
+            } catch(ex) {
+                alert("Erro de Engenharia Construtiva: " + ex.message);
+                document.getElementById('inputCard').style.display = 'none';
+                document.getElementById('confirmacaoIACard').style.display = 'block';
+            }
         },
 
         salvarProjeto: function() {
@@ -569,12 +732,18 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
                 data: new Date().toLocaleString('pt-BR'),
                 snapshotCustos: this.custosAtuais,
                 snapshotVenda: precoFin,
+                snapshotSistemaConstrutivo: {
+                    id: this.engenhariaCalculada.sistemaConstrutivoAplicado.id,
+                    nome: this.engenhariaCalculada.sistemaConstrutivoAplicado.nome,
+                    versao: this.engenhariaCalculada.sistemaConstrutivoAplicado.versao,
+                    regras: this.engenhariaCalculada.sistemaConstrutivoAplicado
+                },
                 engenharia: this.engenhariaCalculada
             };
             DB.projetos.unshift(novoProj);
             StorageManager.save();
             UI.renderHistorico();
-            alert("Orçamento (Versão Estática) Salvo com sucesso no Histórico!");
+            alert("✅ Orçamento Parametrizado Salvo com Sucesso!");
         },
 
         salvarItemCadastro: function() {
@@ -582,17 +751,23 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             let preco = parseFloat(document.getElementById('cadItemPreco').value);
             if(!nome || isNaN(preco)) return;
             
-            let obj = { id: `item-${Date.now()}`, nome: nome, preco: preco };
-            
-            if(this.categoriaAtivaCadastro === 'materiais') {
-                obj.categoria = 'MDF'; obj.tipo = 'chapa'; obj.espessura = 15;
-                DB.materiais.push(obj);
-            } else if (this.categoriaAtivaCadastro === 'ferragens') {
-                obj.categoria = 'GERAL'; obj.unidade = 'unid';
-                DB.ferragens.push(obj);
+            if(this.categoriaAtivaCadastro === 'sistemas') {
+                let novoSis = {
+                    id: `sis-${Date.now()}`,
+                    nome: nome,
+                    versao: 1,
+                    ativo: true,
+                    caixa: { laterais: "externas", tampo: "entre_laterais", base: "entre_laterais", divisorias: "entre_tampo_base" },
+                    fundo: { tipo: "sobreposto", recuo: 0, espessura: 6 },
+                    prateleiras: { tipo: "entre_laterais", recuoProfundidade: 20 },
+                    portas: { tipo: "sobreposta", folgaSuperior: 2, folgaInferior: 2, folgaLateral: 2, folgaEntrePortas: 3 }
+                };
+                DB.sistemasConstrutivos.push(novoSis);
             } else {
-                obj.categoria = 'SERVICO';
-                DB.servicos.push(obj);
+                let obj = { id: `item-${Date.now()}`, nome: nome, preco: preco };
+                if(this.categoriaAtivaCadastro === 'materiais') { obj.categoria = 'MDF'; obj.espessura = 15; DB.materiais.push(obj); }
+                else if (this.categoriaAtivaCadastro === 'ferragens') { obj.categoria = 'GERAL'; DB.ferragens.push(obj); }
+                else { obj.categoria = 'SERVICO'; DB.servicos.push(obj); }
             }
             StorageManager.save();
             document.getElementById('cadItemNome').value = "";
@@ -603,17 +778,19 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
         renderListaCadastros: function() {
             const list = document.getElementById('listaItensTabela');
             list.innerHTML = '';
-            let arr = this.categoriaAtivaCadastro === 'materiais' ? DB.materiais : (this.categoriaAtivaCadastro === 'ferragens' ? DB.ferragens : DB.servicos);
+            let arr = [];
+            if(this.categoriaAtivaCadastro === 'materiais') arr = DB.materiais;
+            else if(this.categoriaAtivaCadastro === 'ferragens') arr = DB.ferragens;
+            else if(this.categoriaAtivaCadastro === 'servicos') arr = DB.servicos;
+            else arr = DB.sistemasConstrutivos;
             
             arr.forEach((item) => {
-                let catBadge = item.categoria || 'Geral';
-                let fabBadge = item.fabricante ? `| Fab: ${item.fabricante}` : '';
+                let desc = item.preco ? `R$ ${item.preco.toFixed(2)}` : `Versão: ${item.versao || 1}`;
                 list.innerHTML += `
                 <div class="item-card">
                     <div>
                         <strong>${item.nome}</strong><br>
-                        <span style="font-size:0.7rem; color:var(--text-dim); background:#1b2436; padding:2px 4px;">${catBadge} ${fabBadge}</span><br>
-                        <span style="font-size:0.85rem; color:var(--accent);">R$ ${item.preco.toFixed(2).replace('.',',')}</span>
+                        <span style="font-size:0.75rem; color:var(--accent);">${desc}</span>
                     </div>
                 </div>`;
             });
@@ -628,7 +805,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             DB.projetos.forEach(p => {
                 let eng = p.engenharia;
                 if(!eng) return;
-                let kMdf = "MDF Principal (Estimado)";
+                let kMdf = "Chapas MDF Principal";
                 agregador[kMdf] = (agregador[kMdf] || 0) + eng.chapasEstimadas.mdfPrincipal;
                 eng.ferragensAplicadas.forEach(fer => {
                     agregador[fer.item.nome] = (agregador[fer.item.nome] || 0) + fer.qtd;
@@ -662,8 +839,8 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
         },
         mudarAbaCadastro: function(cat) {
             App.categoriaAtivaCadastro = cat;
-            ['CadMat', 'CadFer', 'CadSer'].forEach(a => document.getElementById('tab'+a).className = 'tab');
-            document.getElementById('tabCad' + cat.substring(0,3).charAt(0).toUpperCase() + cat.substring(1,3)).className = 'tab active';
+            ['CadMat', 'CadFer', 'CadSer', 'CadSis'].forEach(a => document.getElementById('tab'+a).className = 'tab');
+            document.getElementById('tabCad' + (cat === 'materiais' ? 'Mat' : (cat === 'ferragens' ? 'Fer' : (cat === 'servicos' ? 'Ser' : 'Sis')))).className = 'tab active';
             App.renderListaCadastros();
         },
         carregarImagem: function(e) {
@@ -694,6 +871,13 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
                 <div>Módulos: <strong>${json.configuracao.modulos}</strong></div>
                 <div>Portas/Gav: <strong>${json.configuracao.portas} / ${json.configuracao.gavetas}</strong></div>
             `;
+
+            const selSis = document.getElementById('selectSistemaConstrutivo');
+            selSis.innerHTML = '';
+            DB.sistemasConstrutivos.forEach(s => {
+                let selected = (s.id === json.sistemaConstrutivoSugerido) ? 'selected' : '';
+                selSis.innerHTML += `<option value="${s.id}" ${selected}>${s.nome} (v${s.versao})</option>`;
+            });
         },
         cancelarConfirmacaoIA: function() {
             document.getElementById('confirmacaoIACard').style.display = 'none';
@@ -705,6 +889,15 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             
             document.getElementById('resumoTexto').innerText = eng.projetoBase.observacoes;
             
+            // Relatório de Regras Aplicadas (Req. 35)
+            const sis = eng.sistemaConstrutivoAplicado;
+            document.getElementById('relatorioRegrasAplicadas').innerHTML = `
+                <strong>Sistema Construtivo: ${sis.nome} (v${sis.versao})</strong><br>
+                • Tampo: ${sis.caixa.tampo} | Base: ${sis.caixa.base}<br>
+                • Fundo: ${sis.fundo.tipo} (Recuo: ${sis.fundo.recuo}mm)<br>
+                • Portas: ${sis.portas.tipo} (Folga Entre Portas: ${sis.portas.folgaEntrePortas}mm)
+            `;
+
             const selPerf = document.getElementById('selectPerfilPreco');
             selPerf.innerHTML = '';
             DB.perfisPreco.forEach(p => {
@@ -720,14 +913,14 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             const tPecas = document.querySelector('#tabelaPecas tbody');
             tPecas.innerHTML = '';
             eng.pecas.forEach(p => {
-                tPecas.innerHTML += `<tr><td>${p.nome}</td><td>${p.quantidade}</td><td>${p.comprimento}x${p.largura}x${p.espessura}</td><td>${p.materialCat}</td></tr>`;
+                tPecas.innerHTML += `<tr><td>${p.nome}</td><td>${p.quantidade}</td><td>${p.comprimento}x${p.largura}x${p.espessura}mm</td><td><span style="font-size:0.75rem; color:var(--purple);">${p.origemRegra.regra}</span></td></tr>`;
             });
 
             const ulF = document.getElementById('listaInsumos');
             ulF.innerHTML = `<li>Chapas MDF Estimadas: ${eng.chapasEstimadas.mdfPrincipal} principal, ${eng.chapasEstimadas.mdfFundo} fundo.</li>
-                             <li>Fita de Borda Estimada: ${eng.fitaMetros.toFixed(1)} metros (com margem de segurança).</li>`;
+                             <li>Fita de Borda Total: ${eng.fitaMetros.toFixed(1)} metros.</li>`;
             eng.ferragensAplicadas.forEach(f => {
-                ulF.innerHTML += `<li>${f.qtd.toFixed(1)}x ${f.item.nome} (${f.item.fabricante || 'Geral'})</li>`;
+                ulF.innerHTML += `<li>${f.qtd.toFixed(1)}x ${f.item.nome}</li>`;
             });
 
             this.atualizarVisualizacaoPreco();
@@ -768,9 +961,10 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             if(DB.projetos.length === 0) { div.innerHTML = '<p style="text-align:center;color:var(--text-dim);">Nenhum projeto salvo.</p>'; return; }
             DB.projetos.forEach(p => {
                 const venda = p.snapshotVenda ? p.snapshotVenda.venda : 0;
+                const sisNome = p.snapshotSistemaConstrutivo ? p.snapshotSistemaConstrutivo.nome : 'Padrão';
                 div.innerHTML += `
                 <div class="item-card proj-card">
-                    <div><strong style="color:var(--accent);">${p.cliente}</strong><br><span style="font-size:0.75rem; color:var(--text-dim);">${p.data}</span></div>
+                    <div><strong style="color:var(--accent);">${p.cliente}</strong><br><span style="font-size:0.75rem; color:var(--text-dim);">${p.data} | Sistema: ${sisNome}</span></div>
                     <strong style="font-size:1.1rem;">${venda.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong>
                 </div>`;
             });
