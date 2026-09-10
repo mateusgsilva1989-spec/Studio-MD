@@ -330,7 +330,6 @@
                 { id: 'mdf-f', categoria: 'MDF', nome: 'MDF Fundo Branco 6mm (Chapa)', preco: 180, espessura: 6, tipo: 'chapa' },
                 { id: 'fita-b', categoria: 'FITA', nome: 'Fita Borda Branca 22mm (Metro)', preco: 1.5, tipo: 'metro' }
             );
-            // Inserção inteligente baseada nos manuais fornecidos no escopo do usuário[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)
             DB.ferragens.push(
                 { id: 'fgv-av', categoria: 'GAVETA', fabricante: 'FGVtn', nome: 'Sistema AvantBox Slim', preco: 150, unidade: 'kit', regrasAplicacao: { tipoGaveta: ['comum'] } },
                 { id: 'rom-460', categoria: 'PERFIL', fabricante: 'Rometal', nome: 'Perfil PerfiLED RM-460', preco: 85, unidade: 'barra' },
@@ -341,19 +340,16 @@
         },
         migrarDadosAntigos: function() {
             if (localStorage.getItem('migracao_v2_concluida')) return;
-            // Tenta resgatar tabela antiga
             let velhaTabela = JSON.parse(localStorage.getItem('tabela_precos') || localStorage.getItem('tabela_mdf') || "[]");
             let velhoHistorico = JSON.parse(localStorage.getItem('historico_projetos') || "[]");
             
             if(velhaTabela.length > 0 || velhoHistorico.length > 0) {
                 localStorage.setItem('backupLegacy_DB', JSON.stringify({tabela: velhaTabela, historico: velhoHistorico}));
-                // Traduz o que der da tabela antiga para a nova DB estruturada
                 velhaTabela.forEach(item => {
                     let cat = (item.categoria || '').toUpperCase();
                     if(cat.includes('MDF') || cat.includes('CHAPA')) DB.materiais.push({ id: `mig-${Date.now()}-${Math.random()}`, categoria: 'MDF', nome: item.nome, preco: item.preco, espessura: item.espessuraMM || 15 });
                     else DB.ferragens.push({ id: `mig-${Date.now()}-${Math.random()}`, categoria: 'GERAL', nome: item.nome, preco: item.preco, unidade: item.unidade });
                 });
-                // Migra historico (apenas guardando no novo array)
                 velhoHistorico.forEach(hist => { DB.projetos.push(hist); });
             }
             localStorage.setItem('migracao_v2_concluida', 'true');
@@ -380,7 +376,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             const parts = [{ text: prompt }];
             if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
             
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: parts }] })
             });
@@ -413,7 +409,6 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             let pecas = [];
             const addP = (n, q, c, l, esp, matCat) => pecas.push({ nome: n, quantidade: q, comprimento: Math.round(c), largura: Math.round(l), espessura: esp, materialCat: matCat });
             
-            // Estrutura Básica
             addP('Lateral Esq/Dir', 2, A, P, espCaixa, 'MDF');
             addP('Base/Tampo', 2, L - (espCaixa*2), P, espCaixa, 'MDF');
             if(modulos > 1) addP('Divisória', modulos - 1, A - (espCaixa*2), P - 20, espCaixa, 'MDF');
@@ -431,24 +426,20 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
                 addP('Caixa Gaveta (Lat)', config.gavetas * 2, P - 50, 150, espCaixa, 'MDF');
             }
 
-            // Regras de Ferragens Automáticas baseadas no cadastro
             let ferragens = [];
-            // Verifica dobradicas
             if(config.portas > 0) {
                 let ruleDob = DB.ferragens.find(f => f.categoria === 'DOBRADICA') || {nome: 'Regra técnica não cadastrada (Dobradiça Padrão)', preco: 10};
                 ferragens.push({ item: ruleDob, qtd: config.portas * (A > 1600 ? 4 : 3) });
             }
-            // Verifica gavetas (Usa a AvantBox Slim do manual Rometal/FGVTN se disponível)
             if(config.gavetas > 0) {
                 let ruleGav = DB.ferragens.find(f => f.id === 'fgv-av' || f.categoria === 'GAVETA') || {nome: 'Corrediça Telescópica', preco: 35};
                 ferragens.push({ item: ruleGav, qtd: config.gavetas });
             }
             if(config.cabideiros > 0) {
                 let ruleCab = DB.ferragens.find(f => f.categoria === 'CABIDEIRO') || {nome: 'Cabideiro', preco: 25};
-                ferragens.push({ item: ruleCab, qtd: config.cabideiros * (largMod/1000) }); // qtd em metros
+                ferragens.push({ item: ruleCab, qtd: config.cabideiros * (largMod/1000) });
             }
 
-            // Cálculos Físicos
             let chapasRes = this.calcularChapas(pecas);
             let fitaRes = this.calcularFitaBorda(pecas);
 
@@ -468,7 +459,6 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
                 if(p.materialCat === 'MDF') areaMDF += area;
                 if(p.materialCat === 'MDF_FUNDO') areaFundo += area;
             });
-            // Deterministico com perda (rendimento)
             const m2Chapa = 2.75 * 1.85; 
             const rend = DB.configuracoes.rendimentoChapa;
             return {
@@ -480,12 +470,11 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
         calcularFitaBorda: function(pecas) {
             let metros = 0;
             pecas.forEach(p => {
-                // Estimativa simples: Frente e traseira de cada peça
                 if(p.materialCat === 'MDF') {
                     metros += ((p.comprimento * 2) * p.quantidade) / 1000;
                 }
             });
-            return metros * DB.configuracoes.margemFitaBorda; // + perda técnica
+            return metros * DB.configuracoes.margemFitaBorda;
         }
     };
 
@@ -512,7 +501,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             const perfil = DB.perfisPreco.find(p => p.id === perfilId) || DB.perfisPreco[0];
             const venda = custoTotal * perfil.markup;
             const margem = ((venda - custoTotal) / venda) * 100;
-            const minPreco = custoTotal * 1.3; // Minimo aceitavel p/ cobrir custos indiretos (30%)
+            const minPreco = custoTotal * 1.3;
             return { venda: venda, margem: margem, perfil: perfil, minSeguro: minPreco };
         }
     };
@@ -563,7 +552,6 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             document.getElementById('confirmacaoIACard').style.display = 'none';
             document.getElementById('inputCard').style.display = 'block';
 
-            // FLUXO DETERMINISTICO (Fase 1.5)
             this.engenhariaCalculada = Engenharia.calcularProjeto(this.projetoTemporario);
             this.custosAtuais = Precificacao.calcularCustos(this.engenhariaCalculada);
 
@@ -579,7 +567,6 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
                 id: Date.now().toString(),
                 cliente: document.getElementById('nomeCliente').value || "Cliente s/ nome",
                 data: new Date().toLocaleString('pt-BR'),
-                // Snapshots importantes para nao alterar precos antigos (Req. 20)
                 snapshotCustos: this.custosAtuais,
                 snapshotVenda: precoFin,
                 engenharia: this.engenhariaCalculada
@@ -590,7 +577,6 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             alert("Orçamento (Versão Estática) Salvo com sucesso no Histórico!");
         },
 
-        // Gestão de Cadastros (Req. 3 e 4)
         salvarItemCadastro: function() {
             let nome = document.getElementById('cadItemNome').value;
             let preco = parseFloat(document.getElementById('cadItemPreco').value);
@@ -619,7 +605,7 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             list.innerHTML = '';
             let arr = this.categoriaAtivaCadastro === 'materiais' ? DB.materiais : (this.categoriaAtivaCadastro === 'ferragens' ? DB.ferragens : DB.servicos);
             
-            arr.forEach((item, index) => {
+            arr.forEach((item) => {
                 let catBadge = item.categoria || 'Geral';
                 let fabBadge = item.fabricante ? `| Fab: ${item.fabricante}` : '';
                 list.innerHTML += `
@@ -642,10 +628,8 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             DB.projetos.forEach(p => {
                 let eng = p.engenharia;
                 if(!eng) return;
-                // Agrega chapas
                 let kMdf = "MDF Principal (Estimado)";
                 agregador[kMdf] = (agregador[kMdf] || 0) + eng.chapasEstimadas.mdfPrincipal;
-                // Agrega ferragens
                 eng.ferragensAplicadas.forEach(fer => {
                     agregador[fer.item.nome] = (agregador[fer.item.nome] || 0) + fer.qtd;
                 });
@@ -721,14 +705,12 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             
             document.getElementById('resumoTexto').innerText = eng.projetoBase.observacoes;
             
-            // Popula os perfis de precificacao
             const selPerf = document.getElementById('selectPerfilPreco');
             selPerf.innerHTML = '';
             DB.perfisPreco.forEach(p => {
                 selPerf.innerHTML += `<option value="${p.id}">${p.nome} (Margem Est: ${((p.markup-1)*100).toFixed(0)}%)</option>`;
             });
 
-            // Tabela Técnica (Engenharia Pura)
             const fmt = (v) => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
             document.getElementById('tCustoChapas').innerText = fmt(custos.chapas);
             document.getElementById('tCustoFita').innerText = fmt(custos.fita);
@@ -769,7 +751,6 @@ Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, 
             document.getElementById('lblAltura').innerText = (dim.altura/1000).toFixed(2) + 'm';
             document.getElementById('lblProfundidade').innerText = (dim.profundidade/10) + 'cm';
             
-            // Desenho SVG Básico representativo via Javascript (mantendo estilo anterior mas alimentado por dados estruturados)
             let modulos = config.modulos || 1;
             let svg = `<svg viewBox="0 0 200 250" class="svg-cad"><rect x="10" y="10" width="180" height="230" fill="#fff" stroke="#0f172a" stroke-width="2"/>`;
             for(let i=1; i<modulos; i++) {
