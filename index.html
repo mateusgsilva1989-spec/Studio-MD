@@ -53,6 +53,11 @@
     th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
     th { color: var(--text-dim); }
 
+    /* ESTILOS DA TABELA DE COMPRAS */
+    #tabela-compras { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+    #tabela-compras th, #tabela-compras td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    #tabela-compras th { color: var(--text-dim); background-color: #1b2436; }
+
     .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
     .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
     .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
@@ -101,6 +106,7 @@
     <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
       <button class="btn" style="font-size: 1.1rem; padding: 16px;" onclick="mudarVisaoPrincipal('projeto')">📐 Projeto</button>
       <button class="btn btn-sec" style="font-size: 1.1rem; padding: 16px; background-color: var(--blue);" onclick="mudarVisaoPrincipal('clientes')">📁 Clientes</button>
+      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: #f59e0b; color: #fff;" onclick="mudarVisaoPrincipal('compras')">🛒 Compras e Insumos</button>
       <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: #334155; color: #fff;" onclick="mudarVisaoPrincipal('config')">⚙️ Configuração</button>
     </div>
   </div>
@@ -111,10 +117,9 @@
     <button class="btn-voltar-home" onclick="mudarVisaoPrincipal('home')">🏠 Início</button>
   </header>
 
-  <!-- ==================== VISÃO 1: PROJETO (Inclui Construção) ==================== -->
+  <!-- ==================== VISÃO 1: PROJETO ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
     
-    <!-- REGRAS CONSTRUTIVAS RÁPIDAS -->
     <div class="card" style="background: #0f172a;">
       <h2 style="font-size: 0.95rem; margin-bottom: 8px;">🛠️ Padrões Construtivos Atuais</h2>
       <div class="grid-2">
@@ -135,14 +140,12 @@
       </div>
     </div>
 
-    <!-- UPLOAD DE FOTO E DESCRIÇÃO -->
     <div class="card">
       <h2>📷 Desenho e Descrição do Móvel</h2>
       
       <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
       <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..."></textarea>
-      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; margin-bottom: 12px;">Descrever a estrutura e medidas exatas reduz muito a chance da Inteligência Artificial errar a leitura do croqui.</p>
-
+      
       <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
         Material Base / MDF Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
       </div>
@@ -161,7 +164,7 @@
 
       <img id="preview-img" alt="Preview do Croqui">
 
-      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA (Consultando Notebook)</button>
+      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
       <div id="status" class="status-msg"></div>
     </div>
 
@@ -173,7 +176,6 @@
         <div class="tab" id="tabEsbocoBtn" onclick="mudarAba('esboco')">📐 Prancha</div>
       </div>
 
-      <!-- ABA COMERCIAL -->
       <div id="abaComercial">
         <label>👤 Nome do Cliente / Identificação do Projeto</label>
         <input type="text" id="nomeCliente" placeholder="Ex: Cliente João - Armário Cozinha">
@@ -189,19 +191,11 @@
         <button class="btn" style="background-color: #10b981; color:#000;" onclick="salvarProjetoNoHistorico()">💾 Salvar Orçamento no Histórico</button>
         <button class="btn btn-sec" style="background-color: #475569;" onclick="window.print()">🖨️ Imprimir / Gerar PDF</button>
         <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-        <button class="btn btn-sec" onclick="mudarAba('tecnica')">🛠️ Ver Custo Técnico e Ajustar Preços</button>
       </div>
 
-      <!-- ABA TÉCNICA / CORTE E MEMÓRIA DE CÁLCULO -->
       <div id="abaTecnica" style="display: none;">
-        
-        <!-- PAINEL DE MEMÓRIA DE CÁLCULO E SIMULAÇÃO DE VALORES -->
         <div class="calc-box">
           <h4>🧮 Simulação do Preço Final</h4>
-          <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:10px;">
-            Altere qualquer valor abaixo para simular e recalcular o preço em tempo real:
-          </p>
-
           <div class="grid-2">
             <div>
               <label>Qtd. Chapas Estimada</label>
@@ -212,7 +206,6 @@
               <input type="number" id="inpEditPrecoChapa" step="1" min="0" oninput="recalcularPrecoManual()">
             </div>
           </div>
-
           <div class="grid-2">
             <div>
               <label>Ferragens & Insumos (R$)</label>
@@ -223,7 +216,6 @@
               <input type="number" id="inpEditMargem" step="5" min="0" oninput="recalcularPrecoManual()">
             </div>
           </div>
-
           <div style="margin-top:12px; background:#1b2436; padding:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
             <div>
               <span style="font-size:0.75rem; color:var(--text-dim);">Custo Total Material:</span><br>
@@ -239,36 +231,24 @@
         <h3>Lista de Peças Estimada</h3>
         <table id="tabelaPecas">
           <thead>
-            <tr>
-              <th>Peça</th>
-              <th>Qtd</th>
-              <th>Medidas (mm)</th>
-            </tr>
+            <tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th></tr>
           </thead>
           <tbody></tbody>
         </table>
 
-        <h3 style="margin-top: 16px;">Insumos e Ferragens Recomendados (Notebook)</h3>
+        <h3 style="margin-top: 16px;">Insumos e Ferragens Recomendados</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
-
-        <button class="btn btn-sec" onclick="mudarAba('esboco')">📐 Ver Prancha e Prompt Gemini</button>
       </div>
 
-      <!-- ABA PRANCHA CONSTRUTIVA E PROMPT GEMINI -->
       <div id="abaEsboco" style="display: none;">
         <h3>📐 Prancha Técnica de Projeto</h3>
-        <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">Desenho proporcional estilo CAD/Promob respeitando a escala real do móvel.</p>
-
-        <!-- DESENHO SVG DA PRANCHA -->
         <div class="prancha-container" id="pranchaArea">
           <div class="prancha-header">Studio DM — Distribuição Interna & Medidas</div>
-          
           <div class="prancha-grid">
             <div class="cad-box">
               <div class="cad-title">Distribuição Interna Proporcional</div>
               <div id="svgContainer"></div>
             </div>
-
             <div>
               <div class="info-medidas">
                 <div class="cad-title" style="text-align:left; margin-bottom:4px;">Medidas do Móvel</div>
@@ -276,7 +256,6 @@
                 <p><strong>Altura Total:</strong> <span id="lblAltura">0,00 m</span></p>
                 <p><strong>Profundidade:</strong> <span id="lblProfundidade">00 cm</span></p>
               </div>
-
               <div class="cad-box">
                 <div class="cad-title">Vista Superior</div>
                 <div id="svgTopContainer"></div>
@@ -285,34 +264,23 @@
           </div>
         </div>
 
-        <!-- CAMPO DE PROMPT PARA O GEMINI -->
         <div style="margin-top: 16px; background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
-          <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt Fidedigno para Imagem no Gemini</h4>
-          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Copie o texto abaixo e cole no Google Gemini para gerar a imagem 3D realista fiel ao móvel e à cor selecionada:</p>
-          
-          <textarea id="promptGeminiBox" readonly style="width: 100%; height: 160px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; line-height: 1.4; resize: vertical;"></textarea>
-
-          <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt para o Gemini</button>
+          <h4 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 6px;">✨ Prompt para Imagem no Gemini</h4>
+          <textarea id="promptGeminiBox" readonly style="width: 100%; height: 160px; background: #1b2436; color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.82rem; resize: vertical;"></textarea>
+          <button class="btn btn-sec" onclick="copiarPromptGemini()">📋 Copiar Prompt</button>
           <div id="statusCopia" style="font-size: 0.8rem; color: var(--accent); margin-top: 6px; text-align: center; display: none;"></div>
         </div>
-
       </div>
-
     </div>
-
   </div>
 
-  <!-- ==================== VISÃO 2: CLIENTES (CADASTRO E HISTÓRICO) ==================== -->
+  <!-- ==================== VISÃO 2: CLIENTES ==================== -->
   <div id="viewClientes" class="main-view" style="display: none;">
-    
-    <!-- CADASTRO / EDIÇÃO DE CLIENTE -->
     <div class="card">
       <h2 id="tituloFormCliente">👤 Cadastrar Novo Cliente</h2>
       <input type="hidden" id="editClientId">
-
       <label>Nome *</label>
       <input type="text" id="cadNome" placeholder="Nome completo do cliente">
-
       <div class="grid-2">
         <div>
           <label>Telefone / WhatsApp</label>
@@ -323,7 +291,6 @@
           <input type="email" id="cadEmail" placeholder="cliente@email.com">
         </div>
       </div>
-
       <div class="grid-2">
         <div>
           <label>Empresa</label>
@@ -334,52 +301,65 @@
           <input type="text" id="cadEndereco" placeholder="Rua, número, bairro, cidade">
         </div>
       </div>
-
       <button class="btn" id="btnSalvarCliente" onclick="salvarCliente()">💾 Salvar Cliente</button>
       <button class="btn btn-danger" id="btnCancelarCliente" style="display:none; margin-top:8px;" onclick="limparFormCliente()">❌ Cancelar Edição</button>
     </div>
 
-    <!-- LISTA DE CLIENTES CADASTRADOS -->
     <div class="card">
       <h2>📇 Clientes Cadastrados</h2>
       <div id="listaClientesCadastrados"></div>
     </div>
 
-    <!-- HISTÓRICO DE ORÇAMENTOS -->
     <div class="card">
       <h2>📁 Histórico de Orçamentos Salvos</h2>
       <div id="listaHistorico"></div>
     </div>
-
   </div>
 
-  <!-- ==================== VISÃO 3: CONFIGURAÇÃO ==================== -->
+  <!-- ==================== VISÃO 3: COMPRAS ==================== -->
+  <div id="viewCompras" class="main-view" style="display: none;">
+    <div class="card">
+        <h2>🛒 Resumo de Insumos e Lista de Compras</h2>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Gere a lista de materiais consolidada com base nos orçamentos salvos no histórico.</p>
+        
+        <button onclick="gerarListaCompras()" class="btn">Gerar Lista Consolidada</button>
+        <button onclick="copiarParaWhatsAppCompras()" class="btn btn-sec" style="background-color: #25d366; color: #fff;">Copiar para WhatsApp</button>
+
+        <div class="resultado-lista" style="margin-top: 16px; background: #0f172a; padding: 10px; border-radius: 8px; overflow-x: auto;">
+            <table id="tabela-compras">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Item / Material</th>
+                        <th>Qtd. Total</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-tabela-compras">
+                    <tr><td colspan="3" style="text-align:center; color:#9ca3af;">Clique em "Gerar Lista" para somar os insumos.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+
+  <!-- ==================== VISÃO 4: CONFIGURAÇÃO ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
-    
-    <!-- CREDENCIAIS E API -->
     <div class="card">
       <h2>🔑 Chave de Conexão (Inteligência Artificial)</h2>
       <div id="statusApiKeyBadge"></div>
-      
       <label style="margin-top:12px;">Sua Chave de API (Google AI Studio)</label>
       <input type="password" id="apiKey" placeholder="Cole sua API Key do Gemini aqui" onchange="salvarConfig()">
-      <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">Sua chave é salva somente no seu navegador e usada para ler fotos e croquis.</p>
     </div>
 
-    <!-- BASE DE CONHECIMENTO DO NOTEBOOK (RAG LOCAL) -->
     <div class="card">
       <h2>📚 Base Técnica (Notebook Rometal / FGVtn)</h2>
-      <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">
-        Esta base técnica integrada ao seu app garante que a IA consulte os catálogos oficiais (Rometal 2026, C-1000, Magnum, Perfis LED PerfiLED, Gavetas AvantBox Slim)[span_3](start_span)[span_3](end_span)[span_4](start_span)[span_4](end_span) antes de gerar os insumos.
-      </p>
       <textarea id="notebookContexto" rows="5" style="font-size: 0.8rem;" onchange="salvarConfig()">REFERÊNCIAS TÉCNICAS OFICIAIS (CATÁLOGOS):
-- Sistemas de Correr/Coplanar: Rometal C-1000 Automático (com push&go e controle por voz/wireless), Linha Magnum, Trilhos RMS-065 / RMS-074[span_5](start_span)[span_5](end_span).
-- Perfis de Alumínio e LED: Linha PerfiLED (RM-460), Lúmen, Leggero[span_6](start_span)[span_6](end_span).
-- Gavetas Metálicas: FGVtn Sistema AvantBox Slim[span_7](start_span)[span_7](end_span).
-- Padrões de Acabamento e Cores: Hibisco, Freijó Imperial, Thassos[span_8](start_span)[span_8](end_span).</textarea>
+- Sistemas de Correr/Coplanar: Rometal C-1000 Automático (com push&go e controle por voz/wireless), Linha Magnum, Trilhos RMS-065 / RMS-074.
+- Perfis de Alumínio e LED: Linha PerfiLED (RM-460), Lúmen, Leggero.
+- Gavetas Metálicas: FGVtn Sistema AvantBox Slim.
+- Padrões de Acabamento e Cores: Hibisco, Freijó Imperial, Thassos.</textarea>
     </div>
 
-    <!-- CONFIGURAÇÕES GERAIS DE MARCENARIA -->
     <div class="card">
       <h2>🛠️ Parâmetros Construtivos e Lucro</h2>
       <div class="grid-2">
@@ -394,14 +374,10 @@
       </div>
     </div>
 
-    <!-- TABELA DE PREÇOS GERAL -->
     <div class="card">
       <h2>🏷️ Tabela de Preços (MDF e Insumos)</h2>
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Cadastre chapas de MDF, corrediças, dobradiças e outros materiais.</p>
-
       <label>Material / MDF Principal Selecionado no Projeto</label>
       <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
-
       <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
         <label>➕ Cadastrar Novo Item na Tabela</label>
         <div class="grid-2">
@@ -410,11 +386,9 @@
         </div>
         <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
       </div>
-
       <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
       <div id="listaItensTabela"></div>
     </div>
-
   </div>
 
   <script>
@@ -450,11 +424,11 @@
       atualizarBadgeApiKey();
     };
 
-    // --- CONTROLE DE VISÃO DA NAVEGAÇÃO PRINCIPAL ---
     function mudarVisaoPrincipal(visao) {
       document.getElementById('viewHome').style.display = visao === 'home' ? 'block' : 'none';
       document.getElementById('viewProjeto').style.display = visao === 'projeto' ? 'block' : 'none';
       document.getElementById('viewClientes').style.display = visao === 'clientes' ? 'block' : 'none';
+      document.getElementById('viewCompras').style.display = visao === 'compras' ? 'block' : 'none';
       document.getElementById('viewConfig').style.display = visao === 'config' ? 'block' : 'none';
 
       const header = document.getElementById('appHeader');
@@ -462,6 +436,103 @@
       window.scrollTo(0, 0);
     }
 
+    /* GESTÃO DE COMPRAS E INSUMOS */
+    function gerarListaCompras() {
+        if(historicoProjetos.length === 0) {
+            alert("Nenhum projeto salvo no histórico para gerar a lista.");
+            return;
+        }
+
+        const insumosConsolidados = {
+            'MDF e Chapas': {},
+            'Ferragens e Componentes': {}
+        };
+
+        historicoProjetos.forEach(p => {
+            const projeto = p.resultado;
+            if(!projeto) return;
+
+            // Consolidação de MDF
+            const nomeMdf = p.mdfNome || "MDF Indefinido";
+            const qtdChapas = projeto.chapasEstimadas || 0;
+            if(qtdChapas > 0) {
+                if (insumosConsolidados['MDF e Chapas'][nomeMdf]) {
+                    insumosConsolidados['MDF e Chapas'][nomeMdf] += qtdChapas;
+                } else {
+                    insumosConsolidados['MDF e Chapas'][nomeMdf] = qtdChapas;
+                }
+            }
+            
+            // Consolidação de Insumos da IA
+            if(projeto.insumos) {
+                 projeto.insumos.forEach(insumo => {
+                      let nomeInsumo = insumo;
+                      let qtd = 1; 
+                      
+                      const match = insumo.match(/^([\d.,]+)\s+(.*)/);
+                      if (match) {
+                          qtd = parseFloat(match[1].replace(',', '.'));
+                          nomeInsumo = match[2].trim();
+                      }
+
+                      if (insumosConsolidados['Ferragens e Componentes'][nomeInsumo]) {
+                          insumosConsolidados['Ferragens e Componentes'][nomeInsumo] += qtd;
+                      } else {
+                          insumosConsolidados['Ferragens e Componentes'][nomeInsumo] = qtd;
+                      }
+                 });
+            }
+        });
+
+        const tbody = document.getElementById('corpo-tabela-compras');
+        tbody.innerHTML = ''; 
+
+        for (const [categoria, itens] of Object.entries(insumosConsolidados)) {
+            for (const [nome, qtd] of Object.entries(itens)) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${categoria}</td>
+                    <td>${nome}</td>
+                    <td>${qtd % 1 !== 0 ? qtd.toFixed(1).replace('.', ',') : qtd}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+        
+        if (tbody.innerHTML === '') {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#9ca3af;">Nenhum material encontrado nos projetos salvos.</td></tr>';
+        }
+    }
+
+    function copiarParaWhatsAppCompras() {
+        const tbody = document.getElementById('corpo-tabela-compras');
+        if(tbody.rows.length === 0 || tbody.innerText.includes("Clique em")) {
+            alert("Gere a lista de compras primeiro.");
+            return;
+        }
+        
+        let textoWhatsApp = "*LISTA DE COMPRAS - STUDIO DM*\n\n";
+        let categoriaAtual = "";
+        
+        Array.from(tbody.rows).forEach(row => {
+            if(row.cells.length < 3) return;
+            const categoria = row.cells[0].innerText;
+            const item = row.cells[1].innerText;
+            const qtd = row.cells[2].innerText;
+            
+            if (categoria !== categoriaAtual) {
+                textoWhatsApp += `\n*${categoria}*\n`;
+                categoriaAtual = categoria;
+            }
+            textoWhatsApp += `- ${item}: *${qtd}*\n`;
+        });
+
+        navigator.clipboard.writeText(textoWhatsApp).then(() => {
+            alert("Lista copiada! Agora é só colar no WhatsApp do seu fornecedor.");
+        });
+    }
+
+    /* RESTANTE DO CÓDIGO (Configurações, IA, SVG e Projetos) */
     function salvarConfig() {
       const key = document.getElementById('apiKey').value.trim();
       localStorage.setItem('gemini_key', key);
@@ -479,11 +550,10 @@
       if (key) {
         badgeContainer.innerHTML = '<span class="badge-status badge-ok">✅ Chave de API Configurada</span>';
       } else {
-        badgeContainer.innerHTML = '<span class="badge-status badge-alert">⚠️ Chave de API Ausente. Cole sua chave do Gemini.</span>';
+        badgeContainer.innerHTML = '<span class="badge-status badge-alert">⚠️ Chave de API Ausente.</span>';
       }
     }
 
-    // --- GESTÃO DE CLIENTES ---
     function salvarCliente() {
       const id = document.getElementById('editClientId').value;
       const nome = document.getElementById('cadNome').value.trim();
@@ -492,19 +562,13 @@
       const empresa = document.getElementById('cadEmpresa').value.trim();
       const endereco = document.getElementById('cadEndereco').value.trim();
 
-      if (!nome) {
-        alert('Por favor, informe ao menos o nome do cliente.');
-        return;
-      }
+      if (!nome) { alert('Informe ao menos o nome do cliente.'); return; }
 
       if (id) {
         const index = listaClientes.findIndex(c => c.id === id);
-        if (index !== -1) {
-          listaClientes[index] = { id, nome, telefone, email, empresa, endereco };
-        }
+        if (index !== -1) listaClientes[index] = { id, nome, telefone, email, empresa, endereco };
       } else {
-        const novoCli = { id: Date.now().toString(), nome, telefone, email, empresa, endereco };
-        listaClientes.unshift(novoCli);
+        listaClientes.unshift({ id: Date.now().toString(), nome, telefone, email, empresa, endereco });
       }
 
       localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
@@ -516,9 +580,8 @@
     function renderClientes() {
       const container = document.getElementById('listaClientesCadastrados');
       container.innerHTML = '';
-
       if (listaClientes.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum cliente cadastrado ainda.</p>';
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado.</p>';
         return;
       }
 
@@ -527,10 +590,7 @@
         div.className = 'cli-card';
         div.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-              <strong style="color:var(--accent); font-size:1rem;">${cli.nome}</strong>
-              ${cli.empresa ? `<span style="font-size:0.8rem; color:var(--text-dim);"> (${cli.empresa})</span>` : ''}
-            </div>
+            <div><strong style="color:var(--accent);">${cli.nome}</strong>${cli.empresa ? ` <span style="font-size:0.8rem; color:var(--text-dim);">(${cli.empresa})</span>` : ''}</div>
             <div style="display:flex; gap:6px;">
               <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarCliente('${cli.id}')">✏️ Editar</button>
               <button class="btn-sm btn-danger" onclick="excluirCliente('${cli.id}')">🗑️ Excluir</button>
@@ -549,14 +609,12 @@
     function editarCliente(id) {
       const cli = listaClientes.find(c => c.id === id);
       if (!cli) return;
-
       document.getElementById('editClientId').value = cli.id;
       document.getElementById('cadNome').value = cli.nome;
       document.getElementById('cadTelefone').value = cli.telefone || '';
       document.getElementById('cadEmail').value = cli.email || '';
       document.getElementById('cadEmpresa').value = cli.empresa || '';
       document.getElementById('cadEndereco').value = cli.endereco || '';
-
       document.getElementById('tituloFormCliente').innerText = '✏️ Editar Cliente';
       document.getElementById('btnSalvarCliente').innerText = '💾 Atualizar Cliente';
       document.getElementById('btnCancelarCliente').style.display = 'block';
@@ -570,7 +628,6 @@
       document.getElementById('cadEmail').value = '';
       document.getElementById('cadEmpresa').value = '';
       document.getElementById('cadEndereco').value = '';
-
       document.getElementById('tituloFormCliente').innerText = '👤 Cadastrar Novo Cliente';
       document.getElementById('btnSalvarCliente').innerText = '💾 Salvar Cliente';
       document.getElementById('btnCancelarCliente').style.display = 'none';
@@ -584,16 +641,12 @@
       }
     }
 
-    // --- TABELA DE PREÇOS ---
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
-
       const select = document.getElementById('padraoMdfSelect');
       const container = document.getElementById('listaItensTabela');
-      
       select.innerHTML = '';
       container.innerHTML = '';
-
       tabelaPrecos.forEach((item, index) => {
         const opt = document.createElement('option');
         opt.value = item.id;
@@ -603,67 +656,48 @@
         const div = document.createElement('div');
         div.className = 'mdf-item';
         div.innerHTML = `
-          <div>
-            <strong style="font-size:0.85rem;">${item.nome}</strong><br>
-            <span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span>
-          </div>
+          <div><strong style="font-size:0.85rem;">${item.nome}</strong><br><span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span></div>
           <button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">Excluir</button>
         `;
         container.appendChild(div);
       });
-
       alterarPadraoAtivo();
     }
 
     function adicionarItemTabela() {
       const nomeInput = document.getElementById('novoItemNome');
       const precoInput = document.getElementById('novoItemPreco');
-
       const nome = nomeInput.value.trim();
       const preco = parseFloat(precoInput.value);
-
-      if (!nome || isNaN(preco) || preco < 0) {
-        alert('Por favor, informe um nome e um preço válido para o item.');
-        return;
-      }
-
+      if (!nome || isNaN(preco) || preco < 0) { alert('Informe um nome e um preço válido.'); return; }
       tabelaPrecos.push({ id: Date.now().toString(), nome, preco });
-      nomeInput.value = '';
-      precoInput.value = '';
-
+      nomeInput.value = ''; precoInput.value = '';
       renderTabelaPrecos();
     }
 
     function excluirItemTabela(index) {
-      if (tabelaPrecos.length <= 1) {
-        alert('É necessário manter ao menos 1 item na tabela de preços.');
-        return;
-      }
+      if (tabelaPrecos.length <= 1) { alert('Mantenha ao menos 1 item na tabela.'); return; }
       tabelaPrecos.splice(index, 1);
       renderTabelaPrecos();
     }
 
     function obterItemAtivo() {
-      const select = document.getElementById('padraoMdfSelect');
-      const selectedId = select.value;
+      const selectedId = document.getElementById('padraoMdfSelect').value;
       return tabelaPrecos.find(m => m.id === selectedId) || tabelaPrecos[0];
     }
 
     function alterarPadraoAtivo() {
       const itemAtivo = obterItemAtivo();
       document.getElementById('lblMdfAtual').innerText = `${itemAtivo.nome} (R$ ${itemAtivo.preco},00)`;
-
       if (ultimoResultado) {
         document.getElementById('inpEditPrecoChapa').value = itemAtivo.preco;
         recalcularPrecoManual();
       }
     }
 
-    // --- LEITURA E PROCESSAMENTO DE CROQUI COM RAG LOCAL (NOTEBOOK) ---
     function carregarImagem(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function(evt) {
         imagemBase64 = evt.target.result.split(',')[1];
@@ -678,15 +712,10 @@
     async function processarCroqui() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
       const statusEl = document.getElementById('status');
-
-      if (!apiKey) {
-        alert('Por favor, cadastre sua Chave de API do Google Gemini na "Configuração" antes de continuar.');
-        mudarVisaoPrincipal('config');
-        return;
-      }
+      if (!apiKey) { alert('Cadastre sua Chave de API na "Configuração".'); mudarVisaoPrincipal('config'); return; }
 
       statusEl.className = 'status-msg loading';
-      statusEl.innerText = '⏳ Consultando Notebook (Catálogos) e calculando peças...';
+      statusEl.innerText = '⏳ Processando e calculando peças...';
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
 
@@ -695,109 +724,62 @@
       const folgaGaveta = document.getElementById('folgaGaveta').value;
       const margemLucro = parseFloat(document.getElementById('margemLucro').value);
       const itemAtivo = obterItemAtivo();
-      
       const notebookContexto = document.getElementById('notebookContexto').value.trim();
       const descUsuario = document.getElementById('descricaoMovel').value.trim();
-      
       const regraDescricao = descUsuario ? `\nINSTRUÇÕES DO MARCENEIRO: "${descUsuario}"\n` : '';
 
       const prompt = `Você é um mestre marceneiro e orçamentista sênior.
-CONSIDERE O SEGUINTE CONHECIMENTO TÉCNICO EXTRAÍDO DOS CATÁLOGOS OFICIAIS DO SEU NOTEBOOK:
+CONSIDERE O SEGUINTE CONHECIMENTO TÉCNICO:
 """
 ${notebookContexto}
 """
-
-Analise o croqui fornecido e utilize as referências técnicas acima para sugerir os melhores sistemas de ferragens, trilhos e perfis aplicáveis.
-${regraDescricao}
-Extraia as dimensões principais (Altura, Largura, Profundidade em mm) e a estrutura interna.
-
-REGRAS FÍSICAS DE MARCENARIA:
-1. Altura < 800mm: Proibido maleiro e cabideiro.
-2. Altura entre 800mm e 1500mm: Permitido prateleiras e gavetas. Sem maleiro/cabideiro.
-3. Altura > 1500mm: Permitido maleiro, cabideiro, prateleiras e gavetas.
-
+Analise o croqui fornecido e utilize as referências técnicas acima. ${regraDescricao}
+Extraia as dimensões (Altura, Largura, Profundidade em mm) e estrutura.
 PARÂMETROS CONSTRUTIVOS:
-- Espessura das caixas: ${espCaixa}mm | Fundo: ${espFundo}mm
-- Desconto para gavetas: ${folgaGaveta}mm
-- Material principal: ${itemAtivo.nome} (R$ ${itemAtivo.preco} a chapa)
-
-Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
+- Espessura caixas: ${espCaixa}mm | Fundo: ${espFundo}mm
+- Desconto gavetas: ${folgaGaveta}mm
+- Material: ${itemAtivo.nome}
+Responda OBRIGATORIAMENTE em JSON puro, na estrutura:
 {
-  "resumoComercial": "Descrição detalhada do móvel citando as soluções de ferragens adequadas.",
-  "alturaMM": 600,
-  "larguraMM": 600,
-  "profundidadeMM": 600,
-  "numModulos": 1,
-  "temMaleiro": false,
-  "temCabideiro": false,
-  "numPrateleiras": 1,
-  "numGavetas": 0,
-  "pecas": [
-    {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600}
-  ],
-  "insumos": [
-    "1 Chapa MDF 15mm",
-    "Sistema Rometal / FGVtn recomendado conforme catálogo",
-    "Fita de borda"
-  ],
-  "chapasEstimadas": 0.5,
-  "custoOutros": 120
+  "resumoComercial": "Descrição do móvel e soluções.",
+  "alturaMM": 600, "larguraMM": 600, "profundidadeMM": 600,
+  "numModulos": 1, "temMaleiro": false, "temCabideiro": false, "numPrateleiras": 1, "numGavetas": 0,
+  "pecas": [ {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600} ],
+  "insumos": [ "1 Chapa MDF 15mm", "Corrediças Telescópicas", "Fita de borda" ],
+  "chapasEstimadas": 0.5, "custoOutros": 120
 }`;
 
-      const modelos = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
-      let data = null;
-      let ultimoErro = '';
-
-      for (const modelo of modelos) {
+      let data = null, ultimoErro = '';
+      for (const modelo of ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash']) {
         try {
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  { text: prompt },
-                  { inline_data: { mime_type: "image/jpeg", data: imagemBase64 } }
-                ]
-              }]
-            })
+            body: JSON.stringify({ contents: [{ parts: [ { text: prompt }, { inline_data: { mime_type: "image/jpeg", data: imagemBase64 } } ] }] })
           });
-
           const resData = await response.json();
-          if (resData.error) {
-            ultimoErro = resData.error.message;
-            continue;
-          }
-
-          if (resData.candidates && resData.candidates.length > 0) {
-            data = resData;
-            break;
-          }
-        } catch (err) {
-          ultimoErro = err.message;
-        }
+          if (resData.error) { ultimoErro = resData.error.message; continue; }
+          if (resData.candidates && resData.candidates.length > 0) { data = resData; break; }
+        } catch (err) { ultimoErro = err.message; }
       }
 
       if (!data) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao analisar: ' + (ultimoErro || 'Verifique sua chave de API.');
+        statusEl.innerText = '❌ Erro: ' + (ultimoErro || 'Verifique sua chave.');
         document.getElementById('btnProcessar').disabled = false;
         return;
       }
 
       try {
         const rawText = data.candidates[0].content.parts[0].text;
-        const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-        const resultado = JSON.parse(jsonText);
-
+        const resultado = JSON.parse(rawText.replace(/```json/g, '').replace(/```/g, '').trim());
         ultimoResultado = resultado;
         exibirResultado(resultado, margemLucro);
         statusEl.style.display = 'none';
         desenharPranchaSVG(resultado);
-
       } catch (err) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao processar resposta da IA: ' + err.message;
+        statusEl.innerText = '❌ Erro ao processar JSON da IA.';
       } finally {
         document.getElementById('btnProcessar').disabled = false;
       }
@@ -808,13 +790,9 @@ Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
       document.getElementById('resumoTexto').innerText = data.resumoComercial;
 
       const itemAtivo = obterItemAtivo();
-      const chapas = data.chapasEstimadas || 1;
-      const precoChapa = itemAtivo.preco || 250;
-      const outrosCustos = data.custoOutros || 150;
-
-      document.getElementById('inpEditChapas').value = chapas;
-      document.getElementById('inpEditPrecoChapa').value = precoChapa;
-      document.getElementById('inpEditOutrosCustos').value = outrosCustos;
+      document.getElementById('inpEditChapas').value = data.chapasEstimadas || 1;
+      document.getElementById('inpEditPrecoChapa').value = itemAtivo.preco || 250;
+      document.getElementById('inpEditOutrosCustos').value = data.custoOutros || 150;
       document.getElementById('inpEditMargem').value = margemLucro;
 
       recalcularPrecoManual();
@@ -838,7 +816,6 @@ Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
 
     function recalcularPrecoManual() {
       if (!ultimoResultado) return;
-
       const chapas = parseFloat(document.getElementById('inpEditChapas').value) || 0;
       const precoChapa = parseFloat(document.getElementById('inpEditPrecoChapa').value) || 0;
       const outrosInsumos = parseFloat(document.getElementById('inpEditOutrosCustos').value) || 0;
@@ -867,7 +844,6 @@ Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
       const altMM = data.alturaMM || 2800;
       const largMM = data.larguraMM || 1200;
       const profMM = data.profundidadeMM || 600;
-
       const altM = altMM / 1000;
       const largM = largMM / 1000;
       const profCM = profMM / 10;
@@ -876,142 +852,84 @@ Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
       document.getElementById('lblAltura').innerText = `${altM.toFixed(2).replace('.', ',')} m`;
       document.getElementById('lblProfundidade').innerText = `${profCM.toFixed(0)} cm`;
 
-      const maxW = 180;
-      const maxH = 220;
       const aspect = largMM / altMM;
-
-      let boxW, boxH;
-      if (aspect >= 1) {
-        boxW = maxW;
-        boxH = Math.max(70, Math.min(maxH, maxW / aspect));
-      } else {
-        boxH = maxH;
-        boxW = Math.max(70, Math.min(maxW, maxH * aspect));
-      }
-
-      const startX = 30 + (maxW - boxW) / 2;
-      const startY = 20 + (maxH - boxH) / 2;
+      let boxW = aspect >= 1 ? 180 : Math.max(70, Math.min(180, 220 * aspect));
+      let boxH = aspect >= 1 ? Math.max(70, Math.min(220, 180 / aspect)) : 220;
+      const startX = 30 + (180 - boxW) / 2;
+      const startY = 20 + (220 - boxH) / 2;
 
       let svgContent = `<rect x="${startX}" y="${startY}" width="${boxW}" height="${boxH}" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>`;
 
-      const modulos = data.numModulos || 1;
-      if (modulos > 1) {
-        for (let m = 1; m < modulos; m++) {
-          let modX = startX + (boxW / modulos) * m;
+      if (data.numModulos > 1) {
+        for (let m = 1; m < data.numModulos; m++) {
+          let modX = startX + (boxW / data.numModulos) * m;
           svgContent += `<line x1="${modX}" y1="${startY}" x2="${modX}" y2="${startY + boxH}" stroke="#0f172a" stroke-width="1.5"/>`;
         }
       }
 
-      let currentY = startY;
-      let remainingH = boxH;
-
+      let currentY = startY, remainingH = boxH;
       if (altMM >= 1500 && data.temMaleiro) {
-        let maleiroH = boxH * 0.2;
-        currentY += maleiroH;
+        let maleiroH = boxH * 0.2; currentY += maleiroH; remainingH -= maleiroH;
         svgContent += `<line x1="${startX}" y1="${currentY}" x2="${startX + boxW}" y2="${currentY}" stroke="#0f172a" stroke-width="1.5"/>`;
         svgContent += `<text x="${startX + boxW/2}" y="${currentY - maleiroH/2 + 3}" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">MALEIRO</text>`;
-        remainingH -= maleiroH;
       }
 
-      const gavetas = data.numGavetas || 0;
-      if (gavetas > 0) {
-        let gavetasH = Math.min(remainingH * 0.6, gavetas * 20);
-        let gavYStart = startY + boxH - gavetasH;
+      if (data.numGavetas > 0) {
+        let gavetasH = Math.min(remainingH * 0.6, data.numGavetas * 20);
+        let gavYStart = startY + boxH - gavetasH; remainingH -= gavetasH;
         svgContent += `<line x1="${startX}" y1="${gavYStart}" x2="${startX + boxW}" y2="${gavYStart}" stroke="#0f172a" stroke-width="1.5"/>`;
-        
-        let umaGavH = gavetasH / gavetas;
-        for (let g = 0; g < gavetas; g++) {
+        let umaGavH = gavetasH / data.numGavetas;
+        for (let g = 0; g < data.numGavetas; g++) {
           let gY = gavYStart + g * umaGavH;
           svgContent += `<line x1="${startX}" y1="${gY}" x2="${startX + boxW}" y2="${gY}" stroke="#0f172a" stroke-width="1"/>`;
           svgContent += `<rect x="${startX + boxW/2 - 8}" y="${gY + umaGavH/2 - 1}" width="16" height="2" fill="#0f172a"/>`;
         }
-        svgContent += `<text x="${startX + boxW/2}" y="${gavYStart - 4}" font-size="7" font-weight="bold" fill="#0f172a" text-anchor="middle">${gavetas} GAVETA(S)</text>`;
-        remainingH -= gavetasH;
+        svgContent += `<text x="${startX + boxW/2}" y="${gavYStart - 4}" font-size="7" font-weight="bold" fill="#0f172a" text-anchor="middle">${data.numGavetas} GAVETA(S)</text>`;
       }
 
       if (altMM >= 1000 && data.temCabideiro) {
-        let cabideiroH = remainingH * 0.7;
-        let cabY = currentY + cabideiroH;
+        let cabideiroH = remainingH * 0.7; let cabY = currentY + cabideiroH; remainingH -= cabideiroH;
         svgContent += `<line x1="${startX + 5}" y1="${currentY + 12}" x2="${startX + boxW - 5}" y2="${currentY + 12}" stroke="#64748b" stroke-width="2" stroke-dasharray="3,3"/>`;
         svgContent += `<text x="${startX + boxW/2}" y="${currentY + cabideiroH/2}" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">CABIDEIRO</text>`;
-        if (remainingH > cabideiroH) {
-          svgContent += `<line x1="${startX}" y1="${cabY}" x2="${startX + boxW}" y2="${cabY}" stroke="#0f172a" stroke-width="1.5"/>`;
-        }
+        if (remainingH > 0) svgContent += `<line x1="${startX}" y1="${cabY}" x2="${startX + boxW}" y2="${cabY}" stroke="#0f172a" stroke-width="1.5"/>`;
         currentY = cabY;
-        remainingH -= cabideiroH;
       }
 
-      const prat = data.numPrateleiras || 0;
-      if (prat > 0 && remainingH > 20) {
-        let pratGap = remainingH / (prat + 1);
-        for (let p = 1; p <= prat; p++) {
+      if (data.numPrateleiras > 0 && remainingH > 20) {
+        let pratGap = remainingH / (data.numPrateleiras + 1);
+        for (let p = 1; p <= data.numPrateleiras; p++) {
           let pY = currentY + p * pratGap;
-          if (pY < startY + boxH - (gavetas > 0 ? (gavetas * 20) : 0)) {
+          if (pY < startY + boxH - (data.numGavetas > 0 ? (data.numGavetas * 20) : 0)) {
             svgContent += `<line x1="${startX}" y1="${pY}" x2="${startX + boxW}" y2="${pY}" stroke="#0f172a" stroke-width="1.5"/>`;
           }
         }
-      } else if (gavetas === 0 && !data.temCabideiro && !data.temMaleiro && prat === 0) {
-        svgContent += `<text x="${startX + boxW/2}" y="${startY + boxH/2}" font-size="8" font-weight="bold" fill="#64748b" text-anchor="middle">VÃO LIVRE / NICHO</text>`;
       }
 
-      let totalSVG = `<svg viewBox="0 0 250 280" class="svg-cad">
-        ${svgContent}
-        <line x1="${startX - 12}" y1="${startY}" x2="${startX - 12}" y2="${startY + boxH}" stroke="#64748b" stroke-width="1"/>
-        <line x1="${startX - 16}" y1="${startY}" x2="${startX - 8}" y2="${startY}" stroke="#64748b" stroke-width="1"/>
-        <line x1="${startX - 16}" y1="${startY + boxH}" x2="${startX - 8}" y2="${startY + boxH}" stroke="#64748b" stroke-width="1"/>
+      let totalSVG = `<svg viewBox="0 0 250 280" class="svg-cad">${svgContent}
         <text x="${startX - 18}" y="${startY + boxH/2}" font-size="8" font-weight="bold" fill="#0f172a" transform="rotate(-90 ${startX - 18},${startY + boxH/2})" text-anchor="middle">${altM.toFixed(2)} m</text>
-
-        <line x1="${startX}" y1="${startY + boxH + 12}" x2="${startX + boxW}" y2="${startY + boxH + 12}" stroke="#64748b" stroke-width="1"/>
-        <line x1="${startX}" y1="${startY + boxH + 8}" x2="${startX}" y2="${startY + boxH + 16}" stroke="#64748b" stroke-width="1"/>
-        <line x1="${startX + boxW}" y1="${startY + boxH + 8}" x2="${startX + boxW}" y2="${startY + boxH + 16}" stroke="#64748b" stroke-width="1"/>
         <text x="${startX + boxW/2}" y="${startY + boxH + 24}" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>
       </svg>`;
-
       document.getElementById('svgContainer').innerHTML = totalSVG;
-
-      let topH = Math.max(15, Math.min(35, (profMM / 1000) * 35));
-      let topSVG = `<svg viewBox="0 0 220 65" style="width:100%; max-height:65px;">
-        <rect x="${startX}" y="10" width="${boxW}" height="${topH}" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
-        ${modulos > 1 ? `<line x1="${startX + boxW/2}" y1="10" x2="${startX + boxW/2}" y2="${10 + topH}" stroke="#0f172a" stroke-width="1"/>` : ''}
-        <text x="${startX + boxW/2}" y="${10 + topH/2 + 3}" font-size="8" fill="#475569" text-anchor="middle">${profCM.toFixed(0)} cm prof.</text>
-        <text x="${startX + boxW/2}" y="${10 + topH + 12}" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">${largM.toFixed(2)} m</text>
-      </svg>`;
-      document.getElementById('svgTopContainer').innerHTML = topSVG;
-
-      const promptTexto = gerarPromptGemini(data);
-      document.getElementById('promptGeminiBox').value = promptTexto;
+      document.getElementById('promptGeminiBox').value = gerarPromptGemini(data);
     }
 
     function gerarPromptGemini(data) {
       const itemAtivo = obterItemAtivo();
       const altM = ((data.alturaMM || 2800) / 1000).toFixed(2).replace('.', ',');
       const largM = ((data.larguraMM || 1200) / 1000).toFixed(2).replace('.', ',');
-      const profCM = Math.round((data.profundidadeMM || 600) / 10);
-      
-      let detalhesEstrutura = [];
-      if (data.numModulos > 1) detalhesEstrutura.push(`divisão em ${data.numModulos} módulos`);
-      if (data.temMaleiro) detalhesEstrutura.push("espaço superior para maleiro");
-      if (data.temCabideiro) detalhesEstrutura.push("cabideiro metálico");
-      if (data.numPrateleiras > 0) detalhesEstrutura.push(`${data.numPrateleiras} prateleira(s)`);
-      if (data.numGavetas > 0) detalhesEstrutura.push(`bloco inferior com ${data.numGavetas} gavetas`);
-
       return `Gere uma imagem fotorrealista em altíssima definição (3D architectural render) de móvel planejado de marcenaria.
 - Descrição: ${data.resumoComercial}
-- Dimensões: ${largM}m x ${altM}m x ${profCM}cm.
-- Layout: ${detalhesEstrutura.join(', ')}.
-- Acabamento/Material: ${itemAtivo.nome} com fita de borda perfeitamente aplicada.
-- Iluminação natural suave em estúdio de arquitetura de interiores.`;
+- Dimensões: ${largM}m x ${altM}m x ${Math.round((data.profundidadeMM || 600) / 10)}cm.
+- Acabamento/Material: ${itemAtivo.nome} com fita de borda perfeitamente aplicada.`;
     }
 
     function copiarPromptGemini() {
       const box = document.getElementById('promptGeminiBox');
-      box.select();
-      box.setSelectionRange(0, 99999);
+      box.select(); box.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(box.value).then(() => {
-        const statusCopia = document.getElementById('statusCopia');
-        statusCopia.innerText = '✅ Prompt copiado! Agora cole no Gemini para gerar sua imagem.';
-        statusCopia.style.display = 'block';
-        setTimeout(() => { statusCopia.style.display = 'none'; }, 4000);
+        const s = document.getElementById('statusCopia');
+        s.innerText = '✅ Prompt copiado!'; s.style.display = 'block';
+        setTimeout(() => { s.style.display = 'none'; }, 4000);
       });
     }
 
@@ -1019,63 +937,42 @@ Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
       document.getElementById('abaComercial').style.display = aba === 'comercial' ? 'block' : 'none';
       document.getElementById('abaTecnica').style.display = aba === 'tecnica' ? 'block' : 'none';
       document.getElementById('abaEsboco').style.display = aba === 'esboco' ? 'block' : 'none';
-
       document.getElementById('tabComercialBtn').className = aba === 'comercial' ? 'tab active' : 'tab';
       document.getElementById('tabTecnicaBtn').className = aba === 'tecnica' ? 'tab active' : 'tab';
       document.getElementById('tabEsbocoBtn').className = aba === 'esboco' ? 'tab active' : 'tab';
     }
 
     function salvarProjetoNoHistorico() {
-      if (!ultimoResultado) {
-        alert('Gere um orçamento antes de salvar!');
-        return;
-      }
-
-      const nomeClienteInput = document.getElementById('nomeCliente');
-      const nomeCliente = nomeClienteInput.value.trim() || ('Cliente ' + new Date().toLocaleDateString('pt-BR'));
-      const margemLucro = parseFloat(document.getElementById('inpEditMargem').value) || 100;
-      const itemAtivo = obterItemAtivo();
-
-      const custoMaterial = ultimoResultado.custoMaterial || 0;
-      const valorFinal = custoMaterial * (1 + (margemLucro / 100));
-
-      const novoProjeto = {
+      if (!ultimoResultado) { alert('Gere um orçamento antes de salvar!'); return; }
+      const nomeCliente = document.getElementById('nomeCliente').value.trim() || ('Cliente ' + new Date().toLocaleDateString('pt-BR'));
+      const valorFinal = (ultimoResultado.custoMaterial || 0) * (1 + ((parseFloat(document.getElementById('inpEditMargem').value) || 100) / 100));
+      historicoProjetos.unshift({
         id: Date.now().toString(),
         cliente: nomeCliente,
         data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
         valorTotal: valorFinal,
-        mdfNome: itemAtivo.nome,
+        mdfNome: obterItemAtivo().nome,
         resultado: ultimoResultado
-      };
-
-      historicoProjetos.unshift(novoProjeto);
+      });
       localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
-      alert(`✅ Orçamento de "${nomeCliente}" salvo com sucesso!`);
+      alert(`✅ Orçamento salvo com sucesso!`);
       renderHistorico();
     }
 
     function renderHistorico() {
       const container = document.getElementById('listaHistorico');
       container.innerHTML = '';
-
       if (historicoProjetos.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:12px;">Nenhum orçamento salvo ainda.</p>';
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum orçamento salvo.</p>';
         return;
       }
-
       historicoProjetos.forEach((p, index) => {
         const div = document.createElement('div');
         div.className = 'proj-card';
         div.innerHTML = `
           <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-              <strong style="color:var(--accent); font-size:1rem;">${p.cliente}</strong><br>
-              <span style="font-size:0.75rem; color:var(--text-dim);">${p.data}</span>
-            </div>
+            <div><strong style="color:var(--accent);">${p.cliente}</strong><br><span style="font-size:0.75rem; color:var(--text-dim);">${p.data}</span></div>
             <strong style="font-size:1.1rem; color:#fff;">${p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
-          </div>
-          <div style="font-size:0.8rem; color:var(--text-dim);">
-            🎨 ${p.mdfNome} | ${p.resultado.resumoComercial}
           </div>
           <div style="display:flex; gap:8px; width:100%; margin-top:4px;">
             <button class="btn-sm" style="background-color:var(--blue); color:#fff; flex:1;" onclick="carregarProjetoHistorico(${index})">👁️ Abrir Projeto</button>
@@ -1089,13 +986,10 @@ Responda OBRIGATORIAMENTE em JSON puro, sem markdown extra, na estrutura:
     function carregarProjetoHistorico(index) {
       const p = historicoProjetos[index];
       if (!p) return;
-
       ultimoResultado = p.resultado;
       document.getElementById('nomeCliente').value = p.cliente;
-      
       exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value));
       desenharPranchaSVG(ultimoResultado);
-
       mudarVisaoPrincipal('projeto');
       mudarAba('comercial');
     }
