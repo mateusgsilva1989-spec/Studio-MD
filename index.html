@@ -90,6 +90,8 @@
     .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
     .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
     .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    
+    .ia-badge { background: rgba(139, 92, 246, 0.2); color: var(--purple); font-size: 0.7rem; padding: 3px 6px; border-radius: 4px; margin-left: 6px; }
 
     .instrucao-orcamento { font-size: 0.8rem; color: var(--accent); text-align: center; margin-top: 8px; margin-bottom: -4px;}
 
@@ -125,12 +127,12 @@
 
   <!-- ==================== VISÃO 1: ORÇAMENTO ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
-    <div class="card">
+    <div class="card" id="inputCard">
       <h2>📝 Novo Orçamento</h2>
-      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Descreva o móvel em texto <b>ou</b> envie uma foto do projeto/croqui. Se preferir, envie os dois juntos!</p>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Descreva o móvel em texto <b>ou</b> envie uma foto. A IA identificará a estrutura e nosso Motor de Engenharia fará o cálculo.</p>
       
       <label for="descricaoMovel">Instruções do Marceneiro</label>
-      <textarea id="descricaoMovel" rows="4" placeholder="Ex: Roupeiro com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..." oninput="validarEntradaOrcamento()"></textarea>
+      <textarea id="descricaoMovel" rows="4" placeholder="Ex: Roupeiro com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=1800mm A=2500mm P=600mm..." oninput="validarEntradaOrcamento()"></textarea>
       
       <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
         Material Padrão Ativo: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
@@ -142,7 +144,6 @@
           <span>📷 Tirar Foto</span>
           <input type="file" id="fileCam" accept="image/*" capture="environment" onchange="carregarImagem(event)">
         </div>
-        
         <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
           <span>🖼️ Galeria</span>
           <input type="file" id="fileGaleria" accept="image/*" onchange="carregarImagem(event)">
@@ -152,11 +153,25 @@
       <img id="preview-img" alt="Preview do Croqui">
 
       <p class="instrucao-orcamento" id="msgBotao">Digite uma descrição ou envie uma imagem para começar.</p>
-      <button class="btn" id="btnProcessar" onclick="processarCroqui()" disabled>⚡ Gerar Orçamento com IA</button>
+      <button class="btn" id="btnProcessar" onclick="interpretarComIA()" disabled>⚡ Identificar Projeto com IA</button>
       <div id="status" class="status-msg"></div>
     </div>
 
-    <!-- CARD DE RESULTADOS -->
+    <!-- CAIXA DE VALIDAÇÃO DA IA ANTES DO CÁLCULO DE ENGENHARIA -->
+    <div id="confirmacaoIACard" class="card" style="display: none; border-color: var(--accent);">
+      <h2>🤖 Estrutura Identificada pela IA</h2>
+      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Verifique se a IA interpretou corretamente as medidas. Se estiver certo, vamos para a engenharia.</p>
+      
+      <div id="dadosProjetoIA" style="background: #0f172a; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+         <!-- Preenchido via JS -->
+      </div>
+
+      <button class="btn" style="background-color: var(--accent); color: #000; margin-top: 16px;" onclick="confirmarEGerarEngenharia()">⚙️ Confirmar e Calcular Engenharia</button>
+      <button class="btn btn-danger" style="margin-top: 8px;" onclick="cancelarConfirmacaoIA()">❌ Corrigir Texto/Imagem</button>
+    </div>
+
+
+    <!-- CARD DE RESULTADOS (ENGENHARIA E PREÇO) -->
     <div class="card" id="resultadoCard" style="display: none;">
       <div class="tabs">
         <div class="tab active" id="tabComercialBtn" onclick="mudarAba('comercial')">Comercial</div>
@@ -183,10 +198,10 @@
 
       <div id="abaTecnica" style="display: none;">
         <div class="calc-box">
-          <h4>🧮 Simulação do Preço Final</h4>
+          <h4>🧮 Simulação do Preço Final <span class="ia-badge">Motor de Engenharia</span></h4>
           <div class="grid-2">
             <div>
-              <label>Qtd. Chapas Estimada</label>
+              <label>Qtd. Chapas Calculada</label>
               <input type="number" id="inpEditChapas" step="0.1" min="0" oninput="recalcularPrecoManual()">
             </div>
             <div>
@@ -216,7 +231,7 @@
           </div>
         </div>
 
-        <h3>Lista de Peças Estimada</h3>
+        <h3>Lista de Peças Calculadas</h3>
         <table id="tabelaPecas">
           <thead>
             <tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th></tr>
@@ -224,7 +239,7 @@
           <tbody></tbody>
         </table>
 
-        <h3 style="margin-top: 16px;">Insumos e Ferragens Recomendados</h3>
+        <h3 style="margin-top: 16px;">Insumos e Ferragens Calculados</h3>
         <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
       </div>
 
@@ -304,12 +319,21 @@
       
       <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
         <label id="lblAcaoTabela">➕ Cadastrar Novo Item na Tabela</label>
+        
+        <div style="margin-bottom:10px;">
+            <select id="novoItemCategoria">
+                <option value="MDF">Chapa / MDF</option>
+                <option value="Ferragem">Ferragem / Acessório</option>
+                <option value="Fita">Fita de Borda</option>
+            </select>
+        </div>
+
         <div class="grid-2">
           <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
           <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
         </div>
         <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button class="btn btn-sec" id="btnSalvarItem" style="margin-top: 0; flex: 1;" onclick="salvarItemTabela()">Adicionar à Tabela de Preços</button>
+            <button class="btn btn-sec" id="btnSalvarItem" style="margin-top: 0; flex: 1;" onclick="salvarItemTabela()">Adicionar à Tabela</button>
             <button class="btn btn-danger" id="btnCancelarEdicaoItem" style="margin-top: 0; display:none;" onclick="cancelarEdicaoItem()">Cancelar</button>
         </div>
       </div>
@@ -409,21 +433,50 @@
   </div>
 
   <script>
+    // =========================
+    // VARIÁVEIS GLOBAIS
+    // =========================
     let imagemBase64 = "";
     let ultimoResultado = null;
     let editandoItemIndex = -1;
 
-    let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || JSON.parse(localStorage.getItem('tabela_mdf')) || [
-      { id: '1', nome: 'MDF Branco TX (Chapa)', preco: 250 },
-      { id: '2', nome: 'MDF Amadeirado Louro Freijó (Chapa)', preco: 380 },
-      { id: '3', nome: 'Corrediça Telescópica 45cm (Par)', preco: 35 },
-      { id: '4', nome: 'Dobradiça 35mm Amortecedor (Unid.)', preco: 12 },
-      { id: '5', nome: 'Fita de Borda 22mm (Rolo 20m)', preco: 45 }
-    ];
+    // Núcleo de Engenharia
+    let projetoBaseAtual = null; // Guardará o JSON interpretado pelo Gemini
+    let engenhariaAtual = null; // Guardará o resultado do Motor de Engenharia
+
+    // =========================
+    // BANCO LOCAL (MATERIAIS E CONFIG)
+    // =========================
+    
+    // Migração de tabela antiga para o novo formato com "categoria"
+    let tabelaCrua = JSON.parse(localStorage.getItem('tabela_precos')) || JSON.parse(localStorage.getItem('tabela_mdf')) || [];
+    if(tabelaCrua.length === 0) {
+        tabelaCrua = [
+          { id: '1', categoria: 'MDF', nome: 'MDF Branco TX (Chapa)', preco: 250, espessuraMM: 15, unidade: 'chapa' },
+          { id: '2', categoria: 'MDF', nome: 'MDF Amadeirado Louro Freijó (Chapa)', preco: 380, espessuraMM: 15, unidade: 'chapa' },
+          { id: '3', categoria: 'Ferragem', nome: 'Corrediça Telescópica 45cm (Par)', preco: 35, unidade: 'par' },
+          { id: '4', categoria: 'Ferragem', nome: 'Dobradiça 35mm Amortecedor (Unid.)', preco: 12, unidade: 'unidade' },
+          { id: '5', categoria: 'Fita', nome: 'Fita de Borda 22mm (Rolo 20m)', preco: 45, unidade: 'rolo' }
+        ];
+    } else {
+        // Garantir que os itens antigos tenham categoria
+        tabelaCrua = tabelaCrua.map(item => {
+            if(!item.categoria) {
+                if(item.nome.toUpperCase().includes('MDF') || item.nome.toUpperCase().includes('CHAPA')) item.categoria = 'MDF';
+                else if(item.nome.toUpperCase().includes('FITA')) item.categoria = 'Fita';
+                else item.categoria = 'Ferragem';
+            }
+            return item;
+        });
+    }
+    let tabelaPrecos = tabelaCrua;
 
     let historicoProjetos = JSON.parse(localStorage.getItem('historico_projetos')) || [];
     let listaClientes = JSON.parse(localStorage.getItem('lista_clientes')) || [];
 
+    // =========================
+    // INICIALIZAÇÃO
+    // =========================
     window.onload = () => {
       document.getElementById('apiKey').value = localStorage.getItem('gemini_key') || '';
       document.getElementById('espCaixa').value = localStorage.getItem('esp_caixa') || '15';
@@ -456,75 +509,6 @@
       window.scrollTo(0, 0);
     }
 
-    /* GESTÃO DE COMPRAS E INSUMOS */
-    function gerarListaCompras() {
-        if(historicoProjetos.length === 0) {
-            alert("Nenhum projeto salvo no histórico para gerar a lista.");
-            return;
-        }
-        const insumosConsolidados = { 'MDF e Chapas': {}, 'Ferragens e Componentes': {} };
-        historicoProjetos.forEach(p => {
-            const projeto = p.resultado;
-            if(!projeto) return;
-            const nomeMdf = p.mdfNome || "MDF Indefinido";
-            const qtdChapas = projeto.chapasEstimadas || 0;
-            if(qtdChapas > 0) {
-                if (insumosConsolidados['MDF e Chapas'][nomeMdf]) insumosConsolidados['MDF e Chapas'][nomeMdf] += qtdChapas;
-                else insumosConsolidados['MDF e Chapas'][nomeMdf] = qtdChapas;
-            }
-            if(projeto.insumos) {
-                 projeto.insumos.forEach(insumo => {
-                      let nomeInsumo = insumo;
-                      let qtd = 1; 
-                      const match = insumo.match(/^([\d.,]+)\s+(.*)/);
-                      if (match) {
-                          qtd = parseFloat(match[1].replace(',', '.'));
-                          nomeInsumo = match[2].trim();
-                      }
-                      if (insumosConsolidados['Ferragens e Componentes'][nomeInsumo]) insumosConsolidados['Ferragens e Componentes'][nomeInsumo] += qtd;
-                      else insumosConsolidados['Ferragens e Componentes'][nomeInsumo] = qtd;
-                 });
-            }
-        });
-
-        const tbody = document.getElementById('corpo-tabela-compras');
-        tbody.innerHTML = ''; 
-        for (const [categoria, itens] of Object.entries(insumosConsolidados)) {
-            for (const [nome, qtd] of Object.entries(itens)) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${categoria}</td><td>${nome}</td><td>${qtd % 1 !== 0 ? qtd.toFixed(1).replace('.', ',') : qtd}</td>`;
-                tbody.appendChild(tr);
-            }
-        }
-        if (tbody.innerHTML === '') {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#9ca3af;">Nenhum material encontrado nos projetos salvos.</td></tr>';
-        }
-    }
-
-    function copiarParaWhatsAppCompras() {
-        const tbody = document.getElementById('corpo-tabela-compras');
-        if(tbody.rows.length === 0 || tbody.innerText.includes("Clique em")) {
-            alert("Gere a lista de compras primeiro.");
-            return;
-        }
-        let textoWhatsApp = "*LISTA DE COMPRAS - STUDIO DM*\n\n";
-        let categoriaAtual = "";
-        Array.from(tbody.rows).forEach(row => {
-            if(row.cells.length < 3) return;
-            const categoria = row.cells[0].innerText;
-            const item = row.cells[1].innerText;
-            const qtd = row.cells[2].innerText;
-            if (categoria !== categoriaAtual) {
-                textoWhatsApp += `\n*${categoria}*\n`;
-                categoriaAtual = categoria;
-            }
-            textoWhatsApp += `- ${item}: *${qtd}*\n`;
-        });
-        navigator.clipboard.writeText(textoWhatsApp).then(() => {
-            alert("Lista copiada! Agora é só colar no WhatsApp do seu fornecedor.");
-        });
-    }
-
     /* CONFIGURAÇÕES GERAIS */
     function salvarConfig() {
       const key = document.getElementById('apiKey').value.trim();
@@ -547,93 +531,9 @@
       }
     }
 
-    /* GESTÃO DE CLIENTES */
-    function salvarCliente() {
-      const id = document.getElementById('editClientId').value;
-      const nome = document.getElementById('cadNome').value.trim();
-      const telefone = document.getElementById('cadTelefone').value.trim();
-      const email = document.getElementById('cadEmail').value.trim();
-      const empresa = document.getElementById('cadEmpresa').value.trim();
-      const endereco = document.getElementById('cadEndereco').value.trim();
-
-      if (!nome) { alert('Informe ao menos o nome do cliente.'); return; }
-
-      if (id) {
-        const index = listaClientes.findIndex(c => c.id === id);
-        if (index !== -1) listaClientes[index] = { id, nome, telefone, email, empresa, endereco };
-      } else {
-        listaClientes.unshift({ id: Date.now().toString(), nome, telefone, email, empresa, endereco });
-      }
-      localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
-      limparFormCliente();
-      renderClientes();
-      alert('✅ Cliente salvo com sucesso!');
-    }
-
-    function renderClientes() {
-      const container = document.getElementById('listaClientesCadastrados');
-      container.innerHTML = '';
-      if (listaClientes.length === 0) {
-        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado.</p>';
-        return;
-      }
-      listaClientes.forEach((cli) => {
-        const div = document.createElement('div');
-        div.className = 'cli-card';
-        div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div><strong style="color:var(--accent);">${cli.nome}</strong>${cli.empresa ? ` <span style="font-size:0.8rem; color:var(--text-dim);">(${cli.empresa})</span>` : ''}</div>
-            <div style="display:flex; gap:6px;">
-              <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarCliente('${cli.id}')">✏️ Editar</button>
-              <button class="btn-sm btn-danger" onclick="excluirCliente('${cli.id}')">🗑️ Excluir</button>
-            </div>
-          </div>
-          <div style="font-size:0.82rem; color:var(--text-dim); margin-top:6px; display:flex; flex-direction:column; gap:2px;">
-            ${cli.telefone ? `<span>📞 ${cli.telefone}</span>` : ''}
-            ${cli.email ? `<span>📧 ${cli.email}</span>` : ''}
-            ${cli.endereco ? `<span>📍 ${cli.endereco}</span>` : ''}
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function editarCliente(id) {
-      const cli = listaClientes.find(c => c.id === id);
-      if (!cli) return;
-      document.getElementById('editClientId').value = cli.id;
-      document.getElementById('cadNome').value = cli.nome;
-      document.getElementById('cadTelefone').value = cli.telefone || '';
-      document.getElementById('cadEmail').value = cli.email || '';
-      document.getElementById('cadEmpresa').value = cli.empresa || '';
-      document.getElementById('cadEndereco').value = cli.endereco || '';
-      document.getElementById('tituloFormCliente').innerText = '✏️ Editar Cliente';
-      document.getElementById('btnSalvarCliente').innerText = '💾 Atualizar Cliente';
-      document.getElementById('btnCancelarCliente').style.display = 'block';
-      window.scrollTo(0, 0);
-    }
-
-    function limparFormCliente() {
-      document.getElementById('editClientId').value = '';
-      document.getElementById('cadNome').value = '';
-      document.getElementById('cadTelefone').value = '';
-      document.getElementById('cadEmail').value = '';
-      document.getElementById('cadEmpresa').value = '';
-      document.getElementById('cadEndereco').value = '';
-      document.getElementById('tituloFormCliente').innerText = '👤 Cadastrar Novo Cliente';
-      document.getElementById('btnSalvarCliente').innerText = '💾 Salvar Cliente';
-      document.getElementById('btnCancelarCliente').style.display = 'none';
-    }
-
-    function excluirCliente(id) {
-      if (confirm('Deseja realmente excluir este cliente do cadastro?')) {
-        listaClientes = listaClientes.filter(c => c.id !== id);
-        localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
-        renderClientes();
-      }
-    }
-
-    /* TABELA DE PREÇOS (MATERIAIS E EDIÇÃO) */
+    // =========================
+    // GESTÃO DE MATERIAIS
+    // =========================
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
       const select = document.getElementById('padraoMdfSelect');
@@ -643,29 +543,41 @@
       container.innerHTML = '';
       
       tabelaPrecos.forEach((item, index) => {
-        const opt = document.createElement('option');
-        opt.value = item.id;
-        opt.innerText = `${item.nome} — R$ ${item.preco},00`;
-        select.appendChild(opt);
+        // REGRA: Apenas itens da categoria MDF aparecem no seletor padrão
+        if(item.categoria === 'MDF') {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.innerText = `${item.nome} — R$ ${item.preco},00`;
+            select.appendChild(opt);
+        }
 
         const div = document.createElement('div');
         div.className = 'mdf-item';
         div.innerHTML = `
           <div style="flex:1;">
-            <strong style="font-size:0.85rem;">${item.nome}</strong><br>
+            <strong style="font-size:0.85rem;">${item.nome}</strong> 
+            <span style="font-size:0.7rem; color:var(--text-dim); background:#1b2436; padding:2px 4px; border-radius:4px; margin-left:4px;">${item.categoria}</span><br>
             <span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span>
           </div>
           <div style="display:flex; gap:6px;">
-            <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarItemTabela(${index})">✏️ Editar</button>
+            <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarItemTabela(${index})">✏️</button>
             <button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">🗑️</button>
           </div>
         `;
         container.appendChild(div);
       });
+      
+      if(select.options.length === 0) {
+          const opt = document.createElement('option');
+          opt.innerText = "Nenhum MDF cadastrado";
+          select.appendChild(opt);
+      }
+      
       alterarPadraoAtivo();
     }
 
     function salvarItemTabela() {
+      const catInput = document.getElementById('novoItemCategoria').value;
       const nomeInput = document.getElementById('novoItemNome');
       const precoInput = document.getElementById('novoItemPreco');
       const nome = nomeInput.value.trim();
@@ -674,10 +586,11 @@
       if (!nome || isNaN(preco) || preco < 0) { alert('Informe um nome e um preço válido.'); return; }
       
       if (editandoItemIndex > -1) {
+          tabelaPrecos[editandoItemIndex].categoria = catInput;
           tabelaPrecos[editandoItemIndex].nome = nome;
           tabelaPrecos[editandoItemIndex].preco = preco;
       } else {
-          tabelaPrecos.push({ id: Date.now().toString(), nome, preco });
+          tabelaPrecos.push({ id: Date.now().toString(), categoria: catInput, nome: nome, preco: preco });
       }
       
       cancelarEdicaoItem();
@@ -687,9 +600,9 @@
     function editarItemTabela(index) {
         editandoItemIndex = index;
         const item = tabelaPrecos[index];
+        document.getElementById('novoItemCategoria').value = item.categoria || 'Ferragem';
         document.getElementById('novoItemNome').value = item.nome;
         document.getElementById('novoItemPreco').value = item.preco;
-        document.getElementById('lblAcaoTabela').innerText = '✏️ Editando Item da Tabela';
         document.getElementById('btnSalvarItem').innerText = '💾 Salvar Alteração';
         document.getElementById('btnCancelarEdicaoItem').style.display = 'block';
         document.getElementById('novoItemNome').focus();
@@ -699,8 +612,7 @@
         editandoItemIndex = -1;
         document.getElementById('novoItemNome').value = '';
         document.getElementById('novoItemPreco').value = '';
-        document.getElementById('lblAcaoTabela').innerText = '➕ Cadastrar Novo Item na Tabela';
-        document.getElementById('btnSalvarItem').innerText = 'Adicionar à Tabela de Preços';
+        document.getElementById('btnSalvarItem').innerText = 'Adicionar à Tabela';
         document.getElementById('btnCancelarEdicaoItem').style.display = 'none';
     }
 
@@ -714,7 +626,7 @@
 
     function obterItemAtivo() {
       const selectedId = document.getElementById('padraoMdfSelect').value;
-      return tabelaPrecos.find(m => m.id === selectedId) || tabelaPrecos[0];
+      return tabelaPrecos.find(m => m.id === selectedId) || tabelaPrecos.find(m => m.categoria === 'MDF') || {nome: 'Indefinido', preco: 0};
     }
 
     function alterarPadraoAtivo() {
@@ -726,7 +638,10 @@
       }
     }
 
-    /* PROCESSAMENTO COM A INTELIGÊNCIA ARTIFICIAL */
+
+    // =========================
+    // GEMINI - INTÉRPRETE (NOVO FLUXO)
+    // =========================
     function validarEntradaOrcamento() {
         const descText = document.getElementById('descricaoMovel').value.trim();
         const btn = document.getElementById('btnProcessar');
@@ -755,46 +670,42 @@
       reader.readAsDataURL(file);
     }
 
-    async function processarCroqui() {
+    async function interpretarComIA() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
       const statusEl = document.getElementById('status');
       if (!apiKey) { alert('Cadastre sua Chave de API na "Configuração IA".'); mudarVisaoPrincipal('config'); return; }
 
       statusEl.className = 'status-msg loading';
-      statusEl.innerText = '⏳ Estudando o projeto e calculando materiais...';
+      statusEl.innerText = '⏳ Analisando instruções do marceneiro...';
       statusEl.style.display = 'block';
       document.getElementById('btnProcessar').disabled = true;
 
-      const espCaixa = document.getElementById('espCaixa').value;
-      const espFundo = document.getElementById('espFundo').value;
-      const folgaGaveta = document.getElementById('folgaGaveta').value;
-      const margemLucro = parseFloat(document.getElementById('margemLucro').value);
-      const itemAtivo = obterItemAtivo();
-      const notebookContexto = document.getElementById('notebookContexto').value.trim();
       const descUsuario = document.getElementById('descricaoMovel').value.trim();
+      const espCaixa = parseFloat(document.getElementById('espCaixa').value);
+      const espFundo = parseFloat(document.getElementById('espFundo').value);
+      const itemAtivo = obterItemAtivo();
       
-      const prompt = `Você é um mestre marceneiro e orçamentista sênior.
-CONSIDERE O SEGUINTE CONHECIMENTO TÉCNICO:
-"""
-${notebookContexto}
-"""
-Analise a imagem fornecida (se houver) E PRINCIPALMENTE as instruções em texto do marceneiro abaixo:
-INSTRUÇÕES DO MARCENEIRO: "${descUsuario || 'Não há texto. Use apenas a imagem para deduzir o móvel.'}"
+      // NOVO PROMPT: Atua APENAS como intérprete para gerar o projetoBase.
+      const prompt = `Você é um intérprete de projetos de marcenaria.
+Analise a imagem fornecida (se houver) e as instruções em texto do marceneiro:
+INSTRUÇÕES: "${descUsuario || 'Use apenas a imagem para deduzir as características principais.'}"
 
-Extraia as dimensões (Altura, Largura, Profundidade em mm) e a estrutura com base nestes dados.
-PARÂMETROS CONSTRUTIVOS:
-- Espessura caixas: ${espCaixa}mm | Fundo: ${espFundo}mm
-- Desconto gavetas: ${folgaGaveta}mm
-- Material: ${itemAtivo.nome}
+Sua ÚNICA função é extrair a estrutura do móvel e retornar OBRIGATORIAMENTE um JSON válido no exato formato abaixo.
+ATENÇÃO: NÃO CALCULE PEÇAS, PREÇOS OU QUANTIDADE DE CHAPAS. O sistema fará a engenharia. Retorne APENAS os dados estruturais identificados.
 
-Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
+Responda OBRIGATORIAMENTE em JSON puro:
 {
-  "resumoComercial": "Descrição do móvel e soluções aplicadas.",
-  "alturaMM": 600, "larguraMM": 600, "profundidadeMM": 600,
-  "numModulos": 1, "temMaleiro": false, "temCabideiro": false, "numPrateleiras": 1, "numGavetas": 0,
-  "pecas": [ {"nome": "Lateral", "qtd": 2, "comprimento": 585, "largura": 600} ],
-  "insumos": [ "1 Chapa MDF 15mm", "Corrediças Telescópicas", "Fita de borda" ],
-  "chapasEstimadas": 0.5, "custoOutros": 120
+  "tipoMovel": "Roupeiro / Armário / Balcão (escolha um)",
+  "larguraMM": 1800,
+  "alturaMM": 2500,
+  "profundidadeMM": 600,
+  "modulos": 3,
+  "portas": 6,
+  "gavetas": 0,
+  "prateleiras": 0,
+  "maleiro": false,
+  "cabideiros": 0,
+  "observacoes": "Resumo comercial da interpretação para o cliente."
 }`;
 
       const parts = [{ text: prompt }];
@@ -803,12 +714,6 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
       }
 
       let data = null, ultimoErro = '';
-      
-      // ==========================================
-      // CORREÇÃO APLICADA AQUI ABAIXO:
-      // O modelo 'gemini-2.5-flash' foi descontinuado pela API. 
-      // A chamada foi atualizada para utilizar os modelos mais recentes (gemini-3.6-flash).
-      // ==========================================
       for (const modelo of ['gemini-3.6-flash']) {
         try {
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`, {
@@ -831,19 +736,257 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
 
       try {
         const rawText = data.candidates[0].content.parts[0].text;
-        const resultado = JSON.parse(rawText.replace(/```json/g, '').replace(/```/g, '').trim());
-        ultimoResultado = resultado;
-        exibirResultado(resultado, margemLucro);
+        const resultadoIA = JSON.parse(rawText.replace(/```json/g, '').replace(/```/g, '').trim());
+        
+        // Monta o modelo de Projeto Estruturado Base
+        projetoBaseAtual = {
+            id: Date.now().toString(),
+            tipoMovel: resultadoIA.tipoMovel || "Móvel",
+            larguraMM: Number(resultadoIA.larguraMM) || 0,
+            alturaMM: Number(resultadoIA.alturaMM) || 0,
+            profundidadeMM: Number(resultadoIA.profundidadeMM) || 0,
+            modulos: Number(resultadoIA.modulos) || 1,
+            portas: Number(resultadoIA.portas) || 0,
+            gavetas: Number(resultadoIA.gavetas) || 0,
+            prateleiras: Number(resultadoIA.prateleiras) || 0,
+            maleiro: Boolean(resultadoIA.maleiro),
+            cabideiros: Number(resultadoIA.cabideiros) || 0,
+            espessuraMM: espCaixa,
+            espessuraFundoMM: espFundo,
+            materialId: itemAtivo.id,
+            observacoes: resultadoIA.observacoes || "Móvel sob medida"
+        };
+
         statusEl.style.display = 'none';
-        desenharPranchaSVG(resultado);
+        
+        // VALIDAÇÃO
+        if(validarProjetoBase(projetoBaseAtual)) {
+            mostrarConfirmacaoIA(projetoBaseAtual);
+        } else {
+            validarEntradaOrcamento();
+        }
+
       } catch (err) {
         statusEl.className = 'status-msg error';
-        statusEl.innerText = '❌ Erro ao processar o formato de resposta da IA.';
-      } finally {
-        validarEntradaOrcamento(); 
+        statusEl.innerText = '❌ Erro ao processar o formato de resposta da IA. Tente novamente.';
+        validarEntradaOrcamento();
       }
     }
 
+    // =========================
+    // VALIDAÇÃO E CONFIRMAÇÃO
+    // =========================
+    function validarProjetoBase(proj) {
+        if(proj.larguraMM <= 0 || proj.alturaMM <= 0 || proj.profundidadeMM <= 0) {
+            alert('A IA não conseguiu identificar todas as medidas (L x A x P). Por favor, detalhe melhor no texto.');
+            return false;
+        }
+        if(proj.modulos < 1) proj.modulos = 1;
+        return true;
+    }
+
+    function mostrarConfirmacaoIA(proj) {
+        document.getElementById('inputCard').style.display = 'none';
+        document.getElementById('confirmacaoIACard').style.display = 'block';
+
+        const divDados = document.getElementById('dadosProjetoIA');
+        divDados.innerHTML = `
+            <div><span style="color:var(--text-dim);">Tipo:</span> <strong style="color:#fff;">${proj.tipoMovel}</strong></div>
+            <div><span style="color:var(--text-dim);">Módulos:</span> <strong style="color:#fff;">${proj.modulos}</strong></div>
+            <div><span style="color:var(--text-dim);">Largura:</span> <strong style="color:#fff;">${proj.larguraMM} mm</strong></div>
+            <div><span style="color:var(--text-dim);">Altura:</span> <strong style="color:#fff;">${proj.alturaMM} mm</strong></div>
+            <div><span style="color:var(--text-dim);">Profundid.:</span> <strong style="color:#fff;">${proj.profundidadeMM} mm</strong></div>
+            <div><span style="color:var(--text-dim);">Portas:</span> <strong style="color:#fff;">${proj.portas}</strong></div>
+            <div><span style="color:var(--text-dim);">Gavetas:</span> <strong style="color:#fff;">${proj.gavetas}</strong></div>
+            <div><span style="color:var(--text-dim);">Prateleiras:</span> <strong style="color:#fff;">${proj.prateleiras}</strong></div>
+            <div><span style="color:var(--text-dim);">Maleiro:</span> <strong style="color:#fff;">${proj.maleiro ? 'Sim' : 'Não'}</strong></div>
+            <div><span style="color:var(--text-dim);">Cabideiro:</span> <strong style="color:#fff;">${proj.cabideiros}</strong></div>
+        `;
+    }
+
+    function cancelarConfirmacaoIA() {
+        document.getElementById('confirmacaoIACard').style.display = 'none';
+        document.getElementById('inputCard').style.display = 'block';
+        validarEntradaOrcamento();
+    }
+
+    function confirmarEGerarEngenharia() {
+        document.getElementById('confirmacaoIACard').style.display = 'none';
+        document.getElementById('inputCard').style.display = 'block'; // Volta para permitir novo form, mas mostra resultado
+
+        // MOTOR DE ENGENHARIA DETERMINÍSTICO
+        const engenharia = calcularEngenharia(projetoBaseAtual);
+        const materiais = calcularMateriais(engenharia);
+        const custos = calcularCustos(engenharia, materiais);
+
+        engenhariaAtual = { engenharia, materiais, custos };
+
+        // Integra com a interface antiga
+        ultimoResultado = {
+            resumoComercial: projetoBaseAtual.observacoes,
+            alturaMM: projetoBaseAtual.alturaMM,
+            larguraMM: projetoBaseAtual.larguraMM,
+            profundidadeMM: projetoBaseAtual.profundidadeMM,
+            numModulos: projetoBaseAtual.modulos,
+            temMaleiro: projetoBaseAtual.maleiro,
+            temCabideiro: projetoBaseAtual.cabideiros > 0,
+            numPrateleiras: projetoBaseAtual.prateleiras,
+            numGavetas: projetoBaseAtual.gavetas,
+            pecas: engenharia.pecas.map(p => ({nome: p.nome, qtd: p.quantidade, comprimento: p.comprimentoMM, largura: p.larguraMM})),
+            insumos: materiais.listaDescritiva,
+            chapasEstimadas: materiais.chapasEstimadas,
+            custoOutros: custos.totalFerragens,
+            custoMaterial: custos.totalGeral,
+            projetoBase: projetoBaseAtual,
+            engenharia: engenhariaAtual
+        };
+
+        const margemLucro = parseFloat(document.getElementById('margemLucro').value) || 100;
+        exibirResultado(ultimoResultado, margemLucro);
+        desenharPranchaSVG(ultimoResultado);
+        validarEntradaOrcamento();
+    }
+
+
+    // =========================
+    // MOTOR DE ENGENHARIA
+    // =========================
+    
+    // Funções matemáticas específicas para facilitar manutenção futura
+    function calcLarguraModulo(larguraTotal, espessura, modulos) {
+        return (larguraTotal - (espessura * (modulos + 1))) / modulos;
+    }
+
+    function calcularEngenharia(projeto) {
+        let pecas = [];
+        let esp = projeto.espessuraMM;
+        let espF = projeto.espessuraFundoMM;
+
+        let A = projeto.alturaMM;
+        let L = projeto.larguraMM;
+        let P = projeto.profundidadeMM;
+        let modulos = projeto.modulos;
+
+        let largMod = calcLarguraModulo(L, esp, modulos);
+
+        // Função auxiliar de padronização de peças
+        const addPeca = (id, nome, tipo, qtd, comp, larg, espessura) => {
+            if(qtd > 0) pecas.push({ id, nome, tipo, quantidade: qtd, comprimentoMM: Math.round(comp), larguraMM: Math.round(larg), espessuraMM: espessura });
+        };
+
+        // 1. Estrutura Externa
+        addPeca('lat-esq', 'Lateral Esquerda', 'lateral', 1, A, P, esp);
+        addPeca('lat-dir', 'Lateral Direita', 'lateral', 1, A, P, esp);
+        
+        // 2. Divisórias
+        if(modulos > 1) {
+            addPeca('divisoria', 'Divisória Interna', 'divisoria', modulos - 1, A - (esp * 2), P, esp);
+        }
+
+        // 3. Bases e Tampos (Considerando montagem por módulo interno para roupeiros)
+        addPeca('base', 'Base do Módulo', 'base', modulos, largMod, P, esp);
+        addPeca('tampo', 'Tampo do Módulo', 'tampo', modulos, largMod, P, esp);
+
+        // 4. Prateleiras
+        if (projeto.prateleiras > 0) {
+            // Recuo de 20mm para fundo e para fechamento de portas
+            addPeca('prateleira', 'Prateleira Interna', 'prateleira', projeto.prateleiras, largMod, P - 20, esp);
+        }
+
+        // 5. Fundos
+        addPeca('fundo', 'Fundo Traseiro', 'fundo', modulos, A - 5, largMod + 10, espF); // Embutido com rebaixo/rasgo
+
+        // 6. Gavetas
+        if(projeto.gavetas > 0) {
+            let folgaGaveta = parseFloat(document.getElementById('folgaGaveta').value) || 26;
+            let largGavetaExt = largMod - folgaGaveta;
+            let largFrente = largMod - 6; // folgas laterais
+
+            addPeca('gav-cf', 'Contra Frente / Traseiro Gaveta', 'gaveta', projeto.gavetas * 2, largGavetaExt - (esp * 2), 150, esp);
+            addPeca('gav-lat', 'Lateral Gaveta', 'gaveta', projeto.gavetas * 2, P - 50, 150, esp); // Profundidade menor q móvel
+            addPeca('gav-fundo', 'Fundo de Gaveta', 'fundo', projeto.gavetas, largGavetaExt - (esp * 2) + 10, P - 50, espF);
+            addPeca('gav-frente', 'Frente de Gaveta', 'porta', projeto.gavetas, 200, largFrente, esp); // Altura padrão 200
+        }
+
+        // 7. Portas (Sobrepostas)
+        if (projeto.portas > 0) {
+            let altPorta = A - 6; // Folga 3mm cima/baixo
+            let largPorta = (L / projeto.portas) - 3; // Folga lateral
+            addPeca('porta', 'Porta Principal', 'porta', projeto.portas, altPorta, largPorta, esp);
+        }
+
+        return { projeto, pecas };
+    }
+
+    // =========================
+    // CÁLCULO DE MATERIAIS
+    // =========================
+    function calcularMateriais(eng) {
+        let areaMDF_MM2 = 0;
+        let areaFundo_MM2 = 0;
+        
+        eng.pecas.forEach(p => {
+            let area = (p.comprimentoMM * p.larguraMM) * p.quantidade;
+            if (p.espessuraMM === eng.projeto.espessuraMM) areaMDF_MM2 += area;
+            else if (p.espessuraMM === eng.projeto.espessuraFundoMM) areaFundo_MM2 += area;
+        });
+
+        // Chapa padrão = 2.75 x 1.85 = 5.0875 m2. 
+        // Vamos considerar rendimento de 70% por causa do sentido do veio e da serra.
+        let areaM2_MDF = areaMDF_MM2 / 1000000;
+        let areaM2_Fundo = areaFundo_MM2 / 1000000;
+        let chapasEstimadas = Math.ceil(areaM2_MDF / (5.0875 * 0.70)) || 1;
+
+        // Ferragens
+        let listaFerragens = [];
+        let qtdDobradicas = eng.projeto.portas * (eng.projeto.alturaMM > 1800 ? 4 : 3); // 4 ou 3 dobradiças por porta
+        if (qtdDobradicas > 0) listaFerragens.push({ nome: 'Dobradiça 35mm', qtd: qtdDobradicas, unidade: 'unidade' });
+        if (eng.projeto.gavetas > 0) listaFerragens.push({ nome: 'Par de Corrediça Telescópica', qtd: eng.projeto.gavetas, unidade: 'par' });
+        if (eng.projeto.cabideiros > 0) listaFerragens.push({ nome: 'Tubo Cabideiro', qtd: eng.projeto.cabideiros, unidade: 'unidade' });
+        
+        listaFerragens.push({nome: 'Kit Fixação (Parafusos, Cavilhas)', qtd: 1, unidade: 'kit'});
+
+        let listaDescritiva = [
+            `${chapasEstimadas}x Chapa(s) MDF ${eng.projeto.espessuraMM}mm`,
+            `Aprox. ${areaM2_Fundo.toFixed(1).replace('.',',')} m² de Fundo ${eng.projeto.espessuraFundoMM}mm`
+        ];
+        listaFerragens.forEach(f => listaDescritiva.push(`${f.qtd}x ${f.nome}`));
+
+        return { 
+            chapasEstimadas, 
+            areaM2_MDF, 
+            areaM2_Fundo, 
+            listaFerragens,
+            listaDescritiva
+        };
+    }
+
+    // =========================
+    // CÁLCULO DE CUSTOS
+    // =========================
+    function calcularCustos(eng, materiais) {
+        let itemMdf = obterItemAtivo();
+        let custoMdf = materiais.chapasEstimadas * itemMdf.preco;
+        
+        // Busca preço de dobradiça e corrediça na tabela se existir, senão usa padrão
+        let custoFerragens = 0;
+        materiais.listaFerragens.forEach(fer => {
+            let itemTab = tabelaPrecos.find(t => t.categoria === 'Ferragem' && t.nome.toLowerCase().includes(fer.nome.toLowerCase().split(' ')[0]));
+            let precoUnit = itemTab ? itemTab.preco : (fer.nome.includes('Corrediça') ? 35 : 12);
+            custoFerragens += precoUnit * fer.qtd;
+        });
+        
+        return {
+            mdfUnitario: itemMdf.preco,
+            totalMdf: custoMdf,
+            totalFerragens: custoFerragens,
+            totalGeral: custoMdf + custoFerragens
+        };
+    }
+
+    // =========================
+    // FUNÇÕES DE EXIBIÇÃO (MANTIDAS/ADAPTADAS)
+    // =========================
     function exibirResultado(data, margemLucro) {
       document.getElementById('resultadoCard').style.display = 'block';
       document.getElementById('resumoTexto').innerText = data.resumoComercial;
@@ -851,7 +994,7 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
       const itemAtivo = obterItemAtivo();
       document.getElementById('inpEditChapas').value = data.chapasEstimadas || 1;
       document.getElementById('inpEditPrecoChapa').value = itemAtivo.preco || 250;
-      document.getElementById('inpEditOutrosCustos').value = data.custoOutros || 150;
+      document.getElementById('inpEditOutrosCustos').value = data.custoOutros || 0;
       document.getElementById('inpEditMargem').value = margemLucro;
 
       recalcularPrecoManual();
@@ -899,6 +1042,9 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
       document.getElementById('btnWhatsapp').href = `https://wa.me/?text=${textoWsp}`;
     }
 
+    // =========================
+    // DESENHO SVG
+    // =========================
     function desenharPranchaSVG(data) {
       const altMM = data.alturaMM || 2800;
       const largMM = data.larguraMM || 1200;
@@ -1001,17 +1147,24 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
       document.getElementById('tabEsbocoBtn').className = aba === 'esboco' ? 'tab active' : 'tab';
     }
 
+    // =========================
+    // HISTÓRICO
+    // =========================
     function salvarProjetoNoHistorico() {
       if (!ultimoResultado) { alert('Gere um orçamento antes de salvar!'); return; }
       const nomeCliente = document.getElementById('nomeCliente').value.trim() || ('Cliente ' + new Date().toLocaleDateString('pt-BR'));
       const valorFinal = (ultimoResultado.custoMaterial || 0) * (1 + ((parseFloat(document.getElementById('inpEditMargem').value) || 100) / 100));
+      
       historicoProjetos.unshift({
         id: Date.now().toString(),
         cliente: nomeCliente,
         data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
         valorTotal: valorFinal,
         mdfNome: obterItemAtivo().nome,
-        resultado: ultimoResultado
+        resultado: ultimoResultado,
+        // Mantendo o backup da engenharia para o futuro
+        projetoBase: ultimoResultado.projetoBase || null,
+        engenharia: ultimoResultado.engenharia || null
       });
       localStorage.setItem('historico_projetos', JSON.stringify(historicoProjetos));
       alert(`✅ Orçamento salvo com sucesso!`);
@@ -1046,6 +1199,8 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
       const p = historicoProjetos[index];
       if (!p) return;
       ultimoResultado = p.resultado;
+      projetoBaseAtual = p.projetoBase; // Restaura do backup
+      engenhariaAtual = p.engenharia; // Restaura do backup
       document.getElementById('nomeCliente').value = p.cliente;
       exibirResultado(ultimoResultado, parseFloat(document.getElementById('margemLucro').value));
       desenharPranchaSVG(ultimoResultado);
@@ -1060,6 +1215,169 @@ Responda OBRIGATORIAMENTE em JSON puro, na exata estrutura abaixo:
         renderHistorico();
       }
     }
+
+    // =========================
+    // CLIENTES
+    // =========================
+    function salvarCliente() {
+      const id = document.getElementById('editClientId').value;
+      const nome = document.getElementById('cadNome').value.trim();
+      const telefone = document.getElementById('cadTelefone').value.trim();
+      const email = document.getElementById('cadEmail').value.trim();
+      const empresa = document.getElementById('cadEmpresa').value.trim();
+      const endereco = document.getElementById('cadEndereco').value.trim();
+
+      if (!nome) { alert('Informe ao menos o nome do cliente.'); return; }
+
+      if (id) {
+        const index = listaClientes.findIndex(c => c.id === id);
+        if (index !== -1) listaClientes[index] = { id, nome, telefone, email, empresa, endereco };
+      } else {
+        listaClientes.unshift({ id: Date.now().toString(), nome, telefone, email, empresa, endereco });
+      }
+      localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
+      limparFormCliente();
+      renderClientes();
+      alert('✅ Cliente salvo com sucesso!');
+    }
+
+    function renderClientes() {
+      const container = document.getElementById('listaClientesCadastrados');
+      container.innerHTML = '';
+      if (listaClientes.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-dim); text-align:center;">Nenhum cliente cadastrado.</p>';
+        return;
+      }
+      listaClientes.forEach((cli) => {
+        const div = document.createElement('div');
+        div.className = 'cli-card';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div><strong style="color:var(--accent);">${cli.nome}</strong>${cli.empresa ? ` <span style="font-size:0.8rem; color:var(--text-dim);">(${cli.empresa})</span>` : ''}</div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarCliente('${cli.id}')">✏️ Editar</button>
+              <button class="btn-sm btn-danger" onclick="excluirCliente('${cli.id}')">🗑️ Excluir</button>
+            </div>
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-dim); margin-top:6px; display:flex; flex-direction:column; gap:2px;">
+            ${cli.telefone ? `<span>📞 ${cli.telefone}</span>` : ''}
+            ${cli.email ? `<span>📧 ${cli.email}</span>` : ''}
+            ${cli.endereco ? `<span>📍 ${cli.endereco}</span>` : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function editarCliente(id) {
+      const cli = listaClientes.find(c => c.id === id);
+      if (!cli) return;
+      document.getElementById('editClientId').value = cli.id;
+      document.getElementById('cadNome').value = cli.nome;
+      document.getElementById('cadTelefone').value = cli.telefone || '';
+      document.getElementById('cadEmail').value = cli.email || '';
+      document.getElementById('cadEmpresa').value = cli.empresa || '';
+      document.getElementById('cadEndereco').value = cli.endereco || '';
+      document.getElementById('tituloFormCliente').innerText = '✏️ Editar Cliente';
+      document.getElementById('btnSalvarCliente').innerText = '💾 Atualizar Cliente';
+      document.getElementById('btnCancelarCliente').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function limparFormCliente() {
+      document.getElementById('editClientId').value = '';
+      document.getElementById('cadNome').value = '';
+      document.getElementById('cadTelefone').value = '';
+      document.getElementById('cadEmail').value = '';
+      document.getElementById('cadEmpresa').value = '';
+      document.getElementById('cadEndereco').value = '';
+      document.getElementById('tituloFormCliente').innerText = '👤 Cadastrar Novo Cliente';
+      document.getElementById('btnSalvarCliente').innerText = '💾 Salvar Cliente';
+      document.getElementById('btnCancelarCliente').style.display = 'none';
+    }
+
+    function excluirCliente(id) {
+      if (confirm('Deseja realmente excluir este cliente do cadastro?')) {
+        listaClientes = listaClientes.filter(c => c.id !== id);
+        localStorage.setItem('lista_clientes', JSON.stringify(listaClientes));
+        renderClientes();
+      }
+    }
+
+    // =========================
+    // COMPRAS (MANTIDO E COMPATÍVEL)
+    // =========================
+    function gerarListaCompras() {
+        if(historicoProjetos.length === 0) {
+            alert("Nenhum projeto salvo no histórico para gerar a lista.");
+            return;
+        }
+        const insumosConsolidados = { 'MDF e Chapas': {}, 'Ferragens e Componentes': {} };
+        historicoProjetos.forEach(p => {
+            const projeto = p.resultado;
+            if(!projeto) return;
+            const nomeMdf = p.mdfNome || "MDF Indefinido";
+            const qtdChapas = projeto.chapasEstimadas || 0;
+            if(qtdChapas > 0) {
+                if (insumosConsolidados['MDF e Chapas'][nomeMdf]) insumosConsolidados['MDF e Chapas'][nomeMdf] += qtdChapas;
+                else insumosConsolidados['MDF e Chapas'][nomeMdf] = qtdChapas;
+            }
+            if(projeto.insumos) {
+                 projeto.insumos.forEach(insumo => {
+                      let nomeInsumo = insumo;
+                      let qtd = 1; 
+                      const match = insumo.match(/^([\d.,]+)x\s+(.*)/) || insumo.match(/^([\d.,]+)\s+(.*)/); // Suporta "2x Chapa" ou "2 Chapa"
+                      if (match) {
+                          qtd = parseFloat(match[1].replace(',', '.'));
+                          nomeInsumo = match[2].trim();
+                      }
+                      // Ignorar chapas e fundos nas ferragens, pois foram inseridos nas strings por simplicidade, e os MDFs já são contados acima
+                      if (!nomeInsumo.toLowerCase().includes('chapa mdf') && !nomeInsumo.toLowerCase().includes('fundo')) {
+                         if (insumosConsolidados['Ferragens e Componentes'][nomeInsumo]) insumosConsolidados['Ferragens e Componentes'][nomeInsumo] += qtd;
+                         else insumosConsolidados['Ferragens e Componentes'][nomeInsumo] = qtd;
+                      }
+                 });
+            }
+        });
+
+        const tbody = document.getElementById('corpo-tabela-compras');
+        tbody.innerHTML = ''; 
+        for (const [categoria, itens] of Object.entries(insumosConsolidados)) {
+            for (const [nome, qtd] of Object.entries(itens)) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${categoria}</td><td>${nome}</td><td>${qtd % 1 !== 0 ? qtd.toFixed(1).replace('.', ',') : qtd}</td>`;
+                tbody.appendChild(tr);
+            }
+        }
+        if (tbody.innerHTML === '') {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#9ca3af;">Nenhum material encontrado nos projetos salvos.</td></tr>';
+        }
+    }
+
+    function copiarParaWhatsAppCompras() {
+        const tbody = document.getElementById('corpo-tabela-compras');
+        if(tbody.rows.length === 0 || tbody.innerText.includes("Clique em")) {
+            alert("Gere a lista de compras primeiro.");
+            return;
+        }
+        let textoWhatsApp = "*LISTA DE COMPRAS - STUDIO DM*\n\n";
+        let categoriaAtual = "";
+        Array.from(tbody.rows).forEach(row => {
+            if(row.cells.length < 3) return;
+            const categoria = row.cells[0].innerText;
+            const item = row.cells[1].innerText;
+            const qtd = row.cells[2].innerText;
+            if (categoria !== categoriaAtual) {
+                textoWhatsApp += `\n*${categoria}*\n`;
+                categoriaAtual = categoria;
+            }
+            textoWhatsApp += `- ${item}: *${qtd}*\n`;
+        });
+        navigator.clipboard.writeText(textoWhatsApp).then(() => {
+            alert("Lista copiada! Agora é só colar no WhatsApp do seu fornecedor.");
+        });
+    }
+
   </script>
 </body>
 </html>
