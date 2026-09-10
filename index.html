@@ -15,6 +15,7 @@
       --danger: #ef4444;
       --warning: #f59e0b;
       --blue: #3b82f6;
+      --purple: #8b5cf6;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -79,8 +80,10 @@
     .info-medidas strong { color: #0f172a; }
 
     /* CARDS DE HISTÓRICO E ITENS */
-    .mdf-item, .proj-card, .cli-card { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 8px; }
-    .proj-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .mdf-item, .proj-card, .cli-card { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .proj-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .cli-card { flex-direction: column; align-items: stretch; }
+    
     .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
     .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
@@ -104,10 +107,11 @@
     <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 40px;">Sistema Inteligente para Marcenaria</p>
     
     <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
-      <button class="btn" style="font-size: 1.1rem; padding: 16px;" onclick="mudarVisaoPrincipal('projeto')">📐 Projeto</button>
+      <button class="btn" style="font-size: 1.1rem; padding: 16px;" onclick="mudarVisaoPrincipal('projeto')">📐 Orçamento Inteligente</button>
+      <button class="btn btn-sec" style="font-size: 1.1rem; padding: 16px; background-color: var(--purple);" onclick="mudarVisaoPrincipal('metodos')">🛠️ Métodos e Cadastros</button>
       <button class="btn btn-sec" style="font-size: 1.1rem; padding: 16px; background-color: var(--blue);" onclick="mudarVisaoPrincipal('clientes')">📁 Clientes</button>
-      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: #f59e0b; color: #fff;" onclick="mudarVisaoPrincipal('compras')">🛒 Compras e Insumos</button>
-      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: #334155; color: #fff;" onclick="mudarVisaoPrincipal('config')">⚙️ Configuração</button>
+      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: var(--warning); color: #fff;" onclick="mudarVisaoPrincipal('compras')">🛒 Compras e Insumos</button>
+      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: #334155; color: #fff;" onclick="mudarVisaoPrincipal('config')">⚙️ Configuração IA</button>
     </div>
   </div>
 
@@ -117,37 +121,16 @@
     <button class="btn-voltar-home" onclick="mudarVisaoPrincipal('home')">🏠 Início</button>
   </header>
 
-  <!-- ==================== VISÃO 1: PROJETO ==================== -->
+  <!-- ==================== VISÃO 1: ORÇAMENTO (Apenas Imagem e Processamento) ==================== -->
   <div id="viewProjeto" class="main-view" style="display: none;">
-    
-    <div class="card" style="background: #0f172a;">
-      <h2 style="font-size: 0.95rem; margin-bottom: 8px;">🛠️ Padrões Construtivos Atuais</h2>
-      <div class="grid-2">
-        <div>
-          <label>Espessura Caixa</label>
-          <select id="espCaixa" onchange="salvarConfig()">
-            <option value="15">15 mm</option>
-            <option value="18">18 mm</option>
-          </select>
-        </div>
-        <div>
-          <label>Espessura Fundo</label>
-          <select id="espFundo" onchange="salvarConfig()">
-            <option value="6">6 mm</option>
-            <option value="15">15 mm</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
     <div class="card">
       <h2>📷 Desenho e Descrição do Móvel</h2>
       
-      <label for="descricaoMovel">📝 Descrição Auxiliar (Recomendado)</label>
+      <label for="descricaoMovel">📝 Instruções do Marceneiro</label>
       <textarea id="descricaoMovel" rows="3" placeholder="Ex: Guarda-roupa com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=180cm A=250cm P=60cm..."></textarea>
       
       <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px;">
-        Material Base / MDF Selecionado: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
+        Material Padrão Ativo: <strong id="lblMdfAtual" style="color:var(--accent);">MDF Branco TX</strong>
       </div>
 
       <div class="grid-2">
@@ -274,6 +257,64 @@
     </div>
   </div>
 
+  <!-- ==================== VISÃO: MÉTODOS DE CONSTRUÇÃO E CADASTROS ==================== -->
+  <div id="viewMetodos" class="main-view" style="display: none;">
+    
+    <div class="card">
+      <h2>🛠️ Parâmetros Construtivos e Lucro</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Esses parâmetros guiarão as decisões automáticas da Inteligência Artificial nos cortes.</p>
+      <div class="grid-2">
+        <div>
+          <label>Espessura Caixa</label>
+          <select id="espCaixa" onchange="salvarConfig()">
+            <option value="15">15 mm</option>
+            <option value="18">18 mm</option>
+          </select>
+        </div>
+        <div>
+          <label>Espessura Fundo</label>
+          <select id="espFundo" onchange="salvarConfig()">
+            <option value="6">6 mm</option>
+            <option value="15">15 mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:10px;">
+        <div>
+          <label>Folga p/ Gavetas (mm)</label>
+          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
+        </div>
+        <div>
+          <label>Margem / Lucro Padrão (%)</label>
+          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏷️ Tabela de Preços (Materiais)</h2>
+      
+      <label style="margin-bottom: 6px; color: var(--accent);">MDF Principal para Novos Projetos</label>
+      <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
+      
+      <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <label id="lblAcaoTabela">➕ Cadastrar Novo Item na Tabela</label>
+        <div class="grid-2">
+          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
+          <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button class="btn btn-sec" id="btnSalvarItem" style="margin-top: 0; flex: 1;" onclick="salvarItemTabela()">Adicionar à Tabela de Preços</button>
+            <button class="btn btn-danger" id="btnCancelarEdicaoItem" style="margin-top: 0; display:none;" onclick="cancelarEdicaoItem()">Cancelar</button>
+        </div>
+      </div>
+      
+      <label style="margin-top: 24px;">📋 Itens Cadastrados:</label>
+      <div id="listaItensTabela"></div>
+    </div>
+
+  </div>
+
   <!-- ==================== VISÃO 2: CLIENTES ==================== -->
   <div id="viewClientes" class="main-view" style="display: none;">
     <div class="card">
@@ -342,7 +383,7 @@
     </div>
   </div>
 
-  <!-- ==================== VISÃO 4: CONFIGURAÇÃO ==================== -->
+  <!-- ==================== VISÃO 4: CONFIGURAÇÃO IA ==================== -->
   <div id="viewConfig" class="main-view" style="display: none;">
     <div class="card">
       <h2>🔑 Chave de Conexão (Inteligência Artificial)</h2>
@@ -353,47 +394,19 @@
 
     <div class="card">
       <h2>📚 Base Técnica (Notebook Rometal / FGVtn)</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">As referências técnicas garantem que a IA utilize as ferragens e catálogos corretos nos projetos.</p>
       <textarea id="notebookContexto" rows="5" style="font-size: 0.8rem;" onchange="salvarConfig()">REFERÊNCIAS TÉCNICAS OFICIAIS (CATÁLOGOS):
 - Sistemas de Correr/Coplanar: Rometal C-1000 Automático (com push&go e controle por voz/wireless), Linha Magnum, Trilhos RMS-065 / RMS-074.
 - Perfis de Alumínio e LED: Linha PerfiLED (RM-460), Lúmen, Leggero.
 - Gavetas Metálicas: FGVtn Sistema AvantBox Slim.
 - Padrões de Acabamento e Cores: Hibisco, Freijó Imperial, Thassos.</textarea>
     </div>
-
-    <div class="card">
-      <h2>🛠️ Parâmetros Construtivos e Lucro</h2>
-      <div class="grid-2">
-        <div>
-          <label>Folga p/ Gavetas (mm)</label>
-          <input type="number" id="folgaGaveta" value="26" onchange="salvarConfig()">
-        </div>
-        <div>
-          <label>Margem / Lucro (%)</label>
-          <input type="number" id="margemLucro" value="100" onchange="salvarConfig()">
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>🏷️ Tabela de Preços (MDF e Insumos)</h2>
-      <label>Material / MDF Principal Selecionado no Projeto</label>
-      <select id="padraoMdfSelect" onchange="alterarPadraoAtivo()"></select>
-      <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
-        <label>➕ Cadastrar Novo Item na Tabela</label>
-        <div class="grid-2">
-          <input type="text" id="novoItemNome" placeholder="Ex: Corrediça Telescópica 45cm">
-          <input type="number" id="novoItemPreco" placeholder="Preço (R$)">
-        </div>
-        <button class="btn btn-sec" style="margin-top: 8px;" onclick="adicionarItemTabela()">Adicionar à Tabela de Preços</button>
-      </div>
-      <label style="margin-top: 16px;">📋 Itens Cadastrados:</label>
-      <div id="listaItensTabela"></div>
-    </div>
   </div>
 
   <script>
     let imagemBase64 = "";
     let ultimoResultado = null;
+    let editandoItemIndex = -1;
 
     let tabelaPrecos = JSON.parse(localStorage.getItem('tabela_precos')) || JSON.parse(localStorage.getItem('tabela_mdf')) || [
       { id: '1', nome: 'MDF Branco TX (Chapa)', preco: 250 },
@@ -427,6 +440,7 @@
     function mudarVisaoPrincipal(visao) {
       document.getElementById('viewHome').style.display = visao === 'home' ? 'block' : 'none';
       document.getElementById('viewProjeto').style.display = visao === 'projeto' ? 'block' : 'none';
+      document.getElementById('viewMetodos').style.display = visao === 'metodos' ? 'block' : 'none';
       document.getElementById('viewClientes').style.display = visao === 'clientes' ? 'block' : 'none';
       document.getElementById('viewCompras').style.display = visao === 'compras' ? 'block' : 'none';
       document.getElementById('viewConfig').style.display = visao === 'config' ? 'block' : 'none';
@@ -452,7 +466,6 @@
             const projeto = p.resultado;
             if(!projeto) return;
 
-            // Consolidação de MDF
             const nomeMdf = p.mdfNome || "MDF Indefinido";
             const qtdChapas = projeto.chapasEstimadas || 0;
             if(qtdChapas > 0) {
@@ -463,7 +476,6 @@
                 }
             }
             
-            // Consolidação de Insumos da IA
             if(projeto.insumos) {
                  projeto.insumos.forEach(insumo => {
                       let nomeInsumo = insumo;
@@ -532,7 +544,7 @@
         });
     }
 
-    /* RESTANTE DO CÓDIGO (Configurações, IA, SVG e Projetos) */
+    /* CONFIGURAÇÕES GERAIS */
     function salvarConfig() {
       const key = document.getElementById('apiKey').value.trim();
       localStorage.setItem('gemini_key', key);
@@ -554,6 +566,7 @@
       }
     }
 
+    /* GESTÃO DE CLIENTES */
     function salvarCliente() {
       const id = document.getElementById('editClientId').value;
       const nome = document.getElementById('cadNome').value.trim();
@@ -641,12 +654,15 @@
       }
     }
 
+    /* TABELA DE PREÇOS (MATERIAIS E EDIÇÃO) */
     function renderTabelaPrecos() {
       localStorage.setItem('tabela_precos', JSON.stringify(tabelaPrecos));
       const select = document.getElementById('padraoMdfSelect');
       const container = document.getElementById('listaItensTabela');
+      
       select.innerHTML = '';
       container.innerHTML = '';
+      
       tabelaPrecos.forEach((item, index) => {
         const opt = document.createElement('option');
         opt.value = item.id;
@@ -656,29 +672,69 @@
         const div = document.createElement('div');
         div.className = 'mdf-item';
         div.innerHTML = `
-          <div><strong style="font-size:0.85rem;">${item.nome}</strong><br><span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span></div>
-          <button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">Excluir</button>
+          <div style="flex:1;">
+            <strong style="font-size:0.85rem;">${item.nome}</strong><br>
+            <span style="font-size:0.8rem; color:var(--accent);">R$ ${item.preco},00</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-sm" style="background-color:var(--blue); color:#fff;" onclick="editarItemTabela(${index})">✏️ Editar</button>
+            <button class="btn-sm btn-danger" onclick="excluirItemTabela(${index})">🗑️</button>
+          </div>
         `;
         container.appendChild(div);
       });
       alterarPadraoAtivo();
     }
 
-    function adicionarItemTabela() {
+    function salvarItemTabela() {
       const nomeInput = document.getElementById('novoItemNome');
       const precoInput = document.getElementById('novoItemPreco');
       const nome = nomeInput.value.trim();
       const preco = parseFloat(precoInput.value);
+      
       if (!nome || isNaN(preco) || preco < 0) { alert('Informe um nome e um preço válido.'); return; }
-      tabelaPrecos.push({ id: Date.now().toString(), nome, preco });
-      nomeInput.value = ''; precoInput.value = '';
+      
+      if (editandoItemIndex > -1) {
+          // Atualiza item existente
+          tabelaPrecos[editandoItemIndex].nome = nome;
+          tabelaPrecos[editandoItemIndex].preco = preco;
+      } else {
+          // Adiciona novo item
+          tabelaPrecos.push({ id: Date.now().toString(), nome, preco });
+      }
+      
+      cancelarEdicaoItem();
       renderTabelaPrecos();
+    }
+
+    function editarItemTabela(index) {
+        editandoItemIndex = index;
+        const item = tabelaPrecos[index];
+        document.getElementById('novoItemNome').value = item.nome;
+        document.getElementById('novoItemPreco').value = item.preco;
+        
+        document.getElementById('lblAcaoTabela').innerText = '✏️ Editando Item da Tabela';
+        document.getElementById('btnSalvarItem').innerText = '💾 Salvar Alteração';
+        document.getElementById('btnCancelarEdicaoItem').style.display = 'block';
+        document.getElementById('novoItemNome').focus();
+    }
+
+    function cancelarEdicaoItem() {
+        editandoItemIndex = -1;
+        document.getElementById('novoItemNome').value = '';
+        document.getElementById('novoItemPreco').value = '';
+        
+        document.getElementById('lblAcaoTabela').innerText = '➕ Cadastrar Novo Item na Tabela';
+        document.getElementById('btnSalvarItem').innerText = 'Adicionar à Tabela de Preços';
+        document.getElementById('btnCancelarEdicaoItem').style.display = 'none';
     }
 
     function excluirItemTabela(index) {
       if (tabelaPrecos.length <= 1) { alert('Mantenha ao menos 1 item na tabela.'); return; }
-      tabelaPrecos.splice(index, 1);
-      renderTabelaPrecos();
+      if (confirm('Deseja realmente apagar este material da tabela?')) {
+          tabelaPrecos.splice(index, 1);
+          renderTabelaPrecos();
+      }
     }
 
     function obterItemAtivo() {
@@ -695,6 +751,7 @@
       }
     }
 
+    /* PROCESSAMENTO COM A INTELIGÊNCIA ARTIFICIAL */
     function carregarImagem(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -712,7 +769,7 @@
     async function processarCroqui() {
       const apiKey = (localStorage.getItem('gemini_key') || '').trim();
       const statusEl = document.getElementById('status');
-      if (!apiKey) { alert('Cadastre sua Chave de API na "Configuração".'); mudarVisaoPrincipal('config'); return; }
+      if (!apiKey) { alert('Cadastre sua Chave de API na "Configuração IA".'); mudarVisaoPrincipal('config'); return; }
 
       statusEl.className = 'status-msg loading';
       statusEl.innerText = '⏳ Processando e calculando peças...';
