@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio DM — Orçamento Rápido v1.3</title>
+    <title>Studio DM — Orçamento Rápido v1.3.1</title>
     <style>
         :root {
             --bg: #121826;
@@ -106,7 +106,6 @@
         .composicao-item-price { font-weight: bold; color: var(--accent); margin-top: 6px; display: block;}
         .actions-group { display: flex; gap: 6px; }
         .btn-icon { color: #fff; border: none; border-radius: 4px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
-        .btn-edit { background: var(--warning); }
         .btn-remove { background: var(--danger); }
         
         .badge { background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 6px; }
@@ -154,7 +153,7 @@
     <!-- VISÃO: INÍCIO -->
     <div id="view-inicio" class="view active">
         <h1>Studio DM</h1>
-        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.3</p>
+        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.3.1</p>
         
         <div class="stats-grid" style="margin-top: 32px;">
             <div class="stat-card">
@@ -309,6 +308,14 @@
         <div class="card">
             <div class="form-group"><label>Nome da Empresa</label><input type="text" id="config-empresa"></div>
             <div class="form-group"><label>Telefone (WhatsApp)</label><input type="text" id="config-telefone" placeholder="Ex: 5511999999999"></div>
+            <div class="form-group">
+                <label>Critério de Custo do MDF</label>
+                <select id="config-criterio-custo">
+                    <option value="proporcional">Consumo proporcional (PADRÃO)</option>
+                    <option value="chapa_integral">Chapa integral</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Margem de Perda (%) para Custo Proporcional</label><input type="text" inputmode="decimal" id="config-perda" placeholder="10"></div>
             <div class="form-group"><label>Espessura da Serra (Kerf em mm)</label><input type="text" inputmode="decimal" id="config-kerf" placeholder="3.2"></div>
             <div class="form-group"><label>Observação Padrão</label><textarea id="config-obs" rows="4"></textarea></div>
             <button class="btn" onclick="App.salvarConfiguracoes()">Salvar Configurações</button>
@@ -357,7 +364,7 @@
 
 <script>
 /* ==========================================================================
-   1. BANCO DE DADOS (Estrutura V1.3)
+   1. BANCO DE DADOS (Estrutura V1.3.1)
    ========================================================================== */
 const DEFAULT_DB = {
     perfis: [
@@ -392,6 +399,8 @@ const DEFAULT_DB = {
     orcamentos: [],
     configuracoes: {
         nomeEmpresa: "Studio DM Ambientes Planejados", telefone: "", kerf: 3.2,
+        criterioCustoMdf: "proporcional", // proporcional ou chapa_integral
+        perdaPercentual: 10,
         observacaoPadrao: "Orçamento comercial estimativo. Projeto sujeito a validação técnica de fabricação."
     }
 };
@@ -422,6 +431,8 @@ const StorageManager = {
         if(!DB.perfis) DB.perfis = DEFAULT_DB.perfis;
         if(!DB.configuracoes) DB.configuracoes = DEFAULT_DB.configuracoes;
         if(!DB.configuracoes.kerf) DB.configuracoes.kerf = 3.2;
+        if(!DB.configuracoes.criterioCustoMdf) DB.configuracoes.criterioCustoMdf = 'proporcional';
+        if(typeof DB.configuracoes.perdaPercentual === 'undefined') DB.configuracoes.perdaPercentual = 10;
         if(!DB.mdfs) DB.mdfs = DEFAULT_DB.mdfs;
         if(!DB.componentesDimensionais) DB.componentesDimensionais = DEFAULT_DB.componentesDimensionais;
         if(!DB.componentesQuantidade) DB.componentesQuantidade = DEFAULT_DB.componentesQuantidade;
@@ -477,7 +488,6 @@ const UI = {
         if(str === null || str === undefined || str === '') return 0;
         if(typeof str === 'number') return str;
         let san = str.toString().trim();
-        // Tratamento avançado p/ 1.234,56 ou 1234.56 ou 1.234.56
         if (san.includes(',') && san.includes('.')) {
             if (san.indexOf('.') < san.indexOf(',')) { san = san.replace(/\./g, '').replace(',', '.'); }
             else { san = san.replace(/,/g, ''); }
@@ -511,46 +521,52 @@ const MaterialEngine = {
         let area = this.calcularAreaChapa(mdf);
         return area > 0 ? mdf.precoChapa / area : 0;
     },
-    // Estimativa robusta de chapas considerando dimensão e kerf
     calcularNecessidadeChapas: function(pecasDoGrupo, mdf) {
         let areaTotalPecas = pecasDoGrupo.reduce((acc, p) => acc + p.area, 0);
         let areaChapa = this.calcularAreaChapa(mdf);
-        if (areaChapa <= 0) return { qtdCompra: 0, sobra: 0, aproveitamento: 0, teoretica: 0 };
+        if (areaChapa <= 0) return { qtdCompra: 0, sobra: 0, aproveitamento: 0, teoretica: 0, custoMaterial: 0 };
 
         let teoretica = areaTotalPecas / areaChapa;
         let qtdCompra = Math.ceil(teoretica);
 
-        // Verificação dimensional simplificada (orientação e keft)
         let kerfM = (DB.configuracoes.kerf || 3.2) / 1000;
         let larguraEfetiva = mdf.largura - kerfM;
         let compEfetivo = mdf.comprimento - kerfM;
 
-        pecasDoGrupo.forEach(p => {
-            if (p.largura > larguraEfetiva && p.largura > compEfetivo) {
-                // Peça muito grande avisa implicitamente via sobra
-            }
-        });
-
-        // Margem de segurança de retalho de corte (2% a 5% sobre o teórico se muito justo)
         if ((qtdCompra - teoretica) < 0.15 && teoretica > 0.8) {
-            qtdCompra += 1; // Arredondamento inteligente para evitar falta de material na marcenaria
+            qtdCompra += 1; 
         }
 
         let areaComprada = qtdCompra * areaChapa;
         let sobra = areaComprada - areaTotalPecas;
         let aproveitamento = areaComprada > 0 ? (areaTotalPecas / areaComprada) * 100 : 0;
 
+        // SEPARAÇÃO ENTRE CUSTO DO ORÇAMENTO E QUANTIDADE DE COMPRA
+        let precoM2 = this.calcularPrecoM2(mdf);
+        let criterio = DB.configuracoes.criterioCustoMdf || 'proporcional';
+        let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
+
+        let custoMaterial = 0;
+        if (criterio === 'chapa_integral') {
+            custoMaterial = qtdCompra * mdf.precoChapa;
+        } else {
+            // Consumo proporcional com margem de perda
+            let areaConsiderada = areaTotalPecas * (1 + perdaPct);
+            custoMaterial = areaConsiderada * precoM2;
+        }
+
         return {
-            areaTotalPecas, areaChapa, teoretica, qtdCompra, sobra: Math.max(0, sobra), aproveitamento: Math.min(100, aproveitamento), custoTotal: qtdCompra * mdf.precoChapa
+            areaTotalPecas, areaChapa, teoretica, qtdCompra, sobra: Math.max(0, sobra), 
+            aproveitamento: Math.min(100, aproveitamento), custoMaterial, precoM2
         };
     }
 };
 
 /* ==========================================================================
-   5. APP (Orquestração e Composição V1.3)
+   5. APP (Orquestração e Composição V1.3.1)
    ========================================================================== */
 const App = {
-    orcamentoTemporario: null, orcamentoVisualizado: null, editandoComposicaoIdx: null,
+    orcamentoTemporario: null, orcamentoVisualizado: null,
 
     iniciar: function() { StorageManager.load(); this.atualizarDash(); },
     atualizarDash: function() {
@@ -617,7 +633,7 @@ const App = {
         list.innerHTML = this.orcamentoTemporario.composicao.map((item, idx) => {
             let mdf = DB.mdfs.find(m => m.id === item.mdfId);
             let mdfNome = mdf ? `${mdf.nome} (${mdf.espessura}mm)` : 'Sem MDF';
-            let desc = item.tipo === 'gaveta' ? `Caixa: ${item.largura}x${item.profundidade}mm + ${item.qtdFrentes} Frentes` : `${UI.formatarNumero(item.qtd)}x (${UI.formatarNumero(item.largura)} × ${UI.formatarNumero(item.altura)}mm)`;
+            let desc = item.tipo === 'gaveta' ? `Caixa: ${item.larguraMm}x${item.profundidadeMm}mm + ${item.qtdFrentes} Frentes` : `${UI.formatarNumero(item.qtd)}x (${UI.formatarNumero(item.larguraMm)} × ${UI.formatarNumero(item.alturaMm)}mm)`;
             
             return `
             <div class="composicao-item">
@@ -638,7 +654,6 @@ const App = {
         this.renderizarListaComposicao(); this.calcularTempoReal();
     },
 
-    // --- MODAL DE ADICIONAR PEÇA / COMPONENTE ---
     abrirModalAddComposicao: function() {
         let html = `
             <div class="form-group">
@@ -674,7 +689,6 @@ const App = {
             let precoM2Comercial = dbRef.precos[perfilId] || 0;
             let mdf = DB.mdfs.find(m => m.id === mdfId);
 
-            // Conversão mm para metros para cálculo de área
             let largM = largMm / 1000;
             let altM = altMm / 1000;
             let areaPeca = qtd * largM * altM;
@@ -698,7 +712,6 @@ const App = {
         });
     },
 
-    // --- MODAL DE GAVETA COM CAIXA E FRENTE SEPARADAS ---
     abrirModalAddGaveta: function() {
         let html = `
             <div class="form-row">
@@ -748,32 +761,28 @@ const App = {
             let mdfFundo = DB.mdfs.find(m => m.id === mdfFundoId);
             let mdfFrente = DB.mdfs.find(m => m.id === mdfFrenteId);
 
-            // Engenharia Construtiva Básica da Caixa da Gaveta
             let largM = largMm / 1000, profM = profMm / 1000, altM = altCaixaMm / 1000;
             let espCaixaM = (mdfCaixa.espessura || 15) / 1000;
             
-            // Peças da Caixa: 2 Laterais (prof x alt), 1 Traseira (larg - 2esp x alt), 1 Frente interna (larg - 2esp x alt)
             let areaLateral = 2 * (profM * altM);
             let areaTraseiraEFrontal = 2 * ((largM - (2 * espCaixaM)) * altM);
             let areaFundoCaixa = (largM - (2 * espCaixaM)) * (profM - espCaixaM);
             let areaTotalCaixa = (areaLateral + areaTraseiraEFrontal) * qtd;
             let areaTotalFundo = areaFundoCaixa * qtd;
 
-            // Frentes de Gaveta (separadas)
             let altFrenteM = altFrenteMm / 1000;
             let areaTotalFrentes = qtd * largM * altFrenteM;
 
-            // Preço comercial atribuído com base nos componentes dimensionais base
             let refGavetaPreco = (DB.componentesDimensionais[0]?.precos[perfilId] || 800);
             let valorCaixa = (areaTotalCaixa + areaTotalFundo) * (refGavetaPreco * 0.8);
-            let valorFrentes = areaTotalFrentes * (refGavetaPreco * 1.1); // Frentes costumam ter valor agregado maior
+            let valorFrentes = areaTotalFrentes * (refGavetaPreco * 1.1);
 
             this.orcamentoTemporario.composicao.push({
                 id: 'gav_' + Date.now(),
                 tipo: 'gaveta',
                 nome: `${qtd}x Gavetas (${largMm}x${profMm}mm)`,
                 qtd, largura: largM, altura: altM, larguraMm: largMm, profundidadeMm: profMm, qtdFrentes: qtd,
-                mdfId: mdfCaixa.id, // Referência principal p/ listagem
+                mdfId: mdfCaixa.id,
                 mdfNome: `Caixa: ${mdfCaixa.nome} | Fundo: ${mdfFundo.nome} | Frentes: ${mdfFrente.nome}`,
                 subPecas: [
                     { nome: 'Laterais/Traseiras Caixa', area: areaLateral + areaTraseiraEFrontal, mdf: mdfCaixa },
@@ -787,7 +796,6 @@ const App = {
         });
     },
 
-    // --- CÁLCULO GERAL E MOTOR DE CHAPAS ---
     calcularTempoReal: function() {
         if(!this.orcamentoTemporario) return;
 
@@ -799,7 +807,7 @@ const App = {
         let observacao = document.getElementById('orc-observacao').value.trim() || DB.configuracoes.observacaoPadrao;
 
         let valorMovel = 0;
-        let mapMateriais = {}; // Agrupador estrito por MDF exato
+        let mapMateriais = {};
 
         this.orcamentoTemporario.composicao.forEach(item => {
             valorMovel += item.valorFinal;
@@ -823,21 +831,19 @@ const App = {
             }
         });
 
-        // Processa necessidade de chapas e custos industriais de material
         let resumoMateriais = [];
         let custoTotalMateriais = 0;
 
         Object.keys(mapMateriais).forEach(mdfKey => {
             let mat = mapMateriais[mdfKey];
             let calc = MaterialEngine.calcularNecessidadeChapas(mat.pecas, mat.mdf);
-            custoTotalMateriais += calc.custoTotal;
+            custoTotalMateriais += calc.custoMaterial; // Custo derivado do critério (proporcional ou integral)
             resumoMateriais.push({
                 mdf: mat.mdf,
                 ...calc
             });
         });
 
-        // Adicionais Globais
         const adicionaisSelecionados = []; const adicionaisIds = [];
         document.querySelectorAll('.orc-add-checkbox:checked').forEach(chk => {
             const addDB = DB.adicionais.find(a => a.id === chk.value);
@@ -893,15 +899,15 @@ const App = {
             });
         }
 
-        // Seção de Engenharia e Chapas Necessárias
         if (orc.resumoMateriais && orc.resumoMateriais.length > 0) {
-            html += `<div class="resumo-divider"></div><div style="font-size:12px; color:var(--accent); margin-bottom: 6px; font-weight:bold;">🪵 MATERIAIS NECESSÁRIOS E CHAPAS:</div>`;
+            html += `<div class="resumo-divider"></div><div style="font-size:12px; color:var(--accent); margin-bottom: 6px; font-weight:bold;">🪵 MATERIAIS E LISTA DE COMPRA:</div>`;
             orc.resumoMateriais.forEach(rm => {
                 html += `
                 <div style="background:var(--card); padding:8px; border-radius:6px; margin-bottom:6px; font-size:13px;">
                     <strong>${UI.escapeHTML(rm.mdf.fabricante)} ${UI.escapeHTML(rm.mdf.nome)} (${rm.mdf.espessura}mm)</strong><br>
-                    Necessário: ${UI.formatarNumero(rm.areaTotalPecas)} m² | Comprado: <strong>${rm.qtdCompra} chapa(s)</strong><br>
-                    Aproveitamento: ${UI.formatarNumero(rm.aproveitamento)}% | Sobra: ${UI.formatarNumero(rm.sobra)} m²
+                    Área útil / Consumo: ${UI.formatarNumero(rm.areaTotalPecas)} m²<br>
+                    🛒 <strong>Compra: ${rm.qtdCompra} chapa(s)</strong> (Estimativa: ${UI.formatarDinheiro(rm.qtdCompra * rm.mdf.precoChapa)})<br>
+                    Sobra de estoque: ${UI.formatarNumero(rm.sobra)} m² (${UI.formatarNumero(rm.aproveitamento)}% aproveitamento)
                 </div>`;
             });
         }
@@ -939,7 +945,7 @@ const App = {
         let t = `*ORÇAMENTO — STUDIO DM*\n\n*Cliente:* ${orc.cliente}\n*Móvel:* ${orc.categoriaNome}\n\n*COMPOSIÇÃO:*\n`;
         orc.composicao.forEach(item => { t += `• ${item.nome} — ${UI.formatarDinheiro(item.valorFinal)}\n`; });
         if(orc.resumoMateriais?.length > 0) {
-            t += `\n*PLANO DE CHAPAS:*\n`;
+            t += `\n*PLANO DE CHAPAS (COMPRA):*\n`;
             orc.resumoMateriais.forEach(rm => { t += `• ${rm.mdf.fabricante} ${rm.mdf.nome} ${rm.mdf.espessura}mm: ${rm.qtdCompra} chapa(s)\n`; });
         }
         t += `\n*TOTAL: ${UI.formatarDinheiro(orc.total)}*\n\n*Observações:*\n${orc.observacao}\n\n_${DB.configuracoes.nomeEmpresa}_`;
@@ -963,7 +969,7 @@ const App = {
 };
 
 /* ==========================================================================
-   6. CRUD COMPLETO (Preços e Cadastros v1.3)
+   6. CRUD COMPLETO (Preços e Cadastros v1.3.1)
    ========================================================================== */
 const CRUD = {
     init: function() { this.renderMDFs(); this.renderCompDim(); this.renderCompQtd(); this.renderCategorias(); this.renderAdicionais(); },
@@ -978,7 +984,7 @@ const CRUD = {
     abrirModalMDF: function(id = null) {
         const m = id ? DB.mdfs.find(x => x.id === id) : null;
         let html = `
-            <div class="form-row"><div class="form-group"><label>Fabricante</label><input type="text" id="mdf-fab" value="${m?UI.escapeHTML(m.fabricante):'Arauko'}"></div><div class="form-group"><label>Nome / Padrão</label><input type="text" id="mdf-nome" value="${m?UI.escapeHTML(m.nome):''}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Fabricante</label><input type="text" id="mdf-fab" value="${m?UI.escapeHTML(m.fabricante):'Arauco'}"></div><div class="form-group"><label>Nome / Padrão</label><input type="text" id="mdf-nome" value="${m?UI.escapeHTML(m.nome):''}"></div></div>
             <div class="form-row"><div class="form-group"><label>Espessura (mm)</label><input type="text" inputmode="decimal" id="mdf-esp" value="${m?m.espessura:'15'}"></div><div class="form-group"><label>Preço Chapa (R$)</label><input type="text" inputmode="decimal" id="mdf-preco" value="${m?m.precoChapa:''}"></div></div>
             <div class="form-row"><div class="form-group"><label>Largura Chapa (m)</label><input type="text" inputmode="decimal" id="mdf-larg" value="${m?m.largura:'1.85'}"></div><div class="form-group"><label>Comprimento (m)</label><input type="text" inputmode="decimal" id="mdf-comp" value="${m?m.comprimento:'2.75'}"></div></div>
         `;
@@ -1017,17 +1023,20 @@ const CRUD = {
     renderCategorias: function() { document.getElementById('lista-categorias').innerHTML = DB.categorias.map(cat => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cat.nome)}</strong></div></div>`).join(''); },
     renderAdicionais: function() { document.getElementById('lista-adicionais').innerHTML = DB.adicionais.map(a => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(a.nome)}</strong><span>${UI.formatarDinheiro(a.valor)}</span></div></div>`).join(''); },
     
-    // Configurações
     renderConfiguracoes: function() {
         document.getElementById('config-empresa').value = DB.configuracoes.nomeEmpresa;
         document.getElementById('config-telefone').value = DB.configuracoes.telefone;
         document.getElementById('config-kerf').value = DB.configuracoes.kerf || 3.2;
+        document.getElementById('config-criterio-custo').value = DB.configuracoes.criterioCustoMdf || 'proporcional';
+        document.getElementById('config-perda').value = DB.configuracoes.perdaPercentual || 10;
         document.getElementById('config-obs').value = DB.configuracoes.observacaoPadrao;
     },
     salvarConfiguracoes: function() {
         DB.configuracoes.nomeEmpresa = document.getElementById('config-empresa').value.trim();
         DB.configuracoes.telefone = document.getElementById('config-telefone').value.trim();
         DB.configuracoes.kerf = UI.parseNumero(document.getElementById('config-kerf').value);
+        DB.configuracoes.criterioCustoMdf = document.getElementById('config-criterio-custo').value;
+        DB.configuracoes.perdaPercentual = UI.parseNumero(document.getElementById('config-perda').value);
         DB.configuracoes.observacaoPadrao = document.getElementById('config-obs').value.trim();
         StorageManager.save(); alert("Configurações salvas!");
     }
