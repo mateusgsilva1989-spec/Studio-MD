@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio DM — Orçamento Rápido v1.3.1</title>
+    <title>Studio DM — Orçamento Rápido v1.3.2</title>
     <style>
         :root {
             --bg: #121826;
@@ -153,7 +153,7 @@
     <!-- VISÃO: INÍCIO -->
     <div id="view-inicio" class="view active">
         <h1>Studio DM</h1>
-        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.3.1</p>
+        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.3.2</p>
         
         <div class="stats-grid" style="margin-top: 32px;">
             <div class="stat-card">
@@ -364,7 +364,7 @@
 
 <script>
 /* ==========================================================================
-   1. BANCO DE DADOS (Estrutura V1.3.1)
+   1. BANCO DE DADOS (Estrutura V1.3.2)
    ========================================================================== */
 const DEFAULT_DB = {
     perfis: [
@@ -399,7 +399,7 @@ const DEFAULT_DB = {
     orcamentos: [],
     configuracoes: {
         nomeEmpresa: "Studio DM Ambientes Planejados", telefone: "", kerf: 3.2,
-        criterioCustoMdf: "proporcional", // proporcional ou chapa_integral
+        criterioCustoMdf: "proporcional",
         perdaPercentual: 10,
         observacaoPadrao: "Orçamento comercial estimativo. Projeto sujeito a validação técnica de fabricação."
     }
@@ -524,7 +524,7 @@ const MaterialEngine = {
     calcularNecessidadeChapas: function(pecasDoGrupo, mdf) {
         let areaTotalPecas = pecasDoGrupo.reduce((acc, p) => acc + p.area, 0);
         let areaChapa = this.calcularAreaChapa(mdf);
-        if (areaChapa <= 0) return { qtdCompra: 0, sobra: 0, aproveitamento: 0, teoretica: 0, custoMaterial: 0 };
+        if (areaChapa <= 0) return { qtdCompra: 0, sobra: 0, aproveitamento: 0, teoretica: 0, custoMaterial: 0, precoM2: 0 };
 
         let teoretica = areaTotalPecas / areaChapa;
         let qtdCompra = Math.ceil(teoretica);
@@ -541,7 +541,6 @@ const MaterialEngine = {
         let sobra = areaComprada - areaTotalPecas;
         let aproveitamento = areaComprada > 0 ? (areaTotalPecas / areaComprada) * 100 : 0;
 
-        // SEPARAÇÃO ENTRE CUSTO DO ORÇAMENTO E QUANTIDADE DE COMPRA
         let precoM2 = this.calcularPrecoM2(mdf);
         let criterio = DB.configuracoes.criterioCustoMdf || 'proporcional';
         let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
@@ -550,7 +549,6 @@ const MaterialEngine = {
         if (criterio === 'chapa_integral') {
             custoMaterial = qtdCompra * mdf.precoChapa;
         } else {
-            // Consumo proporcional com margem de perda
             let areaConsiderada = areaTotalPecas * (1 + perdaPct);
             custoMaterial = areaConsiderada * precoM2;
         }
@@ -563,7 +561,7 @@ const MaterialEngine = {
 };
 
 /* ==========================================================================
-   5. APP (Orquestração e Composição V1.3.1)
+   5. APP (Orquestração e Composição V1.3.2)
    ========================================================================== */
 const App = {
     orcamentoTemporario: null, orcamentoVisualizado: null,
@@ -692,7 +690,16 @@ const App = {
             let largM = largMm / 1000;
             let altM = altMm / 1000;
             let areaPeca = qtd * largM * altM;
-            let valorFinal = areaPeca * precoM2Comercial;
+
+            // CORREÇÃO CRÍTICA COMERCIAL:
+            // O valor comercial da peça usa o CUSTO PROPORCIONAL DO MDF da peça + a MÃO DE OBRA / MARGEM proporcional embutida no preço base do componente,
+            // em vez de multiplicar a área inteira diretamente pelo preço comercial cheio por m² (que causava o bug do R$ 2.688,00).
+            let precoM2Mdf = MaterialEngine.calcularPrecoM2(mdf);
+            let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
+            let custoMdfPeca = areaPeca * (1 + perdaPct) * precoM2Mdf;
+            
+            // O perfil comercial adiciona valor agregado sobre o custo base e outros insumos
+            let valorFinal = custoMdfPeca + (areaPeca * precoM2Comercial * 0.35); // Valor comercial balanceado baseado em custo real + perfil
 
             this.orcamentoTemporario.composicao.push({
                 id: 'comp_' + Date.now(),
@@ -774,8 +781,8 @@ const App = {
             let areaTotalFrentes = qtd * largM * altFrenteM;
 
             let refGavetaPreco = (DB.componentesDimensionais[0]?.precos[perfilId] || 800);
-            let valorCaixa = (areaTotalCaixa + areaTotalFundo) * (refGavetaPreco * 0.8);
-            let valorFrentes = areaTotalFrentes * (refGavetaPreco * 1.1);
+            let valorCaixa = (areaTotalCaixa + areaTotalFundo) * (refGavetaPreco * 0.4);
+            let valorFrentes = areaTotalFrentes * (refGavetaPreco * 0.6);
 
             this.orcamentoTemporario.composicao.push({
                 id: 'gav_' + Date.now(),
@@ -837,7 +844,7 @@ const App = {
         Object.keys(mapMateriais).forEach(mdfKey => {
             let mat = mapMateriais[mdfKey];
             let calc = MaterialEngine.calcularNecessidadeChapas(mat.pecas, mat.mdf);
-            custoTotalMateriais += calc.custoMaterial; // Custo derivado do critério (proporcional ou integral)
+            custoTotalMateriais += calc.custoMaterial;
             resumoMateriais.push({
                 mdf: mat.mdf,
                 ...calc
@@ -905,8 +912,8 @@ const App = {
                 html += `
                 <div style="background:var(--card); padding:8px; border-radius:6px; margin-bottom:6px; font-size:13px;">
                     <strong>${UI.escapeHTML(rm.mdf.fabricante)} ${UI.escapeHTML(rm.mdf.nome)} (${rm.mdf.espessura}mm)</strong><br>
-                    Área útil / Consumo: ${UI.formatarNumero(rm.areaTotalPecas)} m²<br>
-                    🛒 <strong>Compra: ${rm.qtdCompra} chapa(s)</strong> (Estimativa: ${UI.formatarDinheiro(rm.qtdCompra * rm.mdf.precoChapa)})<br>
+                    Área útil / Consumo: ${UI.formatarNumero(rm.areaTotalPecas)} m² | Custo estimado: ${UI.formatarDinheiro(rm.custoMaterial)}<br>
+                    🛒 <strong>Compra: ${rm.qtdCompra} chapa(s)</strong> (Valor chapa: ${UI.formatarDinheiro(rm.qtdCompra * rm.mdf.precoChapa)})<br>
                     Sobra de estoque: ${UI.formatarNumero(rm.sobra)} m² (${UI.formatarNumero(rm.aproveitamento)}% aproveitamento)
                 </div>`;
             });
@@ -969,7 +976,7 @@ const App = {
 };
 
 /* ==========================================================================
-   6. CRUD COMPLETO (Preços e Cadastros v1.3.1)
+   6. CRUD COMPLETO (Preços e Cadastros v1.3.2)
    ========================================================================== */
 const CRUD = {
     init: function() { this.renderMDFs(); this.renderCompDim(); this.renderCompQtd(); this.renderCategorias(); this.renderAdicionais(); },
@@ -1033,7 +1040,7 @@ const CRUD = {
     },
     salvarConfiguracoes: function() {
         DB.configuracoes.nomeEmpresa = document.getElementById('config-empresa').value.trim();
-        DB.configuracoes.telefone = document.getElementById('config-telefone').value.trim();
+        DB.configuracoes.telefone = document.getElementById('config-telefone'].value.trim();
         DB.configuracoes.kerf = UI.parseNumero(document.getElementById('config-kerf').value);
         DB.configuracoes.criterioCustoMdf = document.getElementById('config-criterio-custo').value;
         DB.configuracoes.perdaPercentual = UI.parseNumero(document.getElementById('config-perda').value);
