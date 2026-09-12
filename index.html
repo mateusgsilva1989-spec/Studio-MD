@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio DM — Orçamento Rápido v1.1</title>
+    <title>Studio DM — Orçamento Rápido v1.2</title>
     <style>
         :root {
             --bg: #121826;
             --card: #1b2436;
+            --card-alt: #243049;
             --accent: #10b981;
             --accent-hover: #059669;
             --text: #f3f4f6;
@@ -26,39 +27,23 @@
             padding-bottom: 80px;
         }
 
-        .app-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px 16px;
-        }
+        .app-container { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
 
-        h1, h2, h3 { color: var(--text); margin-bottom: 16px; font-weight: 600; }
+        h1, h2, h3, h4 { color: var(--text); margin-bottom: 16px; font-weight: 600; }
         h1 { font-size: 24px; text-align: center; color: var(--accent); }
         h2 { font-size: 20px; margin-top: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px;}
         p { color: var(--text-dim); margin-bottom: 16px; font-size: 14px; }
 
         /* Navigation */
         .nav-bottom {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: var(--card);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            z-index: 100;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--card); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; padding: 12px 0; z-index: 100;
         }
         .nav-bottom button {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            width: 20%;
+            background: none; border: none; color: var(--text-dim); font-size: 12px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            cursor: pointer; width: 20%;
         }
         .nav-bottom button.active { color: var(--accent); font-weight: bold; }
         .nav-icon { font-size: 20px; }
@@ -86,9 +71,7 @@
             background: var(--bg); border: 1px solid var(--border); padding: 12px;
             border-radius: 8px; margin-bottom: 8px; cursor: pointer;
         }
-        .checkbox-group input[type="checkbox"] {
-            width: 20px; height: 20px; accent-color: var(--accent);
-        }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
 
         /* Buttons */
         .btn {
@@ -112,6 +95,17 @@
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 16px; border-radius: 8px; text-align: center; }
         .stat-card.full-width { grid-column: 1 / -1; }
         .stat-value { font-size: 24px; font-weight: bold; color: var(--accent); margin-top: 4px; }
+
+        /* Composição Items */
+        .composicao-item { background: var(--card-alt); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 8px; position: relative; }
+        .composicao-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .composicao-item-title { font-weight: bold; font-size: 15px; color: var(--text); }
+        .composicao-item-details { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+        .composicao-item-price { font-weight: bold; color: var(--accent); margin-top: 6px; display: block;}
+        .btn-remove-item { background: var(--danger); color: #fff; border: none; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; }
+        
+        .badge { background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 6px; }
+        .badge-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
 
         /* Resumo Visual */
         .resumo-box { background: #000; border: 2px solid var(--accent); border-radius: 8px; padding: 16px; margin-top: 24px; }
@@ -144,6 +138,7 @@
             .resumo-total, .resumo-subtotal { color: #000; }
             .resumo-total { border-top: 1px solid #000; }
             .resumo-row.dim { color: #444; }
+            .badge, .badge-outline { border: 1px solid #000; color: #000; background: transparent; }
         }
     </style>
 </head>
@@ -153,7 +148,7 @@
     <!-- VISÃO: INÍCIO -->
     <div id="view-inicio" class="view active">
         <h1>Studio DM</h1>
-        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido</p>
+        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.2</p>
         
         <div class="stats-grid" style="margin-top: 32px;">
             <div class="stat-card">
@@ -181,53 +176,52 @@
     <!-- VISÃO: NOVO ORÇAMENTO -->
     <div id="view-novo-orcamento" class="view">
         <h2>Novo Orçamento</h2>
+        
+        <!-- Identificação -->
         <div class="card">
             <div class="form-group">
                 <label>Cliente *</label>
                 <input type="text" id="orc-cliente" placeholder="Nome do cliente" oninput="App.calcularTempoReal()">
             </div>
-            
             <div class="form-row">
                 <div class="form-group">
                     <label>Perfil de Preço</label>
                     <select id="orc-perfil" onchange="App.calcularTempoReal()"></select>
                 </div>
                 <div class="form-group">
-                    <label>Tipo de Móvel *</label>
+                    <label>Tipo de Móvel (Referência) *</label>
                     <select id="orc-categoria" onchange="App.calcularTempoReal()"></select>
                 </div>
             </div>
-
-            <!-- Alterado para inputmode decimal para facilitar digitação de vírgula/ponto -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Largura (m) *</label>
-                    <input type="text" inputmode="decimal" id="orc-largura" placeholder="Ex: 2,40" oninput="App.calcularTempoReal()">
-                </div>
-                <div class="form-group">
-                    <label>Altura (m) *</label>
-                    <input type="text" inputmode="decimal" id="orc-altura" placeholder="Ex: 2,60" oninput="App.calcularTempoReal()">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label style="color: var(--accent); font-size: 16px; font-weight: bold;" id="orc-area-display">Área total: 0,00 m²</label>
-            </div>
         </div>
 
+        <!-- Construtor Dinâmico (Composição) -->
         <div class="card">
-            <h3>Adicionais (Fixo)</h3>
+            <div class="card-header">
+                <h3>Composição do Móvel</h3>
+            </div>
+            <div id="orc-composicao-lista">
+                <!-- Itens da composição entram aqui -->
+            </div>
+            <button class="btn btn-outline" onclick="App.abrirModalAddComposicao()" style="margin-top: 12px; margin-bottom: 0;">
+                ➕ Adicionar Componente
+            </button>
+        </div>
+
+        <!-- Adicionais e Fechamento -->
+        <div class="card">
+            <h3>Adicionais Fixos (Global)</h3>
             <div id="orc-adicionais-container"></div>
         </div>
 
         <div class="card">
             <div class="form-group">
-                <label>Desconto (%)</label>
+                <label>Desconto Global (%)</label>
                 <input type="text" inputmode="decimal" id="orc-desconto" placeholder="Ex: 5" oninput="App.calcularTempoReal()">
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label>Observações do Orçamento (Opcional)</label>
-                <textarea id="orc-observacao" rows="3" placeholder="Ex: Valor considerando MDF Branco TX..."></textarea>
+                <textarea id="orc-observacao" rows="3" placeholder="Ex: Valor considerando instalação..."></textarea>
             </div>
         </div>
 
@@ -259,15 +253,43 @@
         <div id="historico-lista"></div>
     </div>
 
-    <!-- VISÃO: PREÇOS -->
+    <!-- VISÃO: PREÇOS E CADASTROS -->
     <div id="view-precos" class="view">
-        <h2>Tabela de Preços por m²</h2>
-        <p>Valores baseados nos perfis comerciais.</p>
-        
+        <h2>Cadastros e Preços</h2>
+        <p>Gerencie MDFs, componentes e adicionais.</p>
+
+        <!-- Cadastro MDF -->
         <div class="card">
             <div class="card-header">
-                <h3>Categorias</h3>
-                <button class="btn-small btn-outline" onclick="App.novaCategoria()">+ Novo</button>
+                <h3>Chapas de MDF</h3>
+                <button class="btn-small btn-outline" onclick="CRUD.novoMDF()">+ Novo MDF</button>
+            </div>
+            <div id="lista-mdfs"></div>
+        </div>
+
+        <!-- Cadastro Componentes Dimensionais -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Componentes (Área / m²)</h3>
+                <button class="btn-small btn-outline" onclick="CRUD.novoCompDim()">+ Novo</button>
+            </div>
+            <div id="lista-comp-dim"></div>
+        </div>
+
+        <!-- Cadastro Componentes Quantidade -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Componentes (Quantidade)</h3>
+                <button class="btn-small btn-outline" onclick="CRUD.novoCompQtd()">+ Novo</button>
+            </div>
+            <div id="lista-comp-qtd"></div>
+        </div>
+
+        <!-- Cadastro Categorias e Adicionais (Legado/Global) -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Categorias (Tipos de Móvel)</h3>
+                <button class="btn-small btn-outline" onclick="CRUD.novaCategoria()">+ Novo</button>
             </div>
             <div id="lista-categorias"></div>
         </div>
@@ -275,7 +297,7 @@
         <div class="card">
             <div class="card-header">
                 <h3>Adicionais Fixos</h3>
-                <button class="btn-small btn-outline" onclick="App.novoAdicional()">+ Novo</button>
+                <button class="btn-small btn-outline" onclick="CRUD.novoAdicional()">+ Novo</button>
             </div>
             <div id="lista-adicionais"></div>
         </div>
@@ -356,7 +378,7 @@
 
 <script>
 /* ==========================================================================
-   1. BANCO DE DADOS (Estado Inicial / Estrutura)
+   1. BANCO DE DADOS (Estado Inicial / Estrutura V1.2)
    ========================================================================== */
 const DEFAULT_DB = {
     perfis: [
@@ -364,40 +386,56 @@ const DEFAULT_DB = {
         { id: "p2", nome: "Alto Padrão" },
         { id: "p3", nome: "Arquiteto / Parceiro" }
     ],
+    // Migração: Categorias agora servem apenas como "Referência de Tipo"
     categorias: [
         { id: "cat_1", nome: "Guarda-roupa", precos: { "p1": 850, "p2": 1100, "p3": 750 } },
-        { id: "cat_2", nome: "Cozinha", precos: { "p1": 900, "p2": 1200, "p3": 800 } },
-        { id: "cat_3", nome: "Painel Home", precos: { "p1": 700, "p2": 950, "p3": 600 } },
-        { id: "cat_4", nome: "Banheiro", precos: { "p1": 800, "p2": 1050, "p3": 700 } }
+        { id: "cat_2", nome: "Cozinha", precos: { "p1": 900, "p2": 1200, "p3": 800 } }
     ],
     adicionais: [
         { id: "add_1", nome: "LED", valor: 350 },
-        { id: "add_2", nome: "Espelho", valor: 500 },
-        { id: "add_3", nome: "Vidro", valor: 450 }
+        { id: "add_2", nome: "Espelho", valor: 500 }
+    ],
+    // --- NOVOS ARRAYS V1.2 ---
+    mdfs: [
+        { id: "mdf_1", nome: "Branco TX", fabricante: "Arauko", espessura: 15, largura: 1.85, comprimento: 2.75, precoChapa: 155.00, isBase: true },
+        { id: "mdf_2", nome: "Freijó", fabricante: "Guararapes", espessura: 15, largura: 1.85, comprimento: 2.75, precoChapa: 280.00, isBase: false }
+    ],
+    componentesDimensionais: [
+        { id: "cd_1", nome: "Estrutura / Caixaria", unidade: "m2", precos: { "p1": 800, "p2": 1000, "p3": 750 } },
+        { id: "cd_2", nome: "Portas", unidade: "m2", precos: { "p1": 450, "p2": 600, "p3": 400 } },
+        { id: "cd_3", nome: "Prateleiras", unidade: "m2", precos: { "p1": 300, "p2": 450, "p3": 250 } }
+    ],
+    componentesQuantidade: [
+        { id: "cq_1", nome: "Gaveta", unidade: "un", precos: { "p1": 150, "p2": 220, "p3": 130 } },
+        { id: "cq_2", nome: "Dobradiça com Amortecedor", unidade: "un", precos: { "p1": 15, "p2": 25, "p3": 12 } },
+        { id: "cq_3", nome: "Corrediça Telescópica", unidade: "par", precos: { "p1": 35, "p2": 50, "p3": 28 } }
     ],
     orcamentos: [],
     configuracoes: {
         nomeEmpresa: "Studio DM Ambientes Planejados",
         telefone: "",
-        observacaoPadrao: "Orçamento estimativo baseado nas dimensões informadas. Valores sujeitos à confirmação após levantamento e definição final do projeto."
+        observacaoPadrao: "Orçamento estimativo baseado nas dimensões informadas. Valores sujeitos à confirmação."
     }
 };
 
 let DB = {};
 
 /* ==========================================================================
-   2. STORAGE MANAGER (Persistência)
+   2. STORAGE MANAGER (Persistência e Migração)
    ========================================================================== */
 const StorageManager = {
-    key: "StudioDM_OrcamentoM2_DB_v1", // Mantido conforme instrução
+    key: "StudioDM_OrcamentoM2_DB_v1", // Mantida rigorosamente
     load: function() {
         try {
             const data = localStorage.getItem(this.key);
             if (data) {
                 DB = JSON.parse(data);
-                // Garantir integridade mínima caso falte algo
+                // MIGRATION V1 -> V1.2 (Garante que as novas tabelas existam sem apagar o passado)
                 if(!DB.perfis) DB.perfis = DEFAULT_DB.perfis;
                 if(!DB.configuracoes) DB.configuracoes = DEFAULT_DB.configuracoes;
+                if(!DB.mdfs) DB.mdfs = DEFAULT_DB.mdfs;
+                if(!DB.componentesDimensionais) DB.componentesDimensionais = DEFAULT_DB.componentesDimensionais;
+                if(!DB.componentesQuantidade) DB.componentesQuantidade = DEFAULT_DB.componentesQuantidade;
             } else {
                 DB = JSON.parse(JSON.stringify(DEFAULT_DB));
                 this.save();
@@ -414,7 +452,7 @@ const StorageManager = {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
         const anchor = document.createElement('a');
         anchor.setAttribute("href", dataStr);
-        anchor.setAttribute("download", `StudioDM_Backup_${new Date().getTime()}.json`);
+        anchor.setAttribute("download", `StudioDM_Backup_V1.2_${new Date().getTime()}.json`);
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
@@ -428,9 +466,9 @@ const StorageManager = {
             reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    // Validação simples da estrutura
                     if(imported && imported.categorias && imported.orcamentos) {
                         DB = imported;
+                        StorageManager.load(); // Passa pela migração se for um JSON da V1 pura
                         StorageManager.save();
                         alert("Backup restaurado com sucesso!");
                         App.atualizarDash();
@@ -449,46 +487,15 @@ const StorageManager = {
 };
 
 /* ==========================================================================
-   3. CALCULADORA (Cálculos Geométricos)
-   ========================================================================== */
-const Calculadora = {
-    calcularArea: function(largura, altura) {
-        if(isNaN(largura) || isNaN(altura) || largura <= 0 || altura <= 0) return 0;
-        return largura * altura;
-    }
-};
-
-/* ==========================================================================
-   4. PRECIFICAÇÃO (Regras de Negócio / Financeiro)
-   ========================================================================== */
-const Precificacao = {
-    calcularValor: function(area, precoM2) {
-        return area * precoM2;
-    },
-    calcularAdicionais: function(listaAdicionais) {
-        return listaAdicionais.reduce((total, add) => total + add.valor, 0);
-    },
-    calcularDesconto: function(subtotal, percentual) {
-        if(isNaN(percentual) || percentual < 0) return 0;
-        return subtotal * (percentual / 100);
-    },
-    calcularTotal: function(subtotal, desconto) {
-        return subtotal - desconto;
-    }
-};
-
-/* ==========================================================================
-   5. UI (Interface e Utilitários)
+   3. UTILS E UI (Parser Avançado e Formatação)
    ========================================================================== */
 const UI = {
     mudarVisao: function(idVisao) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(idVisao).classList.add('active');
-        
         document.querySelectorAll('.nav-bottom button').forEach(b => b.classList.remove('active'));
         const navBtn = document.getElementById('nav-' + idVisao);
         if(navBtn) navBtn.classList.add('active');
-        
         window.scrollTo(0,0);
     },
     formatarDinheiro: function(valor) {
@@ -498,14 +505,18 @@ const UI = {
         return (valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: decimais, maximumFractionDigits: decimais });
     },
     parseNumero: function(str) {
-        if(!str) return 0;
-        // Permite tratar vírgula ou ponto, melhorando entrada mobile
-        const san = str.toString().replace(',', '.');
+        if(str === null || str === undefined || str === '') return 0;
+        if(typeof str === 'number') return str;
+        let san = str.toString().trim();
+        // Tratamento para formato brasileiro (ex: 1.234,56 -> 1234.56)
+        if (san.includes('.') && san.includes(',')) {
+            san = san.replace(/\./g, ''); 
+        }
+        san = san.replace(',', '.');
         const num = parseFloat(san);
         return isNaN(num) ? 0 : num;
     },
     escapeHTML: function(str) {
-        // Proteção contra injeção de HTML
         if (typeof str !== 'string') return str;
         return str.replace(/[&<>'"]/g, function(match) {
             const escape = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
@@ -525,7 +536,47 @@ const UI = {
 };
 
 /* ==========================================================================
-   6. APP (Orquestração e Fluxos)
+   4. GERENCIADOR DE MDF (MDFManager)
+   ========================================================================== */
+const MDFManager = {
+    calcularPrecoM2: function(mdf) {
+        if(!mdf || !mdf.largura || !mdf.comprimento || !mdf.precoChapa) return 0;
+        const area = mdf.largura * mdf.comprimento;
+        return area > 0 ? mdf.precoChapa / area : 0;
+    },
+    getBaseMDF: function() {
+        let base = DB.mdfs.find(m => m.isBase);
+        if (!base && DB.mdfs.length > 0) return DB.mdfs[0]; // fallback
+        return base;
+    },
+    calcularIndice: function(mdfId) {
+        const base = this.getBaseMDF();
+        const mdf = DB.mdfs.find(m => m.id === mdfId);
+        if(!base || !mdf) return 1;
+
+        const precoBaseM2 = this.calcularPrecoM2(base);
+        const precoMdfM2 = this.calcularPrecoM2(mdf);
+
+        if(precoBaseM2 === 0) return 1;
+        return precoMdfM2 / precoBaseM2;
+    }
+};
+
+/* ==========================================================================
+   5. PRECIFICAÇÃO (Matemática Pura)
+   ========================================================================== */
+const Precificacao = {
+    calcularAdicionais: function(listaAdicionais) {
+        return listaAdicionais.reduce((total, add) => total + add.valor, 0);
+    },
+    calcularDesconto: function(subtotal, percentual) {
+        if(percentual < 0) return 0;
+        return subtotal * (percentual / 100);
+    }
+};
+
+/* ==========================================================================
+   6. APP (Orquestração e Fluxos do Orçamento V1.2)
    ========================================================================== */
 const App = {
     orcamentoTemporario: null, 
@@ -539,7 +590,6 @@ const App = {
     atualizarDash: function() {
         const orcamentos = DB.orcamentos;
         document.getElementById('dash-qtd').innerText = orcamentos.length;
-        
         const totalDinheiro = orcamentos.reduce((acc, curr) => acc + curr.total, 0);
         document.getElementById('dash-total-orcado').innerText = UI.formatarDinheiro(totalDinheiro);
 
@@ -553,7 +603,7 @@ const App = {
 
     // --- NOVO ORÇAMENTO ---
     iniciarNovoOrcamento: function(dadosCopia = null) {
-        // Popular selects escapando dados do banco
+        // Popula selects fixos
         const selPerfil = document.getElementById('orc-perfil');
         selPerfil.innerHTML = DB.perfis.map(p => `<option value="${p.id}">${UI.escapeHTML(p.nome)}</option>`).join('');
         
@@ -561,7 +611,6 @@ const App = {
         selCat.innerHTML = '<option value="">Selecione...</option>' + 
             DB.categorias.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)}</option>`).join('');
 
-        // Popular Adicionais
         const divAdds = document.getElementById('orc-adicionais-container');
         divAdds.innerHTML = DB.adicionais.map(add => `
             <label class="checkbox-group">
@@ -570,13 +619,10 @@ const App = {
             </label>
         `).join('');
 
-        // Preencher formulário
         if(dadosCopia) {
             document.getElementById('orc-cliente').value = dadosCopia.cliente || "";
             document.getElementById('orc-perfil').value = dadosCopia.perfilId || DB.perfis[0].id;
             document.getElementById('orc-categoria').value = dadosCopia.categoriaId || "";
-            document.getElementById('orc-largura').value = dadosCopia.largura || "";
-            document.getElementById('orc-altura').value = dadosCopia.altura || "";
             document.getElementById('orc-desconto').value = dadosCopia.descontoPerc || "";
             document.getElementById('orc-observacao').value = dadosCopia.observacao || "";
             
@@ -584,86 +630,261 @@ const App = {
             checks.forEach(chk => {
                 if(dadosCopia.adicionaisIds.includes(chk.value)) chk.checked = true;
             });
+
+            // MIGRATION ON FLY: Se for orçamento antigo da V1 copiando para V1.2
+            if(!dadosCopia.composicao) {
+                this.orcamentoTemporario = { composicao: [] };
+                this.orcamentoTemporario.composicao.push({
+                    id: 'mig_' + Date.now(),
+                    refId: null,
+                    nome: "Móvel (Migrado da V1)",
+                    tipo: 'dim',
+                    qtd: 1,
+                    largura: dadosCopia.largura || 0,
+                    altura: dadosCopia.altura || 0,
+                    mdfId: null,
+                    mdfNome: "Não se aplica",
+                    mdfIndice: 1,
+                    precoBase: dadosCopia.precoM2 || 0, // Congelado
+                    valorFinal: dadosCopia.valorMovel || 0
+                });
+            } else {
+                // Copia profunda da composição (Snapshot)
+                this.orcamentoTemporario = { composicao: JSON.parse(JSON.stringify(dadosCopia.composicao)) };
+                // Limpa os IDs para gerar novos na edição
+                this.orcamentoTemporario.composicao.forEach(c => c.id = 'comp_' + Math.random().toString(36).substr(2, 9));
+            }
         } else {
             document.getElementById('orc-cliente').value = "";
             document.getElementById('orc-perfil').value = DB.perfis[0].id;
             document.getElementById('orc-categoria').value = "";
-            document.getElementById('orc-largura').value = "";
-            document.getElementById('orc-altura').value = "";
             document.getElementById('orc-desconto').value = "";
             document.getElementById('orc-observacao').value = "";
+            this.orcamentoTemporario = { composicao: [] };
         }
 
         document.getElementById('orc-resumo-box').style.display = 'none';
         document.getElementById('btn-salvar-orcamento').style.display = 'none';
-        document.getElementById('orc-area-display').innerText = "Área total: 0,00 m²";
-        this.orcamentoTemporario = null;
+        this.renderizarListaComposicao();
         
         if(dadosCopia) this.calcularTempoReal();
     },
 
-    calcularTempoReal: function() {
-        const cliente = document.getElementById('orc-cliente').value.trim();
-        const perfilId = document.getElementById('orc-perfil').value;
-        const categoriaId = document.getElementById('orc-categoria').value;
-        
-        const largura = UI.parseNumero(document.getElementById('orc-largura').value);
-        const altura = UI.parseNumero(document.getElementById('orc-altura').value);
-        let descontoPerc = UI.parseNumero(document.getElementById('orc-desconto').value);
-        
-        if(descontoPerc < 0) descontoPerc = 0;
-        if(descontoPerc > 100) descontoPerc = 100;
-
-        let observacao = document.getElementById('orc-observacao').value.trim();
-        if(!observacao) observacao = DB.configuracoes.observacaoPadrao;
-
-        // Área
-        const area = Calculadora.calcularArea(largura, altura);
-        document.getElementById('orc-area-display').innerText = `Área total: ${UI.formatarNumero(area)} m²`;
-
-        // Se medidas zeradas ou negativas, não exibe resumo
-        if(area <= 0 || !categoriaId || largura <= 0 || altura <= 0) {
-            document.getElementById('orc-resumo-box').style.display = 'none';
-            document.getElementById('btn-salvar-orcamento').style.display = 'none';
+    // --- RENDERIZAÇÃO DA COMPOSIÇÃO NO BUILDER ---
+    renderizarListaComposicao: function() {
+        const list = document.getElementById('orc-composicao-lista');
+        if(this.orcamentoTemporario.composicao.length === 0) {
+            list.innerHTML = `<p style="font-size: 13px; font-style: italic; color: var(--text-dim); text-align: center; margin-top: 12px;">Nenhum componente adicionado.</p>`;
             return;
         }
 
-        // Buscar categoria e perfil
+        list.innerHTML = this.orcamentoTemporario.composicao.map((item, idx) => {
+            let dimText = item.tipo === 'dim' ? `${UI.formatarNumero(item.largura)}m × ${UI.formatarNumero(item.altura)}m` : `Quantidade`;
+            let mdfInfo = item.mdfId ? `<span class="badge">${UI.escapeHTML(item.mdfNome)} (${((item.mdfIndice - 1)*100).toFixed(0)}%)</span>` : `<span class="badge-outline">Sem MDF</span>`;
+            
+            return `
+            <div class="composicao-item">
+                <div class="composicao-item-header">
+                    <span class="composicao-item-title">${item.qtd}x ${UI.escapeHTML(item.nome)}</span>
+                    <button class="btn-remove-item" onclick="App.removerComponente(${idx})">X</button>
+                </div>
+                <div class="composicao-item-details">
+                    Medida/Tipo: ${dimText} <br>
+                    MDF: ${mdfInfo}
+                </div>
+                <span class="composicao-item-price">${UI.formatarDinheiro(item.valorFinal)}</span>
+            </div>
+            `;
+        }).join('');
+    },
+
+    removerComponente: function(idx) {
+        this.orcamentoTemporario.composicao.splice(idx, 1);
+        this.renderizarListaComposicao();
+        this.calcularTempoReal();
+    },
+
+    // --- MODAL DE ADICIONAR COMPONENTE ---
+    abrirModalAddComposicao: function() {
+        let html = `
+            <div class="form-group">
+                <label>Tipo de Componente</label>
+                <select id="modal-add-tipo" onchange="App.mudarFiltroAddComposicao()">
+                    <option value="dim">Dimensional (m² / Linear)</option>
+                    <option value="qtd">Por Quantidade (Unidade / Par)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Componente Base</label>
+                <select id="modal-add-item"></select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Qtd</label>
+                    <input type="text" inputmode="decimal" id="modal-add-qtd" value="1">
+                </div>
+                <div class="form-group" id="box-add-largura">
+                    <label>Largura (m)</label>
+                    <input type="text" inputmode="decimal" id="modal-add-larg">
+                </div>
+                <div class="form-group" id="box-add-altura">
+                    <label>Alt/Prof (m)</label>
+                    <input type="text" inputmode="decimal" id="modal-add-alt">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Vincular MDF (Opcional)</label>
+                <select id="modal-add-mdf">
+                    <option value="">-- Nenhum (Não se aplica) --</option>
+                    ${DB.mdfs.map(m => `<option value="${m.id}">${UI.escapeHTML(m.nome)} (+${MDFManager.getDiferencaPercentual?.(m.id) || ((MDFManager.calcularIndice(m.id)-1)*100).toFixed(1)}%)</option>`).join('')}
+                </select>
+            </div>
+        `;
+
+        UI.abrirModal("Adicionar Parte", html, () => {
+            const tipo = document.getElementById('modal-add-tipo').value;
+            const selectItem = document.getElementById('modal-add-item');
+            const refId = selectItem.value;
+            const refNome = selectItem.options[selectItem.selectedIndex].text;
+            
+            const qtd = UI.parseNumero(document.getElementById('modal-add-qtd').value);
+            const larg = UI.parseNumero(document.getElementById('modal-add-larg').value);
+            const alt = UI.parseNumero(document.getElementById('modal-add-alt').value);
+            const mdfId = document.getElementById('modal-add-mdf').value;
+
+            if (qtd <= 0) return alert("Quantidade deve ser maior que zero.");
+            if (tipo === 'dim' && (larg <= 0 || alt <= 0)) return alert("Informe largura e altura válidas.");
+            if (!refId) return alert("Selecione o componente base.");
+
+            const perfilId = document.getElementById('orc-perfil').value;
+            let dbRef = tipo === 'dim' ? DB.componentesDimensionais.find(c => c.id === refId) : DB.componentesQuantidade.find(c => c.id === refId);
+            
+            // Busca o preço base congelado para o momento da inserção
+            let precoBase = dbRef && dbRef.precos[perfilId] ? dbRef.precos[perfilId] : 0;
+            
+            let mdfIndice = 1;
+            let mdfNome = "Não se aplica";
+            if(mdfId) {
+                const mdf = DB.mdfs.find(m => m.id === mdfId);
+                mdfIndice = MDFManager.calcularIndice(mdfId);
+                mdfNome = mdf.nome;
+            }
+
+            // Calcula o valor final local apenas para registro imediato. O calcularTempoReal refará se o perfil mudar.
+            let areaCalculo = tipo === 'dim' ? (qtd * larg * alt) : qtd;
+            let valorFinal = areaCalculo * precoBase * mdfIndice;
+
+            this.orcamentoTemporario.composicao.push({
+                id: 'comp_' + Date.now(),
+                refId: refId,
+                nome: refNome,
+                tipo: tipo,
+                qtd: qtd,
+                largura: larg,
+                altura: alt,
+                mdfId: mdfId,
+                mdfNome: mdfNome,
+                mdfIndice: mdfIndice,
+                precoBase: precoBase,
+                valorFinal: valorFinal
+            });
+
+            UI.fecharModal();
+            this.renderizarListaComposicao();
+            this.calcularTempoReal();
+        });
+
+        this.mudarFiltroAddComposicao(); // Popula
+    },
+
+    mudarFiltroAddComposicao: function() {
+        const tipo = document.getElementById('modal-add-tipo').value;
+        const boxLarg = document.getElementById('box-add-largura');
+        const boxAlt = document.getElementById('box-add-altura');
+        const selItem = document.getElementById('modal-add-item');
+        
+        let html = '';
+        if(tipo === 'dim') {
+            boxLarg.style.display = 'block'; boxAlt.style.display = 'block';
+            html = DB.componentesDimensionais.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)} (por ${c.unidade})</option>`).join('');
+        } else {
+            boxLarg.style.display = 'none'; boxAlt.style.display = 'none';
+            html = DB.componentesQuantidade.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)} (por ${c.unidade})</option>`).join('');
+        }
+        selItem.innerHTML = html;
+    },
+
+    // --- MOTOR DE CÁLCULO GERAL ---
+    calcularTempoReal: function() {
+        if(!this.orcamentoTemporario) return;
+
+        const cliente = document.getElementById('orc-cliente').value.trim();
+        const perfilId = document.getElementById('orc-perfil').value;
+        const categoriaId = document.getElementById('orc-categoria').value;
+        let descontoPerc = UI.parseNumero(document.getElementById('orc-desconto').value);
+        if(descontoPerc < 0) descontoPerc = 0;
+        if(descontoPerc > 100) descontoPerc = 100;
+        
+        let observacao = document.getElementById('orc-observacao').value.trim();
+        if(!observacao) observacao = DB.configuracoes.observacaoPadrao;
+
         const categoria = DB.categorias.find(c => c.id === categoriaId);
-        const precoM2 = categoria.precos[perfilId] || 0;
         const perfil = DB.perfis.find(p => p.id === perfilId);
 
-        // Lógica Principal (Intocada na essência)
-        const valorMovel = Precificacao.calcularValor(area, precoM2);
+        // Atualiza reativamente os preços da composição SE o perfil mudou, ou recarrega base
+        let valorMovel = 0;
+        let areaTotalSimulada = 0; // Apenas para referência no dash se quiser
 
-        // Adicionais
+        this.orcamentoTemporario.composicao.forEach(item => {
+            // Busca o preço base no DB atualizado para o perfil atual (Não altera componentes "Migrados" sem refId)
+            if(item.refId) {
+                let ref = item.tipo === 'dim' ? DB.componentesDimensionais.find(c => c.id === item.refId) : DB.componentesQuantidade.find(c => c.id === item.refId);
+                if(ref && ref.precos[perfilId] !== undefined) {
+                    item.precoBase = ref.precos[perfilId];
+                }
+            }
+
+            // Atualiza índice do MDF caso ele tenha alterado no DB (MDF Ativo)
+            if(item.mdfId) {
+                let mdf = DB.mdfs.find(m => m.id === item.mdfId);
+                if(mdf) {
+                    item.mdfIndice = MDFManager.calcularIndice(mdf.id);
+                    item.mdfNome = mdf.nome;
+                }
+            }
+
+            // Cálculo isolado per componente
+            let multiplicador = item.tipo === 'dim' ? (item.qtd * item.largura * item.altura) : item.qtd;
+            item.valorFinal = multiplicador * item.precoBase * (item.mdfIndice || 1);
+            
+            valorMovel += item.valorFinal;
+            if(item.tipo === 'dim') areaTotalSimulada += (item.qtd * item.largura * item.altura);
+        });
+
+        // Adicionais Fixos (Global)
         const adicionaisSelecionados = [];
         const adicionaisIds = [];
         document.querySelectorAll('.orc-add-checkbox:checked').forEach(chk => {
             const addDB = DB.adicionais.find(a => a.id === chk.value);
-            if(addDB) {
-                adicionaisSelecionados.push(addDB);
-                adicionaisIds.push(addDB.id);
-            }
+            if(addDB) { adicionaisSelecionados.push(addDB); adicionaisIds.push(addDB.id); }
         });
 
         const valorAdicionais = Precificacao.calcularAdicionais(adicionaisSelecionados);
         const subtotal = valorMovel + valorAdicionais;
         const valorDesconto = Precificacao.calcularDesconto(subtotal, descontoPerc);
-        const total = Precificacao.calcularTotal(subtotal, valorDesconto);
+        const total = subtotal - valorDesconto;
 
+        // Montando Objeto V1.2 (Compatível e Expandido)
         this.orcamentoTemporario = {
-            id: Date.now().toString(),
+            ...this.orcamentoTemporario, // Mantém array composicao
+            id: this.orcamentoTemporario.id || Date.now().toString(),
             data: new Date().toISOString(),
             cliente: cliente, 
             perfilId: perfilId,
-            perfilNome: perfil.nome,
+            perfilNome: perfil ? perfil.nome : 'Sem perfil',
             categoriaId: categoriaId,
-            categoriaNome: categoria.nome,
-            largura: largura,
-            altura: altura,
-            area: area,
-            precoM2: precoM2,
+            categoriaNome: categoria ? categoria.nome : 'Sem tipo',
+            area: areaTotalSimulada, // Referência
             valorMovel: valorMovel,
             adicionais: adicionaisSelecionados,
             adicionaisIds: adicionaisIds,
@@ -674,30 +895,59 @@ const App = {
             observacao: observacao
         };
 
-        this.renderizarResumo(this.orcamentoTemporario, 'orc-resumo-content');
-        document.getElementById('orc-resumo-box').style.display = 'block';
-        document.getElementById('btn-salvar-orcamento').style.display = 'block';
+        // UI Refresh
+        this.renderizarListaComposicao(); // Atualiza a lista com novos preços
+        
+        if (this.orcamentoTemporario.composicao.length > 0 || valorMovel > 0) {
+            this.renderizarResumo(this.orcamentoTemporario, 'orc-resumo-content');
+            document.getElementById('orc-resumo-box').style.display = 'block';
+            document.getElementById('btn-salvar-orcamento').style.display = 'block';
+        } else {
+            document.getElementById('orc-resumo-box').style.display = 'none';
+            document.getElementById('btn-salvar-orcamento').style.display = 'none';
+        }
     },
 
+    // --- RENDERIZADORES DE RELATÓRIO ---
     renderizarResumo: function(orc, containerId) {
-        // Aplicação do layout solicitado: Valor, Adicionais, Subtotal, Desconto e Total sempre presentes.
-        // Utilizando escapeHTML para evitar injeções
         const clienteSeguro = orc.cliente ? UI.escapeHTML(orc.cliente) : 'Não informado';
         
         let html = `
             <div class="resumo-row dim"><span>Cliente:</span> <span>${clienteSeguro}</span></div>
-            <div class="resumo-row dim"><span>Móvel:</span> <span>${UI.escapeHTML(orc.categoriaNome)}</span></div>
-            <div class="resumo-row dim"><span>Dimensões:</span> <span>${UI.formatarNumero(orc.largura)}m × ${UI.formatarNumero(orc.altura)}m</span></div>
-            <div class="resumo-row dim"><span>Área:</span> <span>${UI.formatarNumero(orc.area)} m²</span></div>
-            <div class="resumo-row dim"><span>Preço (${UI.escapeHTML(orc.perfilNome)}):</span> <span>${UI.formatarDinheiro(orc.precoM2)}/m²</span></div>
-            
+            <div class="resumo-row dim"><span>Móvel (Ref):</span> <span>${UI.escapeHTML(orc.categoriaNome)}</span></div>
             <div class="resumo-divider"></div>
+        `;
+
+        // Renderização Dinâmica da Composição (V1.2) ou V1 Legado
+        if (orc.composicao && orc.composicao.length > 0) {
+            html += `<div style="font-size:12px; color:var(--text-dim); margin-bottom: 8px;">COMPOSIÇÃO:</div>`;
+            orc.composicao.forEach(item => {
+                let adjustText = item.mdfId && item.mdfIndice !== 1 ? `<span style="font-size:11px; color:var(--accent);"> MDF: +${((item.mdfIndice-1)*100).toFixed(0)}%</span>` : '';
+                html += `
+                    <div class="resumo-row">
+                        <div style="flex:1;">
+                            <div style="font-weight:bold; font-size:14px;">${item.qtd}x ${UI.escapeHTML(item.nome)}</div>
+                            <div style="font-size:12px; color:var(--text-dim);">${item.mdfNome !== 'Não se aplica' ? item.mdfNome : ''} ${adjustText}</div>
+                        </div>
+                        <span>${UI.formatarDinheiro(item.valorFinal)}</span>
+                    </div>
+                `;
+            });
+        } else {
+            // Fallback para orçamento antigo (V1)
+            html += `
+                <div class="resumo-row dim"><span>Dimensões:</span> <span>${UI.formatarNumero(orc.largura)}m × ${UI.formatarNumero(orc.altura)}m</span></div>
+                <div class="resumo-row"><span>Valor Base Móvel:</span> <span>${UI.formatarDinheiro(orc.valorMovel)}</span></div>
+            `;
+        }
+
+        html += `
+            <div class="resumo-divider"></div>
+            <div class="resumo-row"><span>Soma dos Componentes:</span> <span>${UI.formatarDinheiro(orc.valorMovel)}</span></div>
+            <div class="resumo-row"><span>Adicionais Globais:</span> <span>${UI.formatarDinheiro(orc.valorAdicionais || Precificacao.calcularAdicionais(orc.adicionais))}</span></div>
             
-            <div class="resumo-row"><span>Valor do móvel:</span> <span>${UI.formatarDinheiro(orc.valorMovel)}</span></div>
-            <div class="resumo-row"><span>Adicionais:</span> <span>${UI.formatarDinheiro(orc.valorAdicionais || Precificacao.calcularAdicionais(orc.adicionais))}</span></div>
-            
-            <div class="resumo-row resumo-subtotal"><span>Subtotal:</span> <span>${UI.formatarDinheiro(orc.subtotal)}</span></div>
-            <div class="resumo-row" style="color: var(--danger);"><span>Desconto:</span> <span>- ${UI.formatarDinheiro(orc.valorDesconto)}</span></div>
+            <div class="resumo-row resumo-subtotal" style="margin-top:12px;"><span>Subtotal:</span> <span>${UI.formatarDinheiro(orc.subtotal)}</span></div>
+            <div class="resumo-row" style="color: var(--danger);"><span>Desconto (${UI.formatarNumero(orc.descontoPerc)}%):</span> <span>- ${UI.formatarDinheiro(orc.valorDesconto)}</span></div>
             
             <div class="resumo-total">
                 <span>TOTAL</span>
@@ -708,21 +958,18 @@ const App = {
                 <strong>Obs:</strong> ${UI.escapeHTML(orc.observacao)}
             </div>
         `;
-
         document.getElementById(containerId).innerHTML = html;
     },
 
     salvarOrcamento: function() {
         if(!this.orcamentoTemporario) return;
-        
-        // Validações Rígidas
         if (!this.orcamentoTemporario.cliente) {
             alert("Informe o nome do cliente.");
             document.getElementById('orc-cliente').focus();
             return;
         }
-        if (this.orcamentoTemporario.largura <= 0 || this.orcamentoTemporario.altura <= 0) {
-            alert("A largura e altura devem ser maiores que zero.");
+        if (!this.orcamentoTemporario.composicao || this.orcamentoTemporario.composicao.length === 0) {
+            alert("Adicione pelo menos um componente ao móvel.");
             return;
         }
 
@@ -746,7 +993,7 @@ const App = {
 
     excluirOrcamentoAtual: function() {
         if(!this.orcamentoVisualizado) return;
-        if(confirm("Tem certeza que deseja excluir este orçamento?")) {
+        if(confirm("Tem certeza que deseja excluir este orçamento? O histórico não poderá ser recuperado.")) {
             DB.orcamentos = DB.orcamentos.filter(o => o.id !== this.orcamentoVisualizado.id);
             StorageManager.save();
             this.renderizarHistorico();
@@ -758,28 +1005,33 @@ const App = {
         if(!this.orcamentoVisualizado) return;
         const orc = this.orcamentoVisualizado;
         
-        // Layout solicitado
-        let texto = `*STUDIO DM — ORÇAMENTO*\n\n`;
+        let texto = `*ORÇAMENTO — STUDIO DM*\n\n`;
         texto += `*Cliente:* ${orc.cliente}\n`;
-        texto += `*Tipo de móvel:* ${orc.categoriaNome}\n`;
-        texto += `*Perfil:* ${orc.perfilNome}\n`;
-        texto += `*Medidas:* ${UI.formatarNumero(orc.largura)} m × ${UI.formatarNumero(orc.altura)} m\n`;
-        texto += `*Área:* ${UI.formatarNumero(orc.area)} m²\n`;
-        texto += `*Preço:* ${UI.formatarDinheiro(orc.precoM2)} / m²\n\n`;
+        texto += `*Móvel:* ${orc.categoriaNome}\n\n`;
         
-        texto += `*Valor do móvel:* ${UI.formatarDinheiro(orc.valorMovel)}\n`;
-        
-        if(orc.adicionais.length > 0) {
-            texto += `*Adicionais:*\n`;
-            orc.adicionais.forEach(add => {
-                texto += `  - ${add.nome} — ${UI.formatarDinheiro(add.valor)}\n`;
+        if (orc.composicao && orc.composicao.length > 0) {
+            texto += `*COMPOSIÇÃO:*\n`;
+            orc.composicao.forEach(item => {
+                texto += `• ${item.qtd}x ${item.nome}`;
+                if(item.mdfId) texto += ` (${item.mdfNome})`;
+                texto += ` — ${UI.formatarDinheiro(item.valorFinal)}\n`;
             });
         } else {
-            texto += `*Adicionais:* R$ 0,00\n`;
+            // V1 Fallback
+            texto += `*Valor Base Móvel:* ${UI.formatarDinheiro(orc.valorMovel)}\n`;
+        }
+        texto += `\n`;
+
+        if(orc.adicionais.length > 0) {
+            texto += `*ADICIONAIS:*\n`;
+            orc.adicionais.forEach(add => {
+                texto += `• ${add.nome} — ${UI.formatarDinheiro(add.valor)}\n`;
+            });
+            texto += `\n`;
         }
         
-        texto += `\n*Subtotal:* ${UI.formatarDinheiro(orc.subtotal)}\n`;
-        texto += `*Desconto:* ${UI.formatarDinheiro(orc.valorDesconto)}\n`;
+        texto += `*Subtotal:* ${UI.formatarDinheiro(orc.subtotal)}\n`;
+        if (orc.valorDesconto > 0) texto += `*Desconto:* -${UI.formatarDinheiro(orc.valorDesconto)}\n`;
         texto += `*TOTAL: ${UI.formatarDinheiro(orc.total)}*\n\n`;
         
         texto += `*Observações:*\n${orc.observacao}\n\n`;
@@ -794,15 +1046,13 @@ const App = {
         const orc = this.orcamentoVisualizado;
         
         document.getElementById('print-empresa').innerText = DB.configuracoes.nomeEmpresa;
-        // Na impressão a observação já vai dentro do detalhe renderizado
-        document.getElementById('print-obs').innerText = ""; 
+        document.getElementById('print-obs').innerText = ""; // Observação já inclusa no render
         
         const conteudo = document.getElementById('detalhe-resumo-content').innerHTML;
         document.getElementById('print-content').innerHTML = `
             <div style="margin-bottom: 20px;"><strong>Data:</strong> ${new Date(orc.data).toLocaleDateString('pt-BR')}</div>
             ${conteudo}
         `;
-        
         window.print();
     },
 
@@ -815,12 +1065,11 @@ const App = {
         }
 
         const orcs = [...DB.orcamentos].reverse();
-        
         container.innerHTML = orcs.map(orc => `
             <div class="card" style="cursor:pointer;" onclick="App.abrirOrcamentoHistorico('${orc.id}')">
                 <div class="list-item-info">
                     <strong style="color: var(--accent);">${UI.formatarDinheiro(orc.total)}</strong>
-                    <span>${UI.escapeHTML(orc.cliente || 'Sem nome')} — ${UI.escapeHTML(orc.categoriaNome)} (${UI.formatarNumero(orc.area)} m²)</span>
+                    <span>${UI.escapeHTML(orc.cliente || 'Sem nome')} — ${UI.escapeHTML(orc.categoriaNome)}</span>
                     <span style="font-size: 11px; margin-top:4px;">${new Date(orc.data).toLocaleDateString('pt-BR')}</span>
                 </div>
             </div>
@@ -829,164 +1078,218 @@ const App = {
 
     abrirOrcamentoHistorico: function(id) {
         const orc = DB.orcamentos.find(o => o.id === id);
-        // Compatibilidade para orçamentos velhos
         if(orc && !orc.observacao) orc.observacao = DB.configuracoes.observacaoPadrao;
         if(orc) this.abrirDetalheOrcamento(orc);
+    }
+};
+
+/* ==========================================================================
+   7. CRUD COMPLETO (Preços e Cadastros)
+   ========================================================================== */
+const CRUD = {
+    // Inicialização da tela de preços
+    init: function() {
+        this.renderMDFs();
+        this.renderCompDim();
+        this.renderCompQtd();
+        this.renderCategorias();
+        this.renderAdicionais();
     },
 
-    // --- PREÇOS E CADASTROS ---
-    renderizarPrecos: function() {
-        const containerCat = document.getElementById('lista-categorias');
-        containerCat.innerHTML = DB.categorias.map(c => `
+    // --- MDFS ---
+    renderMDFs: function() {
+        const c = document.getElementById('lista-mdfs');
+        c.innerHTML = DB.mdfs.map(m => {
+            let area = m.largura * m.comprimento;
+            let pm2 = area > 0 ? (m.precoChapa / area) : 0;
+            let baseLabel = m.isBase ? `<span class="badge">MDF BASE</span>` : '';
+            let dif = m.isBase ? '0%' : `+${((MDFManager.calcularIndice(m.id)-1)*100).toFixed(1)}%`;
+            return `
             <div class="list-item">
                 <div class="list-item-info">
-                    <strong>${UI.escapeHTML(c.nome)}</strong>
-                    <span>${DB.perfis.map(p => `${UI.escapeHTML(p.nome)}: ${UI.formatarDinheiro(c.precos[p.id] || 0)}`).join(' | ')}</span>
+                    <strong>${UI.escapeHTML(m.nome)} ${baseLabel}</strong>
+                    <span>Chapa: ${UI.formatarDinheiro(m.precoChapa)} | Preço/m²: ${UI.formatarDinheiro(pm2)} | Ajst: ${dif}</span>
                 </div>
-                <button class="btn-small btn-outline" onclick="App.editarCategoria('${c.id}')">Editar</button>
-            </div>
-        `).join('');
-
-        const containerAdd = document.getElementById('lista-adicionais');
-        containerAdd.innerHTML = DB.adicionais.map(a => `
-            <div class="list-item">
-                <div class="list-item-info">
-                    <strong>${UI.escapeHTML(a.nome)}</strong>
-                    <span>Fixo: ${UI.formatarDinheiro(a.valor)}</span>
-                </div>
-                <button class="btn-small btn-outline" onclick="App.editarAdicional('${a.id}')">Editar</button>
-            </div>
-        `).join('');
+                <button class="btn-small btn-outline" onclick="CRUD.abrirModalMDF('${m.id}')">Editar</button>
+            </div>`;
+        }).join('');
     },
-
-    novaCategoria: function() {
-        this.abrirModalCategoria();
-    },
-
-    editarCategoria: function(id) {
-        const cat = DB.categorias.find(c => c.id === id);
-        if(cat) this.abrirModalCategoria(cat);
-    },
-
-    abrirModalCategoria: function(cat = null) {
+    novoMDF: function() { this.abrirModalMDF(); },
+    abrirModalMDF: function(id = null) {
+        const m = id ? DB.mdfs.find(x => x.id === id) : null;
         let html = `
-            <div class="form-group">
-                <label>Nome da Categoria</label>
-                <input type="text" id="modal-cat-nome" value="${cat ? UI.escapeHTML(cat.nome) : ''}">
+            <div class="form-group"><label>Nome / Cor</label><input type="text" id="mdf-nome" value="${m ? UI.escapeHTML(m.nome) : ''}"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Largura (m)</label><input type="text" inputmode="decimal" id="mdf-larg" value="${m ? m.largura : '1.85'}"></div>
+                <div class="form-group"><label>Comprim (m)</label><input type="text" inputmode="decimal" id="mdf-comp" value="${m ? m.comprimento : '2.75'}"></div>
             </div>
+            <div class="form-group"><label>Preço da Chapa (R$)</label><input type="text" inputmode="decimal" id="mdf-preco" value="${m ? m.precoChapa : ''}"></div>
+            <label class="checkbox-group">
+                <span>Definir como MDF BASE (Índice 1,00)</span>
+                <input type="checkbox" id="mdf-base" ${m && m.isBase ? 'checked' : ''}>
+            </label>
         `;
-        DB.perfis.forEach(p => {
-            const preco = cat && cat.precos[p.id] ? cat.precos[p.id] : '';
-            html += `
-                <div class="form-group">
-                    <label>Preço m² - ${UI.escapeHTML(p.nome)}</label>
-                    <input type="text" inputmode="decimal" class="modal-cat-preco" data-perfil="${p.id}" value="${preco}">
-                </div>
-            `;
-        });
+        if(m) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirMDF('${m.id}')">🗑️ Excluir MDF</button>`;
 
-        if(cat) {
-            html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="App.excluirCategoria('${cat.id}')">🗑️ Excluir Categoria</button>`;
+        UI.abrirModal(m ? 'Editar MDF' : 'Novo MDF', html, () => {
+            let nome = document.getElementById('mdf-nome').value.trim();
+            let larg = UI.parseNumero(document.getElementById('mdf-larg').value);
+            let comp = UI.parseNumero(document.getElementById('mdf-comp').value);
+            let preco = UI.parseNumero(document.getElementById('mdf-preco').value);
+            let isBase = document.getElementById('mdf-base').checked;
+
+            if(!nome || larg<=0 || comp<=0 || preco<=0) return alert("Preencha todos os campos corretamente.");
+
+            if(isBase) DB.mdfs.forEach(x => x.isBase = false); // Tira a base dos outros
+
+            if(m) {
+                m.nome = nome; m.largura = larg; m.comprimento = comp; m.precoChapa = preco; m.isBase = isBase;
+            } else {
+                DB.mdfs.push({ id: 'mdf_' + Date.now(), nome, largura: larg, comprimento: comp, precoChapa: preco, isBase });
+            }
+            
+            // Garantir que exista pelo menos 1 base
+            if(DB.mdfs.length > 0 && !DB.mdfs.find(x => x.isBase)) DB.mdfs[0].isBase = true;
+            
+            StorageManager.save(); UI.fecharModal(); this.renderMDFs();
+        });
+    },
+    excluirMDF: function(id) {
+        if(confirm("Excluir este MDF?")) {
+            DB.mdfs = DB.mdfs.filter(m => m.id !== id);
+            if(DB.mdfs.length > 0 && !DB.mdfs.find(x => x.isBase)) DB.mdfs[0].isBase = true;
+            StorageManager.save(); UI.fecharModal(); this.renderMDFs();
         }
+    },
+
+    // --- COMPONENTES DIMENSIONAIS ---
+    renderCompDim: function() {
+        const c = document.getElementById('lista-comp-dim');
+        c.innerHTML = DB.componentesDimensionais.map(cd => `
+            <div class="list-item">
+                <div class="list-item-info"><strong>${UI.escapeHTML(cd.nome)} (por ${cd.unidade})</strong>
+                <span>${DB.perfis.map(p => `${p.nome}: ${UI.formatarDinheiro(cd.precos[p.id])}`).join(' | ')}</span></div>
+                <button class="btn-small btn-outline" onclick="CRUD.abrirModalCompDim('${cd.id}')">Editar</button>
+            </div>`).join('');
+    },
+    novoCompDim: function() { this.abrirModalCompDim(); },
+    abrirModalCompDim: function(id = null) {
+        const cd = id ? DB.componentesDimensionais.find(x => x.id === id) : null;
+        let html = `
+            <div class="form-group"><label>Nome do Componente</label><input type="text" id="cd-nome" value="${cd ? UI.escapeHTML(cd.nome) : ''}"></div>
+            <div class="form-group"><label>Unidade de Medida</label><select id="cd-un"><option value="m2" ${cd&&cd.unidade==='m2'?'selected':''}>Metro Quadrado (m²)</option><option value="ml" ${cd&&cd.unidade==='ml'?'selected':''}>Metro Linear (ml)</option></select></div>
+        `;
+        DB.perfis.forEach(p => { html += `<div class="form-group"><label>Preço Base - ${UI.escapeHTML(p.nome)}</label><input type="text" inputmode="decimal" class="cd-preco" data-perfil="${p.id}" value="${cd ? cd.precos[p.id] : ''}"></div>`; });
+        if(cd) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirCompDim('${cd.id}')">🗑️ Excluir Componente</button>`;
+
+        UI.abrirModal(cd ? 'Editar Comp. Dimensional' : 'Novo Comp. Dimensional', html, () => {
+            let nome = document.getElementById('cd-nome').value.trim();
+            let unidade = document.getElementById('cd-un').value;
+            if(!nome) return alert("Informe o nome");
+            const precos = {};
+            document.querySelectorAll('.cd-preco').forEach(inp => { precos[inp.getAttribute('data-perfil')] = UI.parseNumero(inp.value); });
+            if(cd) { cd.nome = nome; cd.unidade = unidade; cd.precos = precos; }
+            else { DB.componentesDimensionais.push({ id: 'cd_' + Date.now(), nome, unidade, precos }); }
+            StorageManager.save(); UI.fecharModal(); this.renderCompDim();
+        });
+    },
+    excluirCompDim: function(id) {
+        if(confirm("Excluir este componente?")) { DB.componentesDimensionais = DB.componentesDimensionais.filter(c => c.id !== id); StorageManager.save(); UI.fecharModal(); this.renderCompDim(); }
+    },
+
+    // --- COMPONENTES QUANTIDADE ---
+    renderCompQtd: function() {
+        const c = document.getElementById('lista-comp-qtd');
+        c.innerHTML = DB.componentesQuantidade.map(cq => `
+            <div class="list-item">
+                <div class="list-item-info"><strong>${UI.escapeHTML(cq.nome)} (por ${cq.unidade})</strong>
+                <span>${DB.perfis.map(p => `${p.nome}: ${UI.formatarDinheiro(cq.precos[p.id])}`).join(' | ')}</span></div>
+                <button class="btn-small btn-outline" onclick="CRUD.abrirModalCompQtd('${cq.id}')">Editar</button>
+            </div>`).join('');
+    },
+    novoCompQtd: function() { this.abrirModalCompQtd(); },
+    abrirModalCompQtd: function(id = null) {
+        const cq = id ? DB.componentesQuantidade.find(x => x.id === id) : null;
+        let html = `
+            <div class="form-group"><label>Nome (Ferragem / Acessório)</label><input type="text" id="cq-nome" value="${cq ? UI.escapeHTML(cq.nome) : ''}"></div>
+            <div class="form-group"><label>Unidade (ex: un, par, kit)</label><input type="text" id="cq-un" value="${cq ? UI.escapeHTML(cq.unidade) : 'un'}"></div>
+        `;
+        DB.perfis.forEach(p => { html += `<div class="form-group"><label>Preço Base - ${UI.escapeHTML(p.nome)}</label><input type="text" inputmode="decimal" class="cq-preco" data-perfil="${p.id}" value="${cq ? cq.precos[p.id] : ''}"></div>`; });
+        if(cq) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirCompQtd('${cq.id}')">🗑️ Excluir Componente</button>`;
+
+        UI.abrirModal(cq ? 'Editar Comp. Quantidade' : 'Novo Comp. Quantidade', html, () => {
+            let nome = document.getElementById('cq-nome').value.trim();
+            let unidade = document.getElementById('cq-un').value.trim() || 'un';
+            if(!nome) return alert("Informe o nome");
+            const precos = {};
+            document.querySelectorAll('.cq-preco').forEach(inp => { precos[inp.getAttribute('data-perfil')] = UI.parseNumero(inp.value); });
+            if(cq) { cq.nome = nome; cq.unidade = unidade; cq.precos = precos; }
+            else { DB.componentesQuantidade.push({ id: 'cq_' + Date.now(), nome, unidade, precos }); }
+            StorageManager.save(); UI.fecharModal(); this.renderCompQtd();
+        });
+    },
+    excluirCompQtd: function(id) {
+        if(confirm("Excluir este componente?")) { DB.componentesQuantidade = DB.componentesQuantidade.filter(c => c.id !== id); StorageManager.save(); UI.fecharModal(); this.renderCompQtd(); }
+    },
+
+    // --- CATEGORIAS (LEGADO V1) ---
+    renderCategorias: function() {
+        const c = document.getElementById('lista-categorias');
+        c.innerHTML = DB.categorias.map(cat => `
+            <div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cat.nome)}</strong></div>
+            <button class="btn-small btn-outline" onclick="CRUD.abrirModalCategoria('${cat.id}')">Editar</button></div>`).join('');
+    },
+    novaCategoria: function() { this.abrirModalCategoria(); },
+    abrirModalCategoria: function(id = null) {
+        const cat = id ? DB.categorias.find(c => c.id === id) : null;
+        let html = `<div class="form-group"><label>Tipo de Móvel (Nome)</label><input type="text" id="cat-nome" value="${cat ? UI.escapeHTML(cat.nome) : ''}"></div><p style="font-size:12px; color:var(--text-dim);">Obs: Na versão 1.2 os preços base migraram para os Componentes. A categoria serve como rótulo comercial do móvel.</p>`;
+        // Mantem array precos vazio/ficticio para evitar crash no legado V1
+        if(cat) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirCategoria('${cat.id}')">🗑️ Excluir</button>`;
 
         UI.abrirModal(cat ? 'Editar Categoria' : 'Nova Categoria', html, () => {
-            const nome = document.getElementById('modal-cat-nome').value.trim();
+            let nome = document.getElementById('cat-nome').value.trim();
             if(!nome) return alert("Informe o nome");
-            
-            const precos = {};
-            document.querySelectorAll('.modal-cat-preco').forEach(inp => {
-                precos[inp.getAttribute('data-perfil')] = UI.parseNumero(inp.value) || 0;
-            });
-
-            if(cat) {
-                cat.nome = nome;
-                cat.precos = precos;
-            } else {
-                DB.categorias.push({ id: 'cat_' + Date.now(), nome: nome, precos: precos });
-            }
-            StorageManager.save();
-            UI.fecharModal();
-            this.renderizarPrecos();
+            const precos = cat ? cat.precos : {}; // mantem os velhos para n quebrar BD antigo
+            if(cat) { cat.nome = nome; } else { DB.categorias.push({ id: 'cat_' + Date.now(), nome, precos }); }
+            StorageManager.save(); UI.fecharModal(); this.renderCategorias();
         });
     },
-
     excluirCategoria: function(id) {
-        if(confirm("Deseja realmente excluir esta categoria?")) {
-            DB.categorias = DB.categorias.filter(c => c.id !== id);
-            StorageManager.save();
-            UI.fecharModal();
-            this.renderizarPrecos();
-        }
+        if(confirm("Excluir esta categoria?")) { DB.categorias = DB.categorias.filter(c => c.id !== id); StorageManager.save(); UI.fecharModal(); this.renderCategorias(); }
     },
 
-    novoAdicional: function() {
-        this.abrirModalAdicional();
+    // --- ADICIONAIS ---
+    renderAdicionais: function() {
+        const c = document.getElementById('lista-adicionais');
+        c.innerHTML = DB.adicionais.map(a => `
+            <div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(a.nome)}</strong><span>Fixo: ${UI.formatarDinheiro(a.valor)}</span></div>
+            <button class="btn-small btn-outline" onclick="CRUD.abrirModalAdicional('${a.id}')">Editar</button></div>`).join('');
     },
-
-    editarAdicional: function(id) {
-        const add = DB.adicionais.find(a => a.id === id);
-        if(add) this.abrirModalAdicional(add);
-    },
-
-    abrirModalAdicional: function(add = null) {
+    novoAdicional: function() { this.abrirModalAdicional(); },
+    abrirModalAdicional: function(id = null) {
+        const add = id ? DB.adicionais.find(a => a.id === id) : null;
         let html = `
-            <div class="form-group">
-                <label>Nome do Adicional</label>
-                <input type="text" id="modal-add-nome" value="${add ? UI.escapeHTML(add.nome) : ''}">
-            </div>
-            <div class="form-group">
-                <label>Valor Fixo (R$)</label>
-                <input type="text" inputmode="decimal" id="modal-add-valor" value="${add ? add.valor : ''}">
-            </div>
-        `;
-        
-        if(add) {
-            html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="App.excluirAdicional('${add.id}')">🗑️ Excluir Adicional</button>`;
-        }
+            <div class="form-group"><label>Nome do Adicional</label><input type="text" id="modal-add-nome" value="${add ? UI.escapeHTML(add.nome) : ''}"></div>
+            <div class="form-group"><label>Valor Fixo (R$)</label><input type="text" inputmode="decimal" id="modal-add-valor" value="${add ? add.valor : ''}"></div>`;
+        if(add) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirAdicional('${add.id}')">🗑️ Excluir Adicional</button>`;
 
         UI.abrirModal(add ? 'Editar Adicional' : 'Novo Adicional', html, () => {
             const nome = document.getElementById('modal-add-nome').value.trim();
             const valor = UI.parseNumero(document.getElementById('modal-add-valor').value);
             if(!nome) return alert("Informe o nome");
-
-            if(add) {
-                add.nome = nome;
-                add.valor = valor;
-            } else {
-                DB.adicionais.push({ id: 'add_' + Date.now(), nome: nome, valor: valor });
-            }
-            StorageManager.save();
-            UI.fecharModal();
-            this.renderizarPrecos();
+            if(add) { add.nome = nome; add.valor = valor; } else { DB.adicionais.push({ id: 'add_' + Date.now(), nome, valor }); }
+            StorageManager.save(); UI.fecharModal(); this.renderAdicionais();
         });
     },
-
     excluirAdicional: function(id) {
-        if(confirm("Deseja realmente excluir este adicional?")) {
-            DB.adicionais = DB.adicionais.filter(a => a.id !== id);
-            StorageManager.save();
-            UI.fecharModal();
-            this.renderizarPrecos();
-        }
-    },
-
-    // --- CONFIGURAÇÕES ---
-    renderizarConfiguracoes: function() {
-        document.getElementById('config-empresa').value = DB.configuracoes.nomeEmpresa;
-        document.getElementById('config-telefone').value = DB.configuracoes.telefone;
-        document.getElementById('config-obs').value = DB.configuracoes.observacaoPadrao;
-    },
-
-    salvarConfiguracoes: function() {
-        DB.configuracoes.nomeEmpresa = document.getElementById('config-empresa').value.trim();
-        DB.configuracoes.telefone = document.getElementById('config-telefone').value.trim();
-        DB.configuracoes.observacaoPadrao = document.getElementById('config-obs').value.trim();
-        StorageManager.save();
-        alert("Configurações salvas com sucesso!");
+        if(confirm("Deseja excluir?")) { DB.adicionais = DB.adicionais.filter(a => a.id !== id); StorageManager.save(); UI.fecharModal(); this.renderAdicionais(); }
     }
 };
 
-// Inicialização
+// Override do renderizador da tela de preços para usar o init do CRUD V1.2
+App.renderizarPrecos = function() { CRUD.init(); };
+
+// --- INICIALIZAÇÃO ---
 window.onload = function() {
     App.iniciar();
 };
