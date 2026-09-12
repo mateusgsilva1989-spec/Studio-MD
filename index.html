@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio DM — Orçamento Rápido v1.2</title>
+    <title>Studio DM — Orçamento Rápido v1.3</title>
     <style>
         :root {
             --bg: #121826;
@@ -17,6 +17,7 @@
             --danger: #ef4444;
             --danger-hover: #dc2626;
             --warning: #f59e0b;
+            --info: #3b82f6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -110,6 +111,7 @@
         
         .badge { background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 6px; }
         .badge-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
+        .badge-info { background: var(--info); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
 
         /* Resumo Visual */
         .resumo-box { background: #000; border: 2px solid var(--accent); border-radius: 8px; padding: 16px; margin-top: 24px; }
@@ -128,7 +130,7 @@
         /* Modal */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--card); width: 100%; max-width: 400px; border-radius: 8px; padding: 20px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto;}
+        .modal-content { background: var(--card); width: 100%; max-width: 450px; border-radius: 8px; padding: 20px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto;}
 
         /* Print */
         .print-only { display: none; }
@@ -142,7 +144,7 @@
             .resumo-total, .resumo-subtotal { color: #000; }
             .resumo-total { border-top: 1px solid #000; }
             .resumo-row.dim { color: #444; }
-            .badge, .badge-outline { border: 1px solid #000; color: #000; background: transparent; }
+            .badge, .badge-outline, .badge-info { border: 1px solid #000; color: #000; background: transparent; }
         }
     </style>
 </head>
@@ -152,7 +154,7 @@
     <!-- VISÃO: INÍCIO -->
     <div id="view-inicio" class="view active">
         <h1>Studio DM</h1>
-        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.2</p>
+        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.3</p>
         
         <div class="stats-grid" style="margin-top: 32px;">
             <div class="stat-card">
@@ -181,7 +183,6 @@
     <div id="view-novo-orcamento" class="view">
         <h2>Novo Orçamento</h2>
         
-        <!-- Identificação -->
         <div class="card">
             <div class="form-group">
                 <label>Cliente *</label>
@@ -199,20 +200,21 @@
             </div>
         </div>
 
-        <!-- Construtor Dinâmico (Composição) -->
+        <!-- Construtor de Composição -->
         <div class="card">
             <div class="card-header">
-                <h3>Composição do Móvel</h3>
+                <h3>Composição e Peças</h3>
             </div>
             <div id="orc-composicao-lista"></div>
-            <button class="btn btn-outline" onclick="App.abrirModalAddComposicao()" style="margin-top: 12px; margin-bottom: 0;">
-                ➕ Adicionar Componente
-            </button>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn btn-outline" onclick="App.abrirModalAddComposicao()" style="flex:1; margin-bottom:0;">➕ Peça / Comp.</button>
+                <button class="btn btn-outline" onclick="App.abrirModalAddGaveta()" style="flex:1; margin-bottom:0;">📦 Gaveta com Caixa</button>
+            </div>
         </div>
 
-        <!-- Adicionais e Fechamento -->
+        <!-- Adicionais Globais -->
         <div class="card">
-            <h3>Adicionais Globais (Fixo)</h3>
+            <h3>Adicionais / Ferragens</h3>
             <div id="orc-adicionais-container"></div>
         </div>
 
@@ -244,7 +246,7 @@
         <div class="resumo-box" id="detalhe-resumo-content" style="margin-top: 0; margin-bottom: 24px;"></div>
         
         <button class="btn" onclick="App.enviarWhatsApp()">📱 Enviar pelo WhatsApp</button>
-        <button class="btn btn-outline" onclick="App.imprimir()">🖨️ Imprimir Orçamento</button>
+        <button class="btn btn-outline" onclick="App.imprimir()">🖨️ Imprimir Relatório</button>
         <button class="btn btn-outline" onclick="App.duplicarOrcamento()">📋 Duplicar (Editar)</button>
         <button class="btn btn-danger" onclick="App.excluirOrcamentoAtual()">🗑️ Excluir Orçamento</button>
     </div>
@@ -258,36 +260,32 @@
     <!-- VISÃO: PREÇOS E CADASTROS -->
     <div id="view-precos" class="view">
         <h2>Cadastros e Preços</h2>
-        <p>Gerencie MDFs, componentes e adicionais.</p>
+        <p>Gerencie chapas de MDF, regras construtivas e adicionais.</p>
 
-        <!-- Cadastro MDF -->
         <div class="card">
             <div class="card-header">
-                <h3>Chapas de MDF</h3>
+                <h3>Chapas de MDF (Ativas)</h3>
                 <button class="btn-small btn-outline" onclick="CRUD.novoMDF()">+ Novo MDF</button>
             </div>
             <div id="lista-mdfs"></div>
         </div>
 
-        <!-- Cadastro Componentes Dimensionais -->
         <div class="card">
             <div class="card-header">
-                <h3>Componentes (Área/Linear)</h3>
+                <h3>Componentes Dimensionais</h3>
                 <button class="btn-small btn-outline" onclick="CRUD.novoCompDim()">+ Novo</button>
             </div>
             <div id="lista-comp-dim"></div>
         </div>
 
-        <!-- Cadastro Componentes Quantidade -->
         <div class="card">
             <div class="card-header">
-                <h3>Componentes (Quantidade)</h3>
+                <h3>Ferragens / Quantidade</h3>
                 <button class="btn-small btn-outline" onclick="CRUD.novoCompQtd()">+ Novo</button>
             </div>
             <div id="lista-comp-qtd"></div>
         </div>
 
-        <!-- Cadastro Categorias -->
         <div class="card">
             <div class="card-header">
                 <h3>Categorias (Tipos de Móvel)</h3>
@@ -298,7 +296,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3>Adicionais Fixos Globais</h3>
+                <h3>Adicionais Fixos</h3>
                 <button class="btn-small btn-outline" onclick="CRUD.novoAdicional()">+ Novo</button>
             </div>
             <div id="lista-adicionais"></div>
@@ -311,6 +309,7 @@
         <div class="card">
             <div class="form-group"><label>Nome da Empresa</label><input type="text" id="config-empresa"></div>
             <div class="form-group"><label>Telefone (WhatsApp)</label><input type="text" id="config-telefone" placeholder="Ex: 5511999999999"></div>
+            <div class="form-group"><label>Espessura da Serra (Kerf em mm)</label><input type="text" inputmode="decimal" id="config-kerf" placeholder="3.2"></div>
             <div class="form-group"><label>Observação Padrão</label><textarea id="config-obs" rows="4"></textarea></div>
             <button class="btn" onclick="App.salvarConfiguracoes()">Salvar Configurações</button>
         </div>
@@ -330,8 +329,8 @@
 <!-- PRINT TEMPLATE -->
 <div id="print-area" class="print-only" style="padding: 20px; font-family: sans-serif;">
     <h1 id="print-empresa" style="color: black; margin-bottom: 20px;">Studio DM</h1>
-    <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">ORÇAMENTO COMERCIAL</h2>
-    <div id="print-content" style="margin-top: 20px; font-size: 16px; line-height: 1.6;"></div>
+    <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">RELATÓRIO COMERCIAL E TÉCNICO</h2>
+    <div id="print-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6;"></div>
     <div style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 12px; color: #444;" id="print-obs"></div>
 </div>
 
@@ -358,7 +357,7 @@
 
 <script>
 /* ==========================================================================
-   1. BANCO DE DADOS (Estrutura V1.2.1)
+   1. BANCO DE DADOS (Estrutura V1.3)
    ========================================================================== */
 const DEFAULT_DB = {
     perfis: [
@@ -369,32 +368,38 @@ const DEFAULT_DB = {
         { id: "cat_2", nome: "Cozinha", precos: { "p1": 900, "p2": 1200, "p3": 800 } }
     ],
     adicionais: [
-        { id: "add_1", nome: "LED", valor: 350 }, { id: "add_2", nome: "Espelho", valor: 500 }
+        { id: "add_1", nome: "Corrediça Telescópica (Par)", valor: 45 }, 
+        { id: "add_2", nome: "Dobradiça com Amortecedor", valor: 18 }
     ],
     mdfs: [
-        { id: "mdf_1", fabricante: "Arauko", nome: "Branco TX", espessura: 15, faces: 2, largura: 1.85, comprimento: 2.75, precoChapa: 155.00, isBase: true, ativo: true },
-        { id: "mdf_2", fabricante: "Guararapes", nome: "Freijó", espessura: 15, faces: 2, largura: 1.85, comprimento: 2.75, precoChapa: 280.00, isBase: false, ativo: true }
+        { id: "mdf_1", fabricante: "Arauco", nome: "Branco TX", espessura: 15, faces: 2, largura: 1.85, comprimento: 2.75, precoChapa: 155.00, isBase: true, ativo: true },
+        { id: "mdf_2", fabricante: "Arauco", nome: "Branco TX", espessura: 18, faces: 2, largura: 1.85, comprimento: 2.75, precoChapa: 185.00, isBase: false, ativo: true },
+        { id: "mdf_3", fabricante: "Guararapes", nome: "Freijó", espessura: 15, faces: 2, largura: 1.85, comprimento: 2.75, precoChapa: 280.00, isBase: false, ativo: true },
+        { id: "mdf_4", fabricante: "Arauco", nome: "Branco Fundo", espessura: 6, faces: 1, largura: 1.85, comprimento: 2.75, precoChapa: 98.00, isBase: false, ativo: true }
     ],
     componentesDimensionais: [
-        { id: "cd_1", nome: "Estrutura / Caixaria", unidade: "m2", precos: { "p1": 800, "p2": 1000, "p3": 750 }, usaMDF: true },
-        { id: "cd_2", nome: "Portas", unidade: "m2", precos: { "p1": 450, "p2": 600, "p3": 400 }, usaMDF: true },
-        { id: "cd_3", nome: "Rodapé", unidade: "ml", precos: { "p1": 80, "p2": 120, "p3": 60 }, usaMDF: true }
+        { id: "cd_1", nome: "Lateral / Divisória", unidade: "m2", precos: { "p1": 800, "p2": 1000, "p3": 750 } },
+        { id: "cd_2", nome: "Porta", unidade: "m2", precos: { "p1": 500, "p2": 650, "p3": 450 } },
+        { id: "cd_3", nome: "Prateleira", unidade: "m2", precos: { "p1": 350, "p2": 450, "p3": 300 } },
+        { id: "cd_4", nome: "Fundo de Armário", unidade: "m2", precos: { "p1": 200, "p2": 280, "p3": 180 } },
+        { id: "cd_5", nome: "Tamponamento", unidade: "m2", precos: { "p1": 850, "p2": 1100, "p3": 750 } }
     ],
     componentesQuantidade: [
-        { id: "cq_1", nome: "Gaveta", unidade: "un", precos: { "p1": 150, "p2": 220, "p3": 130 }, usaMDF: true },
-        { id: "cq_2", nome: "Dobradiça com Amortecedor", unidade: "un", precos: { "p1": 15, "p2": 25, "p3": 12 }, usaMDF: false },
-        { id: "cq_3", nome: "Corrediça Telescópica", unidade: "par", precos: { "p1": 35, "p2": 50, "p3": 28 }, usaMDF: false }
+        { id: "cq_1", nome: "Cabideiro (ml)", unidade: "ml", precos: { "p1": 60, "p2": 80, "p3": 50 } },
+        { id: "cq_2", nome: "Puxador Perfil (ml)", unidade: "ml", precos: { "p1": 120, "p2": 160, "p3": 100 } }
     ],
+    gavetas: [],
     orcamentos: [],
     configuracoes: {
-        nomeEmpresa: "Studio DM Ambientes Planejados", telefone: "", observacaoPadrao: "Orçamento estimativo baseado nas dimensões informadas."
+        nomeEmpresa: "Studio DM Ambientes Planejados", telefone: "", kerf: 3.2,
+        observacaoPadrao: "Orçamento comercial estimativo. Projeto sujeito a validação técnica de fabricação."
     }
 };
 
 let DB = {};
 
 /* ==========================================================================
-   2. STORAGE MANAGER (Persistência e Correção Backup)
+   2. STORAGE MANAGER & MIGRATIONS
    ========================================================================== */
 const StorageManager = {
     key: "StudioDM_OrcamentoM2_DB_v1",
@@ -403,7 +408,7 @@ const StorageManager = {
             const data = localStorage.getItem(this.key);
             if (data) {
                 DB = JSON.parse(data);
-                this.runMigrations(); // Garante estrutura V1.2.1
+                this.runMigrations();
             } else {
                 DB = JSON.parse(JSON.stringify(DEFAULT_DB));
                 this.save();
@@ -416,29 +421,23 @@ const StorageManager = {
     runMigrations: function() {
         if(!DB.perfis) DB.perfis = DEFAULT_DB.perfis;
         if(!DB.configuracoes) DB.configuracoes = DEFAULT_DB.configuracoes;
+        if(!DB.configuracoes.kerf) DB.configuracoes.kerf = 3.2;
         if(!DB.mdfs) DB.mdfs = DEFAULT_DB.mdfs;
         if(!DB.componentesDimensionais) DB.componentesDimensionais = DEFAULT_DB.componentesDimensionais;
         if(!DB.componentesQuantidade) DB.componentesQuantidade = DEFAULT_DB.componentesQuantidade;
-        
-        // Garante que campos novos existam
-        DB.componentesDimensionais.forEach(c => { if(typeof c.usaMDF === 'undefined') c.usaMDF = true; });
-        DB.componentesQuantidade.forEach(c => { if(typeof c.usaMDF === 'undefined') c.usaMDF = false; });
+        if(!DB.gavetas) DB.gavetas = [];
         DB.mdfs.forEach(m => { if(typeof m.ativo === 'undefined') m.ativo = true; });
     },
-    save: function() {
-        localStorage.setItem(this.key, JSON.stringify(DB));
-    },
+    save: function() { localStorage.setItem(this.key, JSON.stringify(DB)); },
     exportBackup: function() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
         const anchor = document.createElement('a');
-        anchor.setAttribute("href", dataStr);
-        anchor.setAttribute("download", `StudioDM_Backup_${new Date().getTime()}.json`);
+        anchor.setAttribute("href", dataStr); anchor.setAttribute("download", `StudioDM_Backup_${new Date().getTime()}.json`);
         document.body.appendChild(anchor); anchor.click(); anchor.remove();
     },
     importBackup: function(event) {
         const file = event.target.files[0];
         if (!file) return;
-        
         if(confirm("ATENÇÃO: Importar um backup irá substituir TODOS os dados atuais. Deseja continuar?")) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -446,17 +445,13 @@ const StorageManager = {
                     const imported = JSON.parse(e.target.result);
                     if(imported && imported.categorias && imported.orcamentos) {
                         DB = imported; 
-                        StorageManager.runMigrations(); // MIGRAR O BD IMPORTADO
-                        StorageManager.save(); // SALVAR SEM CARREGAR O LOCALSTORAGE ANTIGO
+                        StorageManager.runMigrations();
+                        StorageManager.save();
                         alert("Backup restaurado com sucesso!");
                         App.atualizarDash();
                         UI.mudarVisao('view-inicio');
-                    } else {
-                        alert("Arquivo de backup inválido.");
-                    }
-                } catch(err) {
-                    alert("Erro ao ler o arquivo JSON.");
-                }
+                    } else { alert("Arquivo de backup inválido."); }
+                } catch(err) { alert("Erro ao ler o arquivo JSON."); }
             };
             reader.readAsText(file);
         }
@@ -465,7 +460,7 @@ const StorageManager = {
 };
 
 /* ==========================================================================
-   3. UTILS E UI (Parser Avançado)
+   3. UTILS E UI & PARSER ROBUSTO
    ========================================================================== */
 const UI = {
     mudarVisao: function(idVisao) {
@@ -482,8 +477,15 @@ const UI = {
         if(str === null || str === undefined || str === '') return 0;
         if(typeof str === 'number') return str;
         let san = str.toString().trim();
-        if (san.includes('.') && san.includes(',')) { san = san.replace(/\./g, ''); }
-        san = san.replace(',', '.');
+        // Tratamento avançado p/ 1.234,56 ou 1234.56 ou 1.234.56
+        if (san.includes(',') && san.includes('.')) {
+            if (san.indexOf('.') < san.indexOf(',')) { san = san.replace(/\./g, '').replace(',', '.'); }
+            else { san = san.replace(/,/g, ''); }
+        } else if (san.includes(',')) {
+            san = san.replace(',', '.');
+        } else if ((san.match(/\./g) || []).length > 1) {
+            san = san.replace(/\./g, '');
+        }
         const num = parseFloat(san);
         return isNaN(num) ? 0 : num;
     },
@@ -501,30 +503,51 @@ const UI = {
 };
 
 /* ==========================================================================
-   4. GERENCIADOR DE MDF (MDFManager)
+   4. MOTOR DE CÁLCULO DE CHAPAS E ENGENHARIA DE MATERIAIS
    ========================================================================== */
-const MDFManager = {
+const MaterialEngine = {
+    calcularAreaChapa: function(mdf) { return mdf.largura * mdf.comprimento; },
     calcularPrecoM2: function(mdf) {
-        if(!mdf || mdf.largura <= 0 || mdf.comprimento <= 0) return 0;
-        return mdf.precoChapa / (mdf.largura * mdf.comprimento);
+        let area = this.calcularAreaChapa(mdf);
+        return area > 0 ? mdf.precoChapa / area : 0;
     },
-    getBaseMDF: function() {
-        let base = DB.mdfs.find(m => m.isBase);
-        if (!base && DB.mdfs.length > 0) return DB.mdfs[0]; 
-        return base;
-    },
-    calcularIndice: function(mdfId) {
-        const base = this.getBaseMDF();
-        const mdf = DB.mdfs.find(m => m.id === mdfId);
-        if(!base || !mdf) return 1;
-        const precoBaseM2 = this.calcularPrecoM2(base);
-        const precoMdfM2 = this.calcularPrecoM2(mdf);
-        return precoBaseM2 === 0 ? 1 : (precoMdfM2 / precoBaseM2);
+    // Estimativa robusta de chapas considerando dimensão e kerf
+    calcularNecessidadeChapas: function(pecasDoGrupo, mdf) {
+        let areaTotalPecas = pecasDoGrupo.reduce((acc, p) => acc + p.area, 0);
+        let areaChapa = this.calcularAreaChapa(mdf);
+        if (areaChapa <= 0) return { qtdCompra: 0, sobra: 0, aproveitamento: 0, teoretica: 0 };
+
+        let teoretica = areaTotalPecas / areaChapa;
+        let qtdCompra = Math.ceil(teoretica);
+
+        // Verificação dimensional simplificada (orientação e keft)
+        let kerfM = (DB.configuracoes.kerf || 3.2) / 1000;
+        let larguraEfetiva = mdf.largura - kerfM;
+        let compEfetivo = mdf.comprimento - kerfM;
+
+        pecasDoGrupo.forEach(p => {
+            if (p.largura > larguraEfetiva && p.largura > compEfetivo) {
+                // Peça muito grande avisa implicitamente via sobra
+            }
+        });
+
+        // Margem de segurança de retalho de corte (2% a 5% sobre o teórico se muito justo)
+        if ((qtdCompra - teoretica) < 0.15 && teoretica > 0.8) {
+            qtdCompra += 1; // Arredondamento inteligente para evitar falta de material na marcenaria
+        }
+
+        let areaComprada = qtdCompra * areaChapa;
+        let sobra = areaComprada - areaTotalPecas;
+        let aproveitamento = areaComprada > 0 ? (areaTotalPecas / areaComprada) * 100 : 0;
+
+        return {
+            areaTotalPecas, areaChapa, teoretica, qtdCompra, sobra: Math.max(0, sobra), aproveitamento: Math.min(100, aproveitamento), custoTotal: qtdCompra * mdf.precoChapa
+        };
     }
 };
 
 /* ==========================================================================
-   5. APP (Orquestração e Composição V1.2.1)
+   5. APP (Orquestração e Composição V1.3)
    ========================================================================== */
 const App = {
     orcamentoTemporario: null, orcamentoVisualizado: null, editandoComposicaoIdx: null,
@@ -540,7 +563,6 @@ const App = {
         } else { document.getElementById('dash-ultimo').innerText = "-"; }
     },
 
-    // --- NOVO ORÇAMENTO ---
     iniciarNovoOrcamento: function(dadosCopia = null) {
         const selPerfil = document.getElementById('orc-perfil');
         selPerfil.innerHTML = DB.perfis.map(p => `<option value="${p.id}">${UI.escapeHTML(p.nome)}</option>`).join('');
@@ -561,12 +583,13 @@ const App = {
             document.getElementById('orc-categoria').value = dadosCopia.categoriaId || "";
             document.getElementById('orc-desconto').value = dadosCopia.descontoPerc || "";
             document.getElementById('orc-observacao').value = dadosCopia.observacao || "";
-            document.querySelectorAll('.orc-add-checkbox').forEach(chk => { if(dadosCopia.adicionaisIds.includes(chk.value)) chk.checked = true; });
+            
+            const addIds = dadosCopia.adicionaisIds || [];
+            document.querySelectorAll('.orc-add-checkbox').forEach(chk => { if(addIds.includes(chk.value)) chk.checked = true; });
 
             if(!dadosCopia.composicao) {
-                // Migração on fly V1 -> V1.2.1
                 this.orcamentoTemporario = { composicao: [{
-                    id: 'mig_' + Date.now(), refId: null, nome: "Móvel (Migrado)", tipo: 'dim', unidade: 'm2', usaMDF: false, qtd: 1, largura: dadosCopia.largura || 0, altura: dadosCopia.altura || 0, mdfId: null, mdfNome: "Não se aplica", mdfIndice: 1, precoBase: dadosCopia.precoM2 || 0, valorFinal: dadosCopia.valorMovel || 0
+                    id: 'mig_' + Date.now(), refId: null, nome: "Móvel (Migrado)", tipo: 'dim', unidade: 'm2', qtd: 1, largura: dadosCopia.largura || 0, altura: dadosCopia.altura || 0, mdfId: DB.mdfs[0]?.id || null, precoBase: dadosCopia.precoM2 || 0, valorFinal: dadosCopia.valorMovel || 0
                 }]};
             } else {
                 this.orcamentoTemporario = { composicao: JSON.parse(JSON.stringify(dadosCopia.composicao)) };
@@ -574,7 +597,7 @@ const App = {
             }
         } else {
             document.getElementById('orc-cliente').value = ""; document.getElementById('orc-perfil').value = DB.perfis[0].id;
-            document.getElementById('orc-categoria').value = ""; document.getElementById('orc-desconto').value = ""; document.getElementById('orc-observacao').value = "";
+            document.getElementById('orc-categoria').value = ""; document.getElementById('orc-desconto').value = ""; document.getElementById('orc-observacao').value = DB.configuracoes.observacaoPadrao;
             this.orcamentoTemporario = { composicao: [] };
         }
 
@@ -584,150 +607,187 @@ const App = {
         if(dadosCopia) this.calcularTempoReal();
     },
 
-    // --- COMPOSIÇÃO: RENDER & ACTIONS ---
     renderizarListaComposicao: function() {
         const list = document.getElementById('orc-composicao-lista');
         if(this.orcamentoTemporario.composicao.length === 0) {
-            list.innerHTML = `<p style="font-size: 13px; font-style: italic; color: var(--text-dim); text-align: center; margin-top: 12px;">Nenhum componente adicionado.</p>`;
+            list.innerHTML = `<p style="font-size: 13px; font-style: italic; color: var(--text-dim); text-align: center; margin-top: 12px;">Nenhum componente ou gaveta adicionada.</p>`;
             return;
         }
 
         list.innerHTML = this.orcamentoTemporario.composicao.map((item, idx) => {
-            let dimText = item.unidade === 'm2' ? `${UI.formatarNumero(item.largura)}m × ${UI.formatarNumero(item.altura)}m` : (item.unidade === 'ml' ? `${UI.formatarNumero(item.largura)}m (linear)` : `(Por Unidade)`);
-            let mdfInfo = item.usaMDF && item.mdfId ? `<span class="badge">${UI.escapeHTML(item.mdfNome)} (${((item.mdfIndice - 1)*100).toFixed(0)}%)</span>` : `<span class="badge-outline">Sem MDF</span>`;
+            let mdf = DB.mdfs.find(m => m.id === item.mdfId);
+            let mdfNome = mdf ? `${mdf.nome} (${mdf.espessura}mm)` : 'Sem MDF';
+            let desc = item.tipo === 'gaveta' ? `Caixa: ${item.largura}x${item.profundidade}mm + ${item.qtdFrentes} Frentes` : `${UI.formatarNumero(item.qtd)}x (${UI.formatarNumero(item.largura)} × ${UI.formatarNumero(item.altura)}mm)`;
+            
             return `
             <div class="composicao-item">
                 <div class="composicao-item-header">
-                    <span class="composicao-item-title">${item.qtd}x ${UI.escapeHTML(item.nome)}</span>
+                    <span class="composicao-item-title">${UI.escapeHTML(item.nome)}</span>
                     <div class="actions-group">
-                        <button class="btn-icon btn-edit" onclick="App.abrirModalAddComposicao(${idx})">✏️</button>
                         <button class="btn-icon btn-remove" onclick="App.removerComponente(${idx})">🗑️</button>
                     </div>
                 </div>
-                <div class="composicao-item-details">Medida: ${dimText} <br>MDF: ${mdfInfo}</div>
+                <div class="composicao-item-details">${desc} <br>Material: <span class="badge-info">${mdfNome}</span></div>
                 <span class="composicao-item-price">${UI.formatarDinheiro(item.valorFinal)}</span>
             </div>`;
         }).join('');
     },
+
     removerComponente: function(idx) {
         this.orcamentoTemporario.composicao.splice(idx, 1);
         this.renderizarListaComposicao(); this.calcularTempoReal();
     },
 
-    // --- MODAL DE INSERÇÃO/EDIÇÃO DO COMPONENTE ---
-    abrirModalAddComposicao: function(idx = null) {
-        this.editandoComposicaoIdx = idx;
-        const itemEdit = idx !== null ? this.orcamentoTemporario.composicao[idx] : null;
-
+    // --- MODAL DE ADICIONAR PEÇA / COMPONENTE ---
+    abrirModalAddComposicao: function() {
         let html = `
             <div class="form-group">
-                <label>Tipo de Componente</label>
-                <select id="modal-add-tipo" onchange="App.mudarFiltroAddComposicao()">
-                    <option value="dim" ${itemEdit&&itemEdit.tipo==='dim'?'selected':''}>Dimensional (m² / Linear)</option>
-                    <option value="qtd" ${itemEdit&&itemEdit.tipo==='qtd'?'selected':''}>Por Quantidade (Unidade/Par)</option>
+                <label>Componente Base</label>
+                <select id="modal-add-ref">
+                    ${DB.componentesDimensionais.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)} (${c.unidade})</option>`).join('')}
                 </select>
             </div>
-            <div class="form-group"><label>Componente Base</label><select id="modal-add-item" onchange="App.mudarFiltroAddComposicao(true)"></select></div>
-            
             <div class="form-row">
-                <div class="form-group"><label>Qtd</label><input type="text" inputmode="decimal" id="modal-add-qtd" value="${itemEdit?itemEdit.qtd:'1'}"></div>
-                <div class="form-group" id="box-add-largura"><label id="lbl-larg">Largura/Comp. (m)</label><input type="text" inputmode="decimal" id="modal-add-larg" value="${itemEdit?itemEdit.largura:''}"></div>
-                <div class="form-group" id="box-add-altura"><label>Altura (m)</label><input type="text" inputmode="decimal" id="modal-add-alt" value="${itemEdit?itemEdit.altura:''}"></div>
+                <div class="form-group"><label>Qtd Peças</label><input type="text" inputmode="decimal" id="modal-add-qtd" value="2"></div>
+                <div class="form-group"><label>Largura (mm)</label><input type="text" inputmode="decimal" id="modal-add-larg" placeholder="Ex: 600"></div>
+                <div class="form-group"><label>Altura / Comp. (mm)</label><input type="text" inputmode="decimal" id="modal-add-alt" placeholder="Ex: 2800"></div>
             </div>
-            
-            <div class="form-group" id="box-add-mdf">
-                <label>Vincular MDF (Aplicável a este componente)</label>
+            <div class="form-group">
+                <label>Selecionar Material (MDF Exato)</label>
                 <select id="modal-add-mdf">
-                    <option value="">-- Nenhum MDF --</option>
-                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}" ${itemEdit&&itemEdit.mdfId===m.id?'selected':''}>${UI.escapeHTML(m.nome)} (${m.isBase?'Base':'+'+((MDFManager.calcularIndice(m.id)-1)*100).toFixed(1)+'%'})</option>`).join('')}
+                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm - ${m.largura}x${m.comprimento}m)</option>`).join('')}
                 </select>
             </div>
         `;
 
-        UI.abrirModal(itemEdit ? "Editar Componente" : "Adicionar Parte", html, () => {
-            const tipo = document.getElementById('modal-add-tipo').value;
-            const refId = document.getElementById('modal-add-item').value;
+        UI.abrirModal("Adicionar Peça Dimensional", html, () => {
+            const refId = document.getElementById('modal-add-ref').value;
             const qtd = UI.parseNumero(document.getElementById('modal-add-qtd').value);
-            const larg = UI.parseNumero(document.getElementById('modal-add-larg').value);
-            const alt = UI.parseNumero(document.getElementById('modal-add-alt').value);
+            const largMm = UI.parseNumero(document.getElementById('modal-add-larg').value);
+            const altMm = UI.parseNumero(document.getElementById('modal-add-alt').value);
             const mdfId = document.getElementById('modal-add-mdf').value;
             const perfilId = document.getElementById('orc-perfil').value;
 
-            if (qtd <= 0) return alert("Quantidade deve ser maior que zero.");
-            if (!refId && !itemEdit?.refId) return alert("Selecione o componente base."); // Migrados não tem refId no edit, ok.
-
-            let dbRef = null;
-            if (refId) dbRef = tipo === 'dim' ? DB.componentesDimensionais.find(c => c.id === refId) : DB.componentesQuantidade.find(c => c.id === refId);
+            if (qtd <= 0 || largMm <= 0 || altMm <= 0) return alert("Preencha quantidade e dimensões válidas em milímetros.");
             
-            // Reconstroi/Atualiza o Objeto
-            let obj = itemEdit ? {...itemEdit} : { id: 'comp_' + Date.now() };
-            if(dbRef) {
-                obj.refId = dbRef.id; obj.nome = dbRef.nome; obj.tipo = tipo; obj.unidade = dbRef.unidade; obj.usaMDF = dbRef.usaMDF;
-                obj.precoBase = dbRef.precos[perfilId] || 0;
-            }
+            let dbRef = DB.componentesDimensionais.find(c => c.id === refId);
+            let precoM2Comercial = dbRef.precos[perfilId] || 0;
+            let mdf = DB.mdfs.find(m => m.id === mdfId);
 
-            if (obj.unidade === 'm2' && (larg<=0 || alt<=0)) return alert("Informe largura e altura para cálculo em m².");
-            if (obj.unidade === 'ml' && larg<=0) return alert("Informe a dimensão (comprimento) para cálculo linear.");
-            if (obj.usaMDF && !mdfId) return alert("Este componente exige a seleção de um MDF.");
+            // Conversão mm para metros para cálculo de área
+            let largM = largMm / 1000;
+            let altM = altMm / 1000;
+            let areaPeca = qtd * largM * altM;
+            let valorFinal = areaPeca * precoM2Comercial;
 
-            obj.qtd = qtd; obj.largura = obj.unidade==='m2'||obj.unidade==='ml' ? larg : 0; obj.altura = obj.unidade==='m2' ? alt : 0;
-            
-            obj.mdfId = obj.usaMDF ? mdfId : null;
-            if(obj.mdfId) {
-                const m = DB.mdfs.find(x => x.id === obj.mdfId);
-                obj.mdfNome = m.nome; obj.mdfIndice = MDFManager.calcularIndice(obj.mdfId);
-                obj.mdfFabricante = m.fabricante; obj.mdfEspessura = m.espessura; obj.mdfPrecoM2 = MDFManager.calcularPrecoM2(m);
-            } else {
-                obj.mdfNome = "Não se aplica"; obj.mdfIndice = 1;
-            }
-
-            // Calculo individual para gravar snapshot final
-            let mult = obj.unidade === 'm2' ? (obj.qtd * obj.largura * obj.altura) : (obj.unidade === 'ml' ? (obj.qtd * obj.largura) : obj.qtd);
-            obj.valorFinal = mult * obj.precoBase * obj.mdfIndice;
-
-            if(this.editandoComposicaoIdx !== null) this.orcamentoTemporario.composicao[this.editandoComposicaoIdx] = obj;
-            else this.orcamentoTemporario.composicao.push(obj);
+            this.orcamentoTemporario.composicao.push({
+                id: 'comp_' + Date.now(),
+                tipo: 'dim',
+                refId: dbRef.id,
+                nome: dbRef.nome,
+                qtd, largura: largM, altura: altM,
+                larguraMm: largMm, alturaMm: altMm,
+                mdfId: mdf.id,
+                mdfNome: `${mdf.fabricante} ${mdf.nome} ${mdf.espessura}mm`,
+                precoM2Comercial,
+                area: areaPeca,
+                valorFinal
+            });
 
             UI.fecharModal(); this.renderizarListaComposicao(); this.calcularTempoReal();
         });
-
-        // Initialize selects
-        this.mudarFiltroAddComposicao(false, itemEdit ? itemEdit.refId : null);
     },
 
-    mudarFiltroAddComposicao: function(isItemChange = false, setRefId = null) {
-        const tipo = document.getElementById('modal-add-tipo').value;
-        const selItem = document.getElementById('modal-add-item');
-        const boxLarg = document.getElementById('box-add-largura');
-        const boxAlt = document.getElementById('box-add-altura');
-        const boxMdf = document.getElementById('box-add-mdf');
-        
-        // Popula o select se não for apenas mudança de item (ex: trocou dim -> qtd)
-        if(!isItemChange) {
-            let html = tipo === 'dim' 
-                ? DB.componentesDimensionais.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)} (${c.unidade})</option>`).join('')
-                : DB.componentesQuantidade.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)} (${c.unidade})</option>`).join('');
-            selItem.innerHTML = html;
-            if(setRefId) selItem.value = setRefId;
-        }
+    // --- MODAL DE GAVETA COM CAIXA E FRENTE SEPARADAS ---
+    abrirModalAddGaveta: function() {
+        let html = `
+            <div class="form-row">
+                <div class="form-group"><label>Qtd Gavetas</label><input type="text" inputmode="decimal" id="gav-qtd" value="4"></div>
+                <div class="form-group"><label>Largura (mm)</label><input type="text" inputmode="decimal" id="gav-larg" placeholder="500"></div>
+                <div class="form-group"><label>Profundidade (mm)</label><input type="text" inputmode="decimal" id="gav-prof" placeholder="450"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Altura Caixa (mm)</label><input type="text" inputmode="decimal" id="gav-alt" value="150"></div>
+                <div class="form-group"><label>Altura Frente (mm)</label><input type="text" inputmode="decimal" id="gav-alt-frente" value="180"></div>
+            </div>
+            <div class="form-group">
+                <label>MDF Caixa das Gavetas (Ex: Branco TX 15mm)</label>
+                <select id="gav-mdf-caixa">
+                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>MDF Fundo da Caixa (Ex: 6mm)</label>
+                <select id="gav-mdf-fundo">
+                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}" ${m.espessura<=6?'selected':''}>${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>MDF Frentes das Gavetas (Cor Externa)</label>
+                <select id="gav-mdf-frente">
+                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
+                </select>
+            </div>
+        `;
 
-        const refId = selItem.value;
-        let ref = tipo === 'dim' ? DB.componentesDimensionais.find(c => c.id === refId) : DB.componentesQuantidade.find(c => c.id === refId);
-        
-        if(ref) {
-            if(ref.unidade === 'm2') { boxLarg.style.display = 'block'; document.getElementById('lbl-larg').innerText = 'Largura (m)'; boxAlt.style.display = 'block'; }
-            else if(ref.unidade === 'ml') { boxLarg.style.display = 'block'; document.getElementById('lbl-larg').innerText = 'Comprim. (m)'; boxAlt.style.display = 'none'; }
-            else { boxLarg.style.display = 'none'; boxAlt.style.display = 'none'; }
+        UI.abrirModal("Adicionar Módulo de Gavetas", html, () => {
+            const qtd = UI.parseNumero(document.getElementById('gav-qtd').value);
+            const largMm = UI.parseNumero(document.getElementById('gav-larg').value);
+            const profMm = UI.parseNumero(document.getElementById('gav-prof').value);
+            const altCaixaMm = UI.parseNumero(document.getElementById('gav-alt').value);
+            const altFrenteMm = UI.parseNumero(document.getElementById('gav-alt-frente').value);
 
-            if(ref.usaMDF) boxMdf.style.display = 'block';
-            else { boxMdf.style.display = 'none'; document.getElementById('modal-add-mdf').value = ""; }
-        } else {
-            // Fallback (Migrados)
-            boxLarg.style.display = 'none'; boxAlt.style.display = 'none'; boxMdf.style.display = 'none';
-        }
+            const mdfCaixaId = document.getElementById('gav-mdf-caixa').value;
+            const mdfFundoId = document.getElementById('gav-mdf-fundo').value;
+            const mdfFrenteId = document.getElementById('gav-mdf-frente').value;
+            const perfilId = document.getElementById('orc-perfil').value;
+
+            if(qtd<=0 || largMm<=0 || profMm<=0 || altCaixaMm<=0) return alert("Preencha as dimensões da gaveta.");
+
+            let mdfCaixa = DB.mdfs.find(m => m.id === mdfCaixaId);
+            let mdfFundo = DB.mdfs.find(m => m.id === mdfFundoId);
+            let mdfFrente = DB.mdfs.find(m => m.id === mdfFrenteId);
+
+            // Engenharia Construtiva Básica da Caixa da Gaveta
+            let largM = largMm / 1000, profM = profMm / 1000, altM = altCaixaMm / 1000;
+            let espCaixaM = (mdfCaixa.espessura || 15) / 1000;
+            
+            // Peças da Caixa: 2 Laterais (prof x alt), 1 Traseira (larg - 2esp x alt), 1 Frente interna (larg - 2esp x alt)
+            let areaLateral = 2 * (profM * altM);
+            let areaTraseiraEFrontal = 2 * ((largM - (2 * espCaixaM)) * altM);
+            let areaFundoCaixa = (largM - (2 * espCaixaM)) * (profM - espCaixaM);
+            let areaTotalCaixa = (areaLateral + areaTraseiraEFrontal) * qtd;
+            let areaTotalFundo = areaFundoCaixa * qtd;
+
+            // Frentes de Gaveta (separadas)
+            let altFrenteM = altFrenteMm / 1000;
+            let areaTotalFrentes = qtd * largM * altFrenteM;
+
+            // Preço comercial atribuído com base nos componentes dimensionais base
+            let refGavetaPreco = (DB.componentesDimensionais[0]?.precos[perfilId] || 800);
+            let valorCaixa = (areaTotalCaixa + areaTotalFundo) * (refGavetaPreco * 0.8);
+            let valorFrentes = areaTotalFrentes * (refGavetaPreco * 1.1); // Frentes costumam ter valor agregado maior
+
+            this.orcamentoTemporario.composicao.push({
+                id: 'gav_' + Date.now(),
+                tipo: 'gaveta',
+                nome: `${qtd}x Gavetas (${largMm}x${profMm}mm)`,
+                qtd, largura: largM, altura: altM, larguraMm: largMm, profundidadeMm: profMm, qtdFrentes: qtd,
+                mdfId: mdfCaixa.id, // Referência principal p/ listagem
+                mdfNome: `Caixa: ${mdfCaixa.nome} | Fundo: ${mdfFundo.nome} | Frentes: ${mdfFrente.nome}`,
+                subPecas: [
+                    { nome: 'Laterais/Traseiras Caixa', area: areaLateral + areaTraseiraEFrontal, mdf: mdfCaixa },
+                    { nome: 'Fundo da Gaveta', area: areaTotalFundo, mdf: mdfFundo },
+                    { nome: 'Frentes de Gaveta', area: areaTotalFrentes, mdf: mdfFrente }
+                ],
+                valorFinal: valorCaixa + valorFrentes
+            });
+
+            UI.fecharModal(); this.renderizarListaComposicao(); this.calcularTempoReal();
+        });
     },
 
-    // --- CÁLCULO GERAL E RESUMO ---
+    // --- CÁLCULO GERAL E MOTOR DE CHAPAS ---
     calcularTempoReal: function() {
         if(!this.orcamentoTemporario) return;
 
@@ -739,24 +799,45 @@ const App = {
         let observacao = document.getElementById('orc-observacao').value.trim() || DB.configuracoes.observacaoPadrao;
 
         let valorMovel = 0;
+        let mapMateriais = {}; // Agrupador estrito por MDF exato
 
-        // Repassa os componentes para atualizar preço do perfil se ele mudar na tela
         this.orcamentoTemporario.composicao.forEach(item => {
-            if(item.refId) {
-                let dbRef = item.tipo === 'dim' ? DB.componentesDimensionais.find(c => c.id === item.refId) : DB.componentesQuantidade.find(c => c.id === item.refId);
-                if(dbRef && dbRef.precos[perfilId] !== undefined) item.precoBase = dbRef.precos[perfilId];
-            }
-            if(item.mdfId && item.usaMDF) {
-                let m = DB.mdfs.find(x => x.id === item.mdfId);
-                if(m) item.mdfIndice = MDFManager.calcularIndice(m.id);
-            }
-            
-            let mult = item.unidade === 'm2' ? (item.qtd * item.largura * item.altura) : (item.unidade === 'ml' ? (item.qtd * item.largura) : item.qtd);
-            item.valorFinal = mult * item.precoBase * item.mdfIndice;
             valorMovel += item.valorFinal;
+
+            if(item.tipo === 'dim') {
+                let mdf = DB.mdfs.find(m => m.id === item.mdfId);
+                if(mdf) {
+                    let key = mdf.id;
+                    if(!mapMateriais[key]) { mapMateriais[key] = { mdf, pecas: [], areaTotal: 0 }; }
+                    mapMateriais[key].pecas.push({ largura: item.largura, area: item.area });
+                    mapMateriais[key].areaTotal += item.area;
+                }
+            } else if(item.tipo === 'gaveta' && item.subPecas) {
+                item.subPecas.forEach(sp => {
+                    let mdf = sp.mdf;
+                    let key = mdf.id;
+                    if(!mapMateriais[key]) { mapMateriais[key] = { mdf, pecas: [], areaTotal: 0 }; }
+                    mapMateriais[key].pecas.push({ largura: 0.5, area: sp.area });
+                    mapMateriais[key].areaTotal += sp.area;
+                });
+            }
         });
 
-        // Adicionais e Fechamento (O Desconto só aplica sobre o Subtotal Final)
+        // Processa necessidade de chapas e custos industriais de material
+        let resumoMateriais = [];
+        let custoTotalMateriais = 0;
+
+        Object.keys(mapMateriais).forEach(mdfKey => {
+            let mat = mapMateriais[mdfKey];
+            let calc = MaterialEngine.calcularNecessidadeChapas(mat.pecas, mat.mdf);
+            custoTotalMateriais += calc.custoTotal;
+            resumoMateriais.push({
+                mdf: mat.mdf,
+                ...calc
+            });
+        });
+
+        // Adicionais Globais
         const adicionaisSelecionados = []; const adicionaisIds = [];
         document.querySelectorAll('.orc-add-checkbox:checked').forEach(chk => {
             const addDB = DB.adicionais.find(a => a.id === chk.value);
@@ -775,10 +856,11 @@ const App = {
             perfilNome: DB.perfis.find(p=>p.id===perfilId)?.nome,
             categoriaId, categoriaNome: DB.categorias.find(c=>c.id===categoriaId)?.nome || '',
             valorMovel, adicionais: adicionaisSelecionados, adicionaisIds,
-            subtotal, descontoPerc, valorDesconto, total, observacao
+            subtotal, descontoPerc, valorDesconto, total, observacao,
+            resumoMateriais, custoTotalMateriais
         };
 
-        this.renderizarListaComposicao(); 
+        this.renderizarListaComposicao();
         
         if (this.orcamentoTemporario.composicao.length > 0) {
             this.renderizarResumo(this.orcamentoTemporario, 'orc-resumo-content');
@@ -797,18 +879,30 @@ const App = {
         `;
 
         if (orc.composicao && orc.composicao.length > 0) {
-            html += `<div style="font-size:12px; color:var(--text-dim); margin-bottom: 8px;">COMPOSIÇÃO:</div>`;
+            html += `<div style="font-size:12px; color:var(--text-dim); margin-bottom: 8px;">COMPOSIÇÃO DO MÓVEL:</div>`;
             orc.composicao.forEach(item => {
-                let adjustText = item.usaMDF && item.mdfIndice !== 1 ? `<span style="font-size:11px; color:var(--accent);"> MDF ${item.mdfIndice>1?'+':''}${((item.mdfIndice-1)*100).toFixed(0)}%</span>` : '';
                 html += `
                     <div class="resumo-row">
                         <div style="flex:1;">
-                            <div style="font-weight:bold; font-size:14px;">${item.qtd}x ${UI.escapeHTML(item.nome)}</div>
-                            <div style="font-size:12px; color:var(--text-dim);">${item.usaMDF ? item.mdfNome : ''} ${adjustText}</div>
+                            <div style="font-weight:bold; font-size:14px;">${UI.escapeHTML(item.nome)}</div>
+                            <div style="font-size:12px; color:var(--text-dim);">${item.mdfNome || ''}</div>
                         </div>
                         <span>${UI.formatarDinheiro(item.valorFinal)}</span>
                     </div>
                 `;
+            });
+        }
+
+        // Seção de Engenharia e Chapas Necessárias
+        if (orc.resumoMateriais && orc.resumoMateriais.length > 0) {
+            html += `<div class="resumo-divider"></div><div style="font-size:12px; color:var(--accent); margin-bottom: 6px; font-weight:bold;">🪵 MATERIAIS NECESSÁRIOS E CHAPAS:</div>`;
+            orc.resumoMateriais.forEach(rm => {
+                html += `
+                <div style="background:var(--card); padding:8px; border-radius:6px; margin-bottom:6px; font-size:13px;">
+                    <strong>${UI.escapeHTML(rm.mdf.fabricante)} ${UI.escapeHTML(rm.mdf.nome)} (${rm.mdf.espessura}mm)</strong><br>
+                    Necessário: ${UI.formatarNumero(rm.areaTotalPecas)} m² | Comprado: <strong>${rm.qtdCompra} chapa(s)</strong><br>
+                    Aproveitamento: ${UI.formatarNumero(rm.aproveitamento)}% | Sobra: ${UI.formatarNumero(rm.sobra)} m²
+                </div>`;
             });
         }
 
@@ -818,7 +912,7 @@ const App = {
             <div class="resumo-row"><span>Adicionais:</span> <span>${UI.formatarDinheiro(orc.adicionais.reduce((a,b)=>a+b.valor,0))}</span></div>
             <div class="resumo-row resumo-subtotal" style="margin-top:12px;"><span>Subtotal:</span> <span>${UI.formatarDinheiro(orc.subtotal)}</span></div>
             <div class="resumo-row" style="color: var(--danger);"><span>Desconto:</span> <span>- ${UI.formatarDinheiro(orc.valorDesconto)}</span></div>
-            <div class="resumo-total"><span>TOTAL</span><span>${UI.formatarDinheiro(orc.total)}</span></div>
+            <div class="resumo-total"><span>TOTAL COMERCIAL</span><span>${UI.formatarDinheiro(orc.total)}</span></div>
             <div style="margin-top: 16px; font-size: 13px; color: var(--text-dim); text-align: left;"><strong>Obs:</strong> ${UI.escapeHTML(orc.observacao)}</div>
         `;
         document.getElementById(containerId).innerHTML = html;
@@ -843,13 +937,12 @@ const App = {
     enviarWhatsApp: function() {
         const orc = this.orcamentoVisualizado; if(!orc) return;
         let t = `*ORÇAMENTO — STUDIO DM*\n\n*Cliente:* ${orc.cliente}\n*Móvel:* ${orc.categoriaNome}\n\n*COMPOSIÇÃO:*\n`;
-        orc.composicao.forEach(item => {
-            t += `• ${item.qtd}x ${item.nome}`; if(item.usaMDF) t += ` (${item.mdfNome})`; t += ` — ${UI.formatarDinheiro(item.valorFinal)}\n`;
-        });
-        if(orc.adicionais.length > 0) { t += `\n*ADICIONAIS:*\n`; orc.adicionais.forEach(add => { t += `• ${add.nome} — ${UI.formatarDinheiro(add.valor)}\n`; }); }
-        t += `\n*Subtotal:* ${UI.formatarDinheiro(orc.subtotal)}\n`;
-        if (orc.valorDesconto > 0) t += `*Desconto:* -${UI.formatarDinheiro(orc.valorDesconto)}\n`;
-        t += `*TOTAL: ${UI.formatarDinheiro(orc.total)}*\n\n*Observações:*\n${orc.observacao}\n\n_${DB.configuracoes.nomeEmpresa}_`;
+        orc.composicao.forEach(item => { t += `• ${item.nome} — ${UI.formatarDinheiro(item.valorFinal)}\n`; });
+        if(orc.resumoMateriais?.length > 0) {
+            t += `\n*PLANO DE CHAPAS:*\n`;
+            orc.resumoMateriais.forEach(rm => { t += `• ${rm.mdf.fabricante} ${rm.mdf.nome} ${rm.mdf.espessura}mm: ${rm.qtdCompra} chapa(s)\n`; });
+        }
+        t += `\n*TOTAL: ${UI.formatarDinheiro(orc.total)}*\n\n*Observações:*\n${orc.observacao}\n\n_${DB.configuracoes.nomeEmpresa}_`;
         window.open(`https://wa.me/?text=${encodeURIComponent(t)}`, '_blank');
     },
     imprimir: function() {
@@ -870,117 +963,79 @@ const App = {
 };
 
 /* ==========================================================================
-   6. CRUD COMPLETO (Preços e Cadastros)
+   6. CRUD COMPLETO (Preços e Cadastros v1.3)
    ========================================================================== */
 const CRUD = {
     init: function() { this.renderMDFs(); this.renderCompDim(); this.renderCompQtd(); this.renderCategorias(); this.renderAdicionais(); },
 
     renderMDFs: function() {
-        document.getElementById('lista-mdfs').innerHTML = DB.mdfs.map(m => {
-            let pm2 = MDFManager.calcularPrecoM2(m);
-            let dif = m.isBase ? 'BASE' : `+${((MDFManager.calcularIndice(m.id)-1)*100).toFixed(1)}%`;
-            return `<div class="list-item"><div class="list-item-info"><strong style="${!m.ativo?'text-decoration:line-through;color:gray;':''}">${UI.escapeHTML(m.nome)} ${m.isBase?'<span class="badge">MDF BASE</span>':''}</strong><span>${UI.escapeHTML(m.fabricante)} | Chapa: ${UI.formatarDinheiro(m.precoChapa)} | /m²: ${UI.formatarDinheiro(pm2)} | Indice: ${dif}</span></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalMDF('${m.id}')">Editar</button></div>`;
+        document.getElementById('lista-mdfs').innerHTML = DB.mdfs.filter(m => m.ativo).map(m => {
+            let pm2 = MaterialEngine.calcularPrecoM2(m);
+            return `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</strong><span>Chapa ${m.largura}x${m.comprimento}m | R$ ${m.precoChapa} | /m²: ${UI.formatarDinheiro(pm2)}</span></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalMDF('${m.id}')">Editar</button></div>`;
         }).join('');
     },
     novoMDF: function() { this.abrirModalMDF(); },
     abrirModalMDF: function(id = null) {
         const m = id ? DB.mdfs.find(x => x.id === id) : null;
         let html = `
-            <div class="form-row"><div class="form-group"><label>Nome / Cor</label><input type="text" id="mdf-nome" value="${m?UI.escapeHTML(m.nome):''}"></div><div class="form-group"><label>Fabricante</label><input type="text" id="mdf-fab" value="${m?UI.escapeHTML(m.fabricante):''}"></div></div>
-            <div class="form-row"><div class="form-group"><label>Larg (m)</label><input type="text" inputmode="decimal" id="mdf-larg" value="${m?m.largura:'1.85'}"></div><div class="form-group"><label>Comp (m)</label><input type="text" inputmode="decimal" id="mdf-comp" value="${m?m.comprimento:'2.75'}"></div></div>
-            <div class="form-row"><div class="form-group"><label>Espessura (mm)</label><input type="text" inputmode="decimal" id="mdf-esp" value="${m?m.espessura:'15'}"></div><div class="form-group"><label>Preço Chapa</label><input type="text" inputmode="decimal" id="mdf-preco" value="${m?m.precoChapa:''}"></div></div>
-            <label class="checkbox-group"><span>Ativo para Venda</span><input type="checkbox" id="mdf-ativo" ${!m || m.ativo ? 'checked' : ''}></label>
-            <label class="checkbox-group"><span>Definir como MDF BASE</span><input type="checkbox" id="mdf-base" ${m&&m.isBase?'checked':''}></label>
+            <div class="form-row"><div class="form-group"><label>Fabricante</label><input type="text" id="mdf-fab" value="${m?UI.escapeHTML(m.fabricante):'Arauko'}"></div><div class="form-group"><label>Nome / Padrão</label><input type="text" id="mdf-nome" value="${m?UI.escapeHTML(m.nome):''}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Espessura (mm)</label><input type="text" inputmode="decimal" id="mdf-esp" value="${m?m.espessura:'15'}"></div><div class="form-group"><label>Preço Chapa (R$)</label><input type="text" inputmode="decimal" id="mdf-preco" value="${m?m.precoChapa:''}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Largura Chapa (m)</label><input type="text" inputmode="decimal" id="mdf-larg" value="${m?m.largura:'1.85'}"></div><div class="form-group"><label>Comprimento (m)</label><input type="text" inputmode="decimal" id="mdf-comp" value="${m?m.comprimento:'2.75'}"></div></div>
         `;
-        if(m) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirMDF('${m.id}')">🗑️ Excluir MDF</button>`;
+        if(m) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirMDF('${m.id}')">🗑️ Inativar MDF</button>`;
         UI.abrirModal(m?'Editar MDF':'Novo MDF', html, () => {
             let nome=document.getElementById('mdf-nome').value.trim(), fab=document.getElementById('mdf-fab').value.trim();
             let larg=UI.parseNumero(document.getElementById('mdf-larg').value), comp=UI.parseNumero(document.getElementById('mdf-comp').value);
             let preco=UI.parseNumero(document.getElementById('mdf-preco').value), esp=UI.parseNumero(document.getElementById('mdf-esp').value);
-            let isBase=document.getElementById('mdf-base').checked, ativo=document.getElementById('mdf-ativo').checked;
             if(!nome||larg<=0||comp<=0||preco<=0) return alert("Preencha campos válidos (>0)");
-            if(isBase) DB.mdfs.forEach(x => x.isBase = false);
-            if(m) { m.nome=nome; m.fabricante=fab; m.largura=larg; m.comprimento=comp; m.precoChapa=preco; m.espessura=esp; m.isBase=isBase; m.ativo=ativo; }
-            else { DB.mdfs.push({ id: 'mdf_' + Date.now(), nome, fabricante:fab, largura:larg, comprimento:comp, precoChapa:preco, espessura:esp, isBase, ativo, faces: 2 }); }
-            if(DB.mdfs.length > 0 && !DB.mdfs.find(x => x.isBase)) DB.mdfs[0].isBase = true;
+            if(m) { m.nome=nome; m.fabricante=fab; m.largura=larg; m.comprimento=comp; m.precoChapa=preco; m.espessura=esp; }
+            else { DB.mdfs.push({ id: 'mdf_' + Date.now(), nome, fabricante:fab, largura:larg, comprimento:comp, precoChapa:preco, espessura:esp, isBase:false, ativo:true, faces:2 }); }
             StorageManager.save(); UI.fecharModal(); this.renderMDFs();
         });
     },
-    excluirMDF: function(id) { if(confirm("Excluir?")) { DB.mdfs = DB.mdfs.filter(m => m.id !== id); if(DB.mdfs.length > 0 && !DB.mdfs.find(x => x.isBase)) DB.mdfs[0].isBase = true; StorageManager.save(); UI.fecharModal(); this.renderMDFs(); } },
+    excluirMDF: function(id) { if(confirm("Inativar este MDF?")) { let m = DB.mdfs.find(x=>x.id===id); if(m) m.ativo = false; StorageManager.save(); UI.fecharModal(); this.renderMDFs(); } },
 
     renderCompDim: function() {
-        document.getElementById('lista-comp-dim').innerHTML = DB.componentesDimensionais.map(cd => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cd.nome)} (por ${cd.unidade}) ${cd.usaMDF?'[Usa MDF]':''}</strong><span>${DB.perfis.map(p => `${p.nome}: ${UI.formatarDinheiro(cd.precos[p.id])}`).join(' | ')}</span></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalCompDim('${cd.id}')">Editar</button></div>`).join('');
+        document.getElementById('lista-comp-dim').innerHTML = DB.componentesDimensionais.map(cd => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cd.nome)}</strong><span>${DB.perfis.map(p => `${p.nome}: ${UI.formatarDinheiro(cd.precos[p.id])}`).join(' | ')}</span></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalCompDim('${cd.id}')">Editar</button></div>`).join('');
     },
     novoCompDim: function() { this.abrirModalCompDim(); },
     abrirModalCompDim: function(id = null) {
         const cd = id ? DB.componentesDimensionais.find(x => x.id === id) : null;
-        let html = `<div class="form-group"><label>Nome</label><input type="text" id="cd-nome" value="${cd?UI.escapeHTML(cd.nome):''}"></div><div class="form-group"><label>Unidade</label><select id="cd-un"><option value="m2" ${cd&&cd.unidade==='m2'?'selected':''}>m²</option><option value="ml" ${cd&&cd.unidade==='ml'?'selected':''}>m Linear</option></select></div>`;
-        DB.perfis.forEach(p => { html += `<div class="form-group"><label>Preço Base - ${UI.escapeHTML(p.nome)}</label><input type="text" inputmode="decimal" class="cd-preco" data-perfil="${p.id}" value="${cd?cd.precos[p.id]:''}"></div>`; });
-        html += `<label class="checkbox-group"><span>Usa MDF?</span><input type="checkbox" id="cd-usaMdf" ${!cd || cd.usaMDF ? 'checked' : ''}></label>`;
+        let html = `<div class="form-group"><label>Nome</label><input type="text" id="cd-nome" value="${cd?UI.escapeHTML(cd.nome):''}"></div>`;
+        DB.perfis.forEach(p => { html += `<div class="form-group"><label>Preço m² - ${UI.escapeHTML(p.nome)}</label><input type="text" inputmode="decimal" class="cd-preco" data-perfil="${p.id}" value="${cd?cd.precos[p.id]:''}"></div>`; });
         if(cd) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirCompDim('${cd.id}')">🗑️ Excluir</button>`;
         UI.abrirModal(cd?'Editar':'Novo', html, () => {
             let nome=document.getElementById('cd-nome').value.trim(); if(!nome) return alert("Nome!");
             let precos={}; document.querySelectorAll('.cd-preco').forEach(inp => precos[inp.getAttribute('data-perfil')] = UI.parseNumero(inp.value));
-            let un=document.getElementById('cd-un').value, usa=document.getElementById('cd-usaMdf').checked;
-            if(cd) { cd.nome=nome; cd.unidade=un; cd.precos=precos; cd.usaMDF=usa; } else DB.componentesDimensionais.push({ id: 'cd_'+Date.now(), nome, unidade:un, precos, usaMDF:usa });
+            if(cd) { cd.nome=nome; cd.precos=precos; } else DB.componentesDimensionais.push({ id: 'cd_'+Date.now(), nome, unidade:'m2', precos });
             StorageManager.save(); UI.fecharModal(); this.renderCompDim();
         });
     },
     excluirCompDim: function(id) { if(confirm("Excluir?")) { DB.componentesDimensionais = DB.componentesDimensionais.filter(c => c.id !== id); StorageManager.save(); UI.fecharModal(); this.renderCompDim(); } },
 
-    renderCompQtd: function() {
-        document.getElementById('lista-comp-qtd').innerHTML = DB.componentesQuantidade.map(cq => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cq.nome)} (${cq.unidade}) ${cq.usaMDF?'[Usa MDF]':''}</strong><span>${DB.perfis.map(p => `${p.nome}: ${UI.formatarDinheiro(cq.precos[p.id])}`).join(' | ')}</span></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalCompQtd('${cq.id}')">Editar</button></div>`).join('');
+    renderCompQtd: function() { document.getElementById('lista-comp-qtd').innerHTML = DB.componentesQuantidade.map(cq => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cq.nome)}</strong><span>${UI.formatarDinheiro(cq.precos[DB.perfis[0].id])}</span></div></div>`).join(''); },
+    renderCategorias: function() { document.getElementById('lista-categorias').innerHTML = DB.categorias.map(cat => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cat.nome)}</strong></div></div>`).join(''); },
+    renderAdicionais: function() { document.getElementById('lista-adicionais').innerHTML = DB.adicionais.map(a => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(a.nome)}</strong><span>${UI.formatarDinheiro(a.valor)}</span></div></div>`).join(''); },
+    
+    // Configurações
+    renderConfiguracoes: function() {
+        document.getElementById('config-empresa').value = DB.configuracoes.nomeEmpresa;
+        document.getElementById('config-telefone').value = DB.configuracoes.telefone;
+        document.getElementById('config-kerf').value = DB.configuracoes.kerf || 3.2;
+        document.getElementById('config-obs').value = DB.configuracoes.observacaoPadrao;
     },
-    novoCompQtd: function() { this.abrirModalCompQtd(); },
-    abrirModalCompQtd: function(id = null) {
-        const cq = id ? DB.componentesQuantidade.find(x => x.id === id) : null;
-        let html = `<div class="form-group"><label>Nome</label><input type="text" id="cq-nome" value="${cq?UI.escapeHTML(cq.nome):''}"></div><div class="form-group"><label>Unidade</label><input type="text" id="cq-un" value="${cq?UI.escapeHTML(cq.unidade):'un'}"></div>`;
-        DB.perfis.forEach(p => { html += `<div class="form-group"><label>Preço Base - ${UI.escapeHTML(p.nome)}</label><input type="text" inputmode="decimal" class="cq-preco" data-perfil="${p.id}" value="${cq?cq.precos[p.id]:''}"></div>`; });
-        html += `<label class="checkbox-group"><span>Usa MDF?</span><input type="checkbox" id="cq-usaMdf" ${cq && cq.usaMDF ? 'checked' : ''}></label>`;
-        if(cq) html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="CRUD.excluirCompQtd('${cq.id}')">🗑️ Excluir</button>`;
-        UI.abrirModal(cq?'Editar':'Novo', html, () => {
-            let nome=document.getElementById('cq-nome').value.trim(), un=document.getElementById('cq-un').value.trim()||'un'; if(!nome) return alert("Nome!");
-            let precos={}; document.querySelectorAll('.cq-preco').forEach(inp => precos[inp.getAttribute('data-perfil')] = UI.parseNumero(inp.value));
-            let usa=document.getElementById('cq-usaMdf').checked;
-            if(cq) { cq.nome=nome; cq.unidade=un; cq.precos=precos; cq.usaMDF=usa; } else DB.componentesQuantidade.push({ id: 'cq_'+Date.now(), nome, unidade:un, precos, usaMDF:usa });
-            StorageManager.save(); UI.fecharModal(); this.renderCompQtd();
-        });
-    },
-    excluirCompQtd: function(id) { if(confirm("Excluir?")) { DB.componentesQuantidade = DB.componentesQuantidade.filter(c => c.id !== id); StorageManager.save(); UI.fecharModal(); this.renderCompQtd(); } },
-
-    renderCategorias: function() { document.getElementById('lista-categorias').innerHTML = DB.categorias.map(cat => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(cat.nome)}</strong></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalCategoria('${cat.id}')">Editar</button></div>`).join(''); },
-    novaCategoria: function() { this.abrirModalCategoria(); },
-    abrirModalCategoria: function(id = null) {
-        const cat = id ? DB.categorias.find(c => c.id === id) : null;
-        let html = `<div class="form-group"><label>Tipo de Móvel (Ref)</label><input type="text" id="cat-nome" value="${cat?UI.escapeHTML(cat.nome):''}"></div>`;
-        if(cat) html += `<button class="btn btn-danger" onclick="CRUD.excluirCategoria('${cat.id}')">🗑️ Excluir</button>`;
-        UI.abrirModal(cat?'Editar':'Nova', html, () => {
-            let nome = document.getElementById('cat-nome').value.trim(); if(!nome) return alert("Nome!");
-            if(cat) cat.nome = nome; else DB.categorias.push({ id: 'cat_'+Date.now(), nome });
-            StorageManager.save(); UI.fecharModal(); this.renderCategorias();
-        });
-    },
-    excluirCategoria: function(id) { if(confirm("Excluir?")) { DB.categorias = DB.categorias.filter(c => c.id !== id); StorageManager.save(); UI.fecharModal(); this.renderCategorias(); } },
-
-    renderAdicionais: function() { document.getElementById('lista-adicionais').innerHTML = DB.adicionais.map(a => `<div class="list-item"><div class="list-item-info"><strong>${UI.escapeHTML(a.nome)}</strong><span>${UI.formatarDinheiro(a.valor)}</span></div><button class="btn-small btn-outline" onclick="CRUD.abrirModalAdicional('${a.id}')">Editar</button></div>`).join(''); },
-    novoAdicional: function() { this.abrirModalAdicional(); },
-    abrirModalAdicional: function(id = null) {
-        const add = id ? DB.adicionais.find(a => a.id === id) : null;
-        let html = `<div class="form-group"><label>Nome</label><input type="text" id="modal-add-nome" value="${add?UI.escapeHTML(add.nome):''}"></div><div class="form-group"><label>Valor (R$)</label><input type="text" inputmode="decimal" id="modal-add-valor" value="${add?add.valor:''}"></div>`;
-        if(add) html += `<button class="btn btn-danger" onclick="CRUD.excluirAdicional('${add.id}')">🗑️ Excluir</button>`;
-        UI.abrirModal(add?'Editar':'Novo', html, () => {
-            const nome = document.getElementById('modal-add-nome').value.trim(), valor = UI.parseNumero(document.getElementById('modal-add-valor').value);
-            if(!nome) return alert("Nome!");
-            if(add) { add.nome = nome; add.valor = valor; } else DB.adicionais.push({ id: 'add_'+Date.now(), nome, valor });
-            StorageManager.save(); UI.fecharModal(); this.renderAdicionais();
-        });
-    },
-    excluirAdicional: function(id) { if(confirm("Deseja excluir?")) { DB.adicionais = DB.adicionais.filter(a => a.id !== id); StorageManager.save(); UI.fecharModal(); this.renderAdicionais(); } }
+    salvarConfiguracoes: function() {
+        DB.configuracoes.nomeEmpresa = document.getElementById('config-empresa').value.trim();
+        DB.configuracoes.telefone = document.getElementById('config-telefone').value.trim();
+        DB.configuracoes.kerf = UI.parseNumero(document.getElementById('config-kerf').value);
+        DB.configuracoes.observacaoPadrao = document.getElementById('config-obs').value.trim();
+        StorageManager.save(); alert("Configurações salvas!");
+    }
 };
 
 App.renderizarPrecos = function() { CRUD.init(); };
+App.renderizarConfiguracoes = function() { CRUD.renderConfiguracoes(); };
 
-// --- INICIALIZAÇÃO ---
 window.onload = function() { App.iniciar(); };
 </script>
 </body>
