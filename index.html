@@ -1,788 +1,996 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio DM - Marcenaria</title>
-  <style>
-    :root {
-      --bg: #121826; --card: #1b2436; --accent: #10b981; --text: #f3f4f6;
-      --text-dim: #9ca3af; --border: #2d3748; --danger: #ef4444; --warning: #f59e0b;
-      --blue: #3b82f6; --purple: #8b5cf6;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; padding-bottom: 50px; max-width: 600px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); }
-    header h1 { font-size: 1.2rem; color: var(--accent); display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .btn-voltar-home { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
-    .btn-voltar-home:hover { background: var(--border); color: #fff; }
-    .card { background-color: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
-    .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 6px; }
-    label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-top: 10px; margin-bottom: 4px; font-weight: 500; }
-    input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background-color: #0f172a; color: #fff; font-size: 0.95rem; }
-    textarea { resize: vertical; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent); color: #000; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 14px; transition: 0.3s; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; background-color: #4b5563; color: #9ca3af; }
-    .btn-sec { background-color: var(--blue); color: #fff; margin-top: 12px; }
-    .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
-    .btn-danger { background-color: var(--danger); color: #fff; }
-    .file-input-wrapper { border: 2px dashed var(--border); border-radius: 8px; padding: 16px 10px; text-align: center; cursor: pointer; margin-top: 10px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; color: var(--text); }
-    .file-input-wrapper input { display: none; }
-    #preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; display: none; }
-    .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
-    .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; }
-    .tab.active { background: var(--accent); color: #000; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-    th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { color: var(--text-dim); }
-    .status-msg { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; display: none; }
-    .error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-    .loading { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
-    .btn-wsp { background-color: #25d366; color: #fff; margin-top: 10px; text-decoration: none; display: block; text-align: center; border-radius: 8px; padding: 12px; font-weight: bold; }
-    .prancha-container { background: #f8fafc; color: #0f172a; padding: 16px; border-radius: 8px; border: 2px solid #cbd5e1; margin-top: 12px; font-family: 'Segoe UI', Arial, sans-serif; }
-    .prancha-header { text-align: center; font-weight: bold; font-size: 0.9rem; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .prancha-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    @media (min-width: 600px) { .prancha-grid { grid-template-columns: 1.2fr 0.8fr; } }
-    .cad-box { background: #ffffff; border: 2px solid #334155; border-radius: 4px; padding: 12px; position: relative; }
-    .cad-title { font-size: 0.75rem; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
-    .svg-cad { width: 100%; height: auto; max-height: 380px; display: block; margin: 0 auto; }
-    .info-medidas { background: #f1f5f9; border-left: 4px solid #10b981; padding: 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; }
-    .info-medidas p { margin-bottom: 4px; }
-    .info-medidas strong { color: #0f172a; }
-    .item-card { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .proj-card { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .cli-card { flex-direction: column; align-items: stretch; }
-    .calc-box { background: #0f172a; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
-    .calc-box h4 { font-size: 0.95rem; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .badge-status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
-    .badge-ok { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
-    .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-    .ia-badge { background: rgba(139, 92, 246, 0.2); color: var(--purple); font-size: 0.7rem; padding: 3px 6px; border-radius: 4px; margin-left: 6px; }
-    .instrucao-orcamento { font-size: 0.8rem; color: var(--accent); text-align: center; margin-top: 8px; margin-bottom: -4px;}
-    .alert-min-price { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); padding: 8px; border-radius: 6px; font-size: 0.85rem; margin-top: 10px; display: none;}
-    @media print {
-      body { background: #fff; color: #000; padding: 0; }
-      header, .card:not(#resultadoCard), .btn, .tabs, .calc-box, .file-input-wrapper, .instrucao-orcamento { display: none !important; }
-      #resultadoCard { border: none; padding: 0; background: #fff; }
-      #abaComercial { display: block !important; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Studio DM — Orçamento Rápido v1.1</title>
+    <style>
+        :root {
+            --bg: #121826;
+            --card: #1b2436;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --text: #f3f4f6;
+            --text-dim: #9ca3af;
+            --border: #2d3748;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding-bottom: 80px;
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        h1, h2, h3 { color: var(--text); margin-bottom: 16px; font-weight: 600; }
+        h1 { font-size: 24px; text-align: center; color: var(--accent); }
+        h2 { font-size: 20px; margin-top: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px;}
+        p { color: var(--text-dim); margin-bottom: 16px; font-size: 14px; }
+
+        /* Navigation */
+        .nav-bottom {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+        .nav-bottom button {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            width: 20%;
+        }
+        .nav-bottom button.active { color: var(--accent); font-weight: bold; }
+        .nav-icon { font-size: 20px; }
+
+        /* Views */
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Forms */
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+        label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--text-dim); }
+        
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%; background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); padding: 14px; border-radius: 8px; font-size: 16px;
+            outline: none; transition: border 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+        
+        .checkbox-group {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg); border: 1px solid var(--border); padding: 12px;
+            border-radius: 8px; margin-bottom: 8px; cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px; height: 20px; accent-color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--accent); color: #fff; border: none; padding: 16px;
+            width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold;
+            cursor: pointer; text-align: center; margin-bottom: 12px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: var(--border); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: var(--danger-hover); }
+        .btn-small { padding: 8px 12px; font-size: 14px; width: auto; margin-bottom: 0;}
+
+        /* Cards & Dash */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); padding: 16px; border-radius: 8px; text-align: center; }
+        .stat-card.full-width { grid-column: 1 / -1; }
+        .stat-value { font-size: 24px; font-weight: bold; color: var(--accent); margin-top: 4px; }
+
+        /* Resumo Visual */
+        .resumo-box { background: #000; border: 2px solid var(--accent); border-radius: 8px; padding: 16px; margin-top: 24px; }
+        .resumo-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
+        .resumo-row.dim { color: var(--text-dim); }
+        .resumo-divider { border-top: 1px solid var(--border); margin: 12px 0; }
+        .resumo-subtotal { font-weight: bold; color: var(--text); }
+        .resumo-total { border-top: 1px dashed var(--border); margin-top: 12px; padding-top: 12px; font-size: 22px; font-weight: bold; color: var(--accent); text-align: right; display: flex; justify-content: space-between; align-items: center;}
+
+        /* Lists */
+        .list-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
+        .list-item:last-child { border-bottom: none; }
+        .list-item-info strong { display: block; font-size: 16px; margin-bottom: 4px; }
+        .list-item-info span { color: var(--text-dim); font-size: 13px; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; padding: 16px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--card); width: 100%; max-width: 400px; border-radius: 8px; padding: 20px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto;}
+
+        /* Print */
+        .print-only { display: none; }
+        
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .nav-bottom, .no-print { display: none !important; }
+            .app-container { max-width: 100%; padding: 0; }
+            .print-only { display: block; }
+            .resumo-box { border: 1px solid #000; background: #fff; color: #000; }
+            .resumo-total, .resumo-subtotal { color: #000; }
+            .resumo-total { border-top: 1px solid #000; }
+            .resumo-row.dim { color: #444; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ==================== PÁGINA INICIAL ==================== -->
-  <div id="viewHome" class="main-view" style="text-align: center; padding-top: 40px;">
-    <h1 style="font-size: 2.2rem; color: var(--accent); margin-bottom: 6px;">Studio DM</h1>
-    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 40px;">Sistema de Engenharia e Orçamento (Fase 1.5)</p>
+<div class="app-container no-print">
+    <!-- VISÃO: INÍCIO -->
+    <div id="view-inicio" class="view active">
+        <h1>Studio DM</h1>
+        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido</p>
+        
+        <div class="stats-grid" style="margin-top: 32px;">
+            <div class="stat-card">
+                <div style="font-size: 14px; color: var(--text-dim);">Orçamentos Realizados</div>
+                <div class="stat-value" id="dash-qtd">0</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 14px; color: var(--text-dim);">Último Orçamento</div>
+                <div class="stat-value" id="dash-ultimo" style="font-size: 16px; line-height: 24px; margin-top: 8px;">-</div>
+            </div>
+            <div class="stat-card full-width">
+                <div style="font-size: 14px; color: var(--text-dim);">Valor Total Orçado</div>
+                <div class="stat-value" id="dash-total-orcado">R$ 0,00</div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="UI.mudarVisao('view-novo-orcamento'); App.iniciarNovoOrcamento();">
+            ➕ FAZER NOVO ORÇAMENTO
+        </button>
+        <button class="btn btn-outline" onclick="UI.mudarVisao('view-historico')">
+            📋 VER HISTÓRICO
+        </button>
+    </div>
+
+    <!-- VISÃO: NOVO ORÇAMENTO -->
+    <div id="view-novo-orcamento" class="view">
+        <h2>Novo Orçamento</h2>
+        <div class="card">
+            <div class="form-group">
+                <label>Cliente *</label>
+                <input type="text" id="orc-cliente" placeholder="Nome do cliente" oninput="App.calcularTempoReal()">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Perfil de Preço</label>
+                    <select id="orc-perfil" onchange="App.calcularTempoReal()"></select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Móvel *</label>
+                    <select id="orc-categoria" onchange="App.calcularTempoReal()"></select>
+                </div>
+            </div>
+
+            <!-- Alterado para inputmode decimal para facilitar digitação de vírgula/ponto -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Largura (m) *</label>
+                    <input type="text" inputmode="decimal" id="orc-largura" placeholder="Ex: 2,40" oninput="App.calcularTempoReal()">
+                </div>
+                <div class="form-group">
+                    <label>Altura (m) *</label>
+                    <input type="text" inputmode="decimal" id="orc-altura" placeholder="Ex: 2,60" oninput="App.calcularTempoReal()">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label style="color: var(--accent); font-size: 16px; font-weight: bold;" id="orc-area-display">Área total: 0,00 m²</label>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Adicionais (Fixo)</h3>
+            <div id="orc-adicionais-container"></div>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label>Desconto (%)</label>
+                <input type="text" inputmode="decimal" id="orc-desconto" placeholder="Ex: 5" oninput="App.calcularTempoReal()">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Observações do Orçamento (Opcional)</label>
+                <textarea id="orc-observacao" rows="3" placeholder="Ex: Valor considerando MDF Branco TX..."></textarea>
+            </div>
+        </div>
+
+        <!-- RESUMO EM TEMPO REAL -->
+        <div class="resumo-box" id="orc-resumo-box" style="display: none;">
+            <div style="text-align: center; margin-bottom: 12px; color: var(--accent); font-weight: bold;">RESUMO DO ORÇAMENTO</div>
+            <div id="orc-resumo-content"></div>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <button class="btn" id="btn-salvar-orcamento" onclick="App.salvarOrcamento()" style="display: none;">💾 SALVAR ORÇAMENTO</button>
+        </div>
+    </div>
+
+    <!-- VISÃO: DETALHE DO ORÇAMENTO -->
+    <div id="view-detalhe" class="view">
+        <h2>Orçamento Salvo</h2>
+        <div class="resumo-box" id="detalhe-resumo-content" style="margin-top: 0; margin-bottom: 24px;"></div>
+        
+        <button class="btn" onclick="App.enviarWhatsApp()">📱 Enviar pelo WhatsApp</button>
+        <button class="btn btn-outline" onclick="App.imprimir()">🖨️ Imprimir Orçamento</button>
+        <button class="btn btn-outline" onclick="App.duplicarOrcamento()">📋 Duplicar para Novo</button>
+        <button class="btn btn-danger" onclick="App.excluirOrcamentoAtual()">🗑️ Excluir Orçamento</button>
+    </div>
+
+    <!-- VISÃO: HISTÓRICO -->
+    <div id="view-historico" class="view">
+        <h2>Histórico de Orçamentos</h2>
+        <div id="historico-lista"></div>
+    </div>
+
+    <!-- VISÃO: PREÇOS -->
+    <div id="view-precos" class="view">
+        <h2>Tabela de Preços por m²</h2>
+        <p>Valores baseados nos perfis comerciais.</p>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Categorias</h3>
+                <button class="btn-small btn-outline" onclick="App.novaCategoria()">+ Novo</button>
+            </div>
+            <div id="lista-categorias"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Adicionais Fixos</h3>
+                <button class="btn-small btn-outline" onclick="App.novoAdicional()">+ Novo</button>
+            </div>
+            <div id="lista-adicionais"></div>
+        </div>
+    </div>
+
+    <!-- VISÃO: CONFIGURAÇÕES -->
+    <div id="view-configuracoes" class="view">
+        <h2>Configurações</h2>
+        <div class="card">
+            <div class="form-group">
+                <label>Nome da Empresa</label>
+                <input type="text" id="config-empresa">
+            </div>
+            <div class="form-group">
+                <label>Telefone (WhatsApp)</label>
+                <input type="text" id="config-telefone" placeholder="Ex: 5511999999999">
+            </div>
+            <div class="form-group">
+                <label>Observação Padrão</label>
+                <textarea id="config-obs" rows="4"></textarea>
+            </div>
+            <button class="btn" onclick="App.salvarConfiguracoes()">Salvar Configurações</button>
+        </div>
+
+        <div class="card">
+            <h3>Backup de Dados</h3>
+            <p>Exporte seus dados para segurança ou importe de outro aparelho.</p>
+            <button class="btn btn-outline" onclick="StorageManager.exportBackup()">📥 Exportar Backup (JSON)</button>
+            
+            <label class="btn btn-outline" style="margin-bottom: 0;">
+                📤 Importar Backup
+                <input type="file" id="input-import" accept=".json" style="display: none;" onchange="StorageManager.importBackup(event)">
+            </label>
+        </div>
+    </div>
+</div>
+
+<!-- PRINT TEMPLATE -->
+<div id="print-area" class="print-only" style="padding: 20px; font-family: sans-serif;">
+    <h1 id="print-empresa" style="color: black; margin-bottom: 20px;">Studio DM</h1>
+    <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">ORÇAMENTO COMERCIAL</h2>
     
-    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto;">
-      <button class="btn" style="font-size: 1.1rem; padding: 16px;" onclick="UI.mudarVisao('projeto')">📐 Orçamento Estruturado</button>
-      <button class="btn btn-sec" style="font-size: 1.1rem; padding: 16px; background-color: var(--purple);" onclick="UI.mudarVisao('metodos')">🛠️ Central de Cadastros</button>
-      <button class="btn btn-sec" style="font-size: 1.1rem; padding: 16px; background-color: var(--blue);" onclick="UI.mudarVisao('clientes')">📁 CRM & Histórico</button>
-      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: var(--warning); color: #fff;" onclick="UI.mudarVisao('compras')">🛒 Compras e Insumos</button>
-      <button class="btn" style="font-size: 1.1rem; padding: 16px; background-color: #334155; color: #fff;" onclick="UI.mudarVisao('config')">⚙️ Configurações IA</button>
-    </div>
-  </div>
+    <div id="print-content" style="margin-top: 20px; font-size: 16px; line-height: 1.6;"></div>
+    
+    <div style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 12px; color: #444;" id="print-obs"></div>
+</div>
 
-  <header id="appHeader" style="display: none;">
-    <h1 onclick="UI.mudarVisao('home')">📐 Studio DM</h1>
-    <button class="btn-voltar-home" onclick="UI.mudarVisao('home')">🏠 Início</button>
-  </header>
+<!-- BOTTOM NAVIGATION -->
+<div class="nav-bottom no-print">
+    <button onclick="UI.mudarVisao('view-inicio'); App.atualizarDash();" id="nav-view-inicio" class="active">
+        <span class="nav-icon">🏠</span><span>Início</span>
+    </button>
+    <button onclick="UI.mudarVisao('view-novo-orcamento'); App.iniciarNovoOrcamento();" id="nav-view-novo-orcamento">
+        <span class="nav-icon">➕</span><span>Novo</span>
+    </button>
+    <button onclick="UI.mudarVisao('view-historico'); App.renderizarHistorico();" id="nav-view-historico">
+        <span class="nav-icon">📋</span><span>Histórico</span>
+    </button>
+    <button onclick="UI.mudarVisao('view-precos'); App.renderizarPrecos();" id="nav-view-precos">
+        <span class="nav-icon">💰</span><span>Preços</span>
+    </button>
+    <button onclick="UI.mudarVisao('view-configuracoes'); App.renderizarConfiguracoes();" id="nav-view-configuracoes">
+        <span class="nav-icon">⚙️</span><span>Config</span>
+    </button>
+</div>
 
-  <!-- ==================== VISÃO 1: ORÇAMENTO ==================== -->
-  <div id="viewProjeto" class="main-view" style="display: none;">
-    <div class="card" id="inputCard">
-      <h2>📝 Novo Projeto</h2>
-      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">Descreva o móvel ou envie foto. A IA extrai os dados, e nosso <b>Motor de Engenharia</b> faz o cálculo.</p>
-      
-      <label for="descricaoMovel">Instruções do Marceneiro</label>
-      <textarea id="descricaoMovel" rows="4" placeholder="Ex: Roupeiro com 3 gavetas embaixo, maleiro em cima e vão com cabideiro no meio. L=1800mm A=2500mm P=600mm..." oninput="UI.validarEntradaOrcamento()"></textarea>
-      
-      <div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
-        MDF Principal (Caixa): <strong id="lblMdfAtual" style="color:var(--accent);"></strong>
-      </div>
-
-      <label>Imagem do Croqui (Opcional)</label>
-      <div class="grid-2">
-        <div class="file-input-wrapper" onclick="document.getElementById('fileCam').click()">
-          <span>📷 Tirar Foto</span><input type="file" id="fileCam" accept="image/*" capture="environment" onchange="UI.carregarImagem(event)">
-        </div>
-        <div class="file-input-wrapper" onclick="document.getElementById('fileGaleria').click()">
-          <span>🖼️ Galeria</span><input type="file" id="fileGaleria" accept="image/*" onchange="UI.carregarImagem(event)">
-        </div>
-      </div>
-      <img id="preview-img" alt="Preview do Croqui">
-
-      <p class="instrucao-orcamento" id="msgBotao">Digite uma descrição ou envie uma imagem.</p>
-      <button class="btn" id="btnProcessar" onclick="App.processarComIA()" disabled>⚡ Identificar Dados com IA</button>
-      <div id="status" class="status-msg"></div>
-    </div>
-
-    <div id="confirmacaoIACard" class="card" style="display: none; border-color: var(--accent);">
-      <h2>🤖 Validação de Dados da IA</h2>
-      <p style="font-size: 0.82rem; color: var(--text-dim); margin-bottom: 12px;">A IA não calcula preços nem peças. Ela apenas extraiu o layout. Confirme os dados abaixo para o Motor de Engenharia agir.</p>
-      <div id="dadosProjetoIA" style="background: #0f172a; border-radius: 8px; padding: 12px; font-size: 0.85rem; line-height: 1.6; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
-      <button class="btn" style="background-color: var(--accent); color: #000; margin-top: 16px;" onclick="App.confirmarEGerarEngenharia()">⚙️ Calcular Engenharia & Preços</button>
-      <button class="btn btn-danger" style="margin-top: 8px;" onclick="UI.cancelarConfirmacaoIA()">❌ Corrigir Dados</button>
-    </div>
-
-    <!-- RESULTADOS (ENGENHARIA E PREÇO) -->
-    <div class="card" id="resultadoCard" style="display: none;">
-      <div class="tabs">
-        <div class="tab active" id="tabComercialBtn" onclick="UI.mudarAba('comercial')">Comercial</div>
-        <div class="tab" id="tabTecnicaBtn" onclick="UI.mudarAba('tecnica')">Engenharia/Corte</div>
-        <div class="tab" id="tabEsbocoBtn" onclick="UI.mudarAba('esboco')">📐 Prancha</div>
-      </div>
-
-      <div id="abaComercial">
-        <label>👤 Cliente / Identificação do Projeto</label>
-        <input type="text" id="nomeCliente" placeholder="Ex: Cliente João - Armário Cozinha">
-
-        <h3 style="margin-top: 14px;">Resumo do Projeto</h3>
-        <p id="resumoTexto" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-dim);"></p>
-        
-        <div style="margin-top: 16px; background: #0f172a; padding: 12px; border-radius: 8px;">
-            <label style="margin-top:0;">Perfil de Preço / Margem Aplicada</label>
-            <select id="selectPerfilPreco" onchange="UI.atualizarVisualizacaoPreco()"></select>
-            <div id="alertaPrecoMinimo" class="alert-min-price">⚠️ Atenção: Valor final está abaixo do preço mínimo seguro configurado.</div>
-
-            <div class="grid-2" style="margin-top:12px;">
-                <div>
-                    <span style="font-size: 0.75rem; color: var(--text-dim);">Custo Total (Fábrica):</span>
-                    <strong id="valCustoFabrica" style="display:block; font-size: 1.1rem; color: #f3f4f6;">R$ 0,00</strong>
-                </div>
-                <div style="text-align:right;">
-                    <span style="font-size: 0.85rem; color: var(--text-dim);">Preço Final de Venda:</span>
-                    <h2 id="valorTotalVenda" style="color: var(--accent); font-size: 1.5rem; margin-top: 4px;">R$ 0,00</h2>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn" style="background-color: #10b981; color:#000;" onclick="App.salvarProjeto()">💾 Salvar Orçamento</button>
-        <button class="btn btn-sec" style="background-color: #475569;" onclick="window.print()">🖨️ Imprimir Proposta</button>
-        <a id="btnWhatsapp" href="#" target="_blank" class="btn-wsp">📱 Enviar Resumo pelo WhatsApp</a>
-      </div>
-
-      <div id="abaTecnica" style="display: none;">
-        <div class="calc-box">
-          <h4>🧮 Custos Consolidados <span class="ia-badge">Determinístico</span></h4>
-          <table style="width:100%; border:none;">
-            <tr><td style="border:none; color:var(--text-dim);">Chapas (MDF/Fundo)</td><td style="border:none; text-align:right;" id="tCustoChapas">R$ 0,00</td></tr>
-            <tr><td style="border:none; color:var(--text-dim);">Fita de Borda</td><td style="border:none; text-align:right;" id="tCustoFita">R$ 0,00</td></tr>
-            <tr><td style="border:none; color:var(--text-dim);">Ferragens Automáticas</td><td style="border:none; text-align:right;" id="tCustoFerragens">R$ 0,00</td></tr>
-            <tr style="border-top:1px solid var(--border); font-weight:bold;">
-                <td style="border:none; padding-top:8px;">Custo Direto Total:</td>
-                <td style="border:none; text-align:right; padding-top:8px;" id="tCustoTotalBase">R$ 0,00</td>
-            </tr>
-          </table>
-        </div>
-
-        <h3>Lista de Peças de Corte</h3>
-        <table id="tabelaPecas">
-          <thead><tr><th>Peça</th><th>Qtd</th><th>Medidas (mm)</th><th>Material</th></tr></thead>
-          <tbody></tbody>
-        </table>
-
-        <h3 style="margin-top: 16px;">Ferragens Aplicadas por Regra</h3>
-        <ul id="listaInsumos" style="margin-top: 8px; font-size: 0.85rem; padding-left: 18px; color: var(--text-dim);"></ul>
-      </div>
-
-      <div id="abaEsboco" style="display: none;">
-        <h3>📐 Prancha Técnica</h3>
-        <div class="prancha-container" id="pranchaArea">
-          <div class="prancha-header">Studio DM — Vista e Distribuição</div>
-          <div class="prancha-grid">
-            <div class="cad-box">
-              <div class="cad-title">Esquema Paramétrico Frontal</div>
-              <div id="svgContainer"></div>
-            </div>
-            <div>
-              <div class="info-medidas">
-                <div class="cad-title" style="text-align:left; margin-bottom:4px;">Dimensões Globais</div>
-                <p><strong>L:</strong> <span id="lblLargura">0,00 m</span></p>
-                <p><strong>A:</strong> <span id="lblAltura">0,00 m</span></p>
-                <p><strong>P:</strong> <span id="lblProfundidade">00 cm</span></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== VISÃO: CADASTROS ==================== -->
-  <div id="viewMetodos" class="main-view" style="display: none;">
-    <div class="card">
-      <h2>🏷️ Gestão de Catálogos e Preços</h2>
-      
-      <div class="tabs" style="margin-top:12px;">
-        <div class="tab active" id="tabCadMat" onclick="UI.mudarAbaCadastro('materiais')">Materiais</div>
-        <div class="tab" id="tabCadFer" onclick="UI.mudarAbaCadastro('ferragens')">Ferragens</div>
-        <div class="tab" id="tabCadSer" onclick="UI.mudarAbaCadastro('servicos')">Serviços</div>
-      </div>
-
-      <div style="margin-top: 16px; border: 1px solid var(--border); padding: 12px; border-radius: 8px; background:#0f172a;">
-        <label id="lblAcaoTabela">➕ Adicionar Novo Item</label>
-        <div class="grid-2">
-          <input type="text" id="cadItemNome" placeholder="Nome do Produto">
-          <input type="number" id="cadItemPreco" placeholder="Custo (R$)">
-        </div>
-        <div id="extraCadFields"></div>
-        <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <button class="btn btn-sec" id="btnSalvarItem" style="margin-top: 0; flex: 1;" onclick="App.salvarItemCadastro()">Adicionar</button>
-        </div>
-      </div>
-      
-      <label style="margin-top: 24px;">📋 Itens Ativos na Categoria:</label>
-      <div id="listaItensTabela"></div>
-    </div>
-  </div>
-
-  <!-- ==================== VISÃO: CRM ==================== -->
-  <div id="viewClientes" class="main-view" style="display: none;">
-    <div class="card">
-      <h2>📁 Histórico de Orçamentos (Versões Salvas)</h2>
-      <div id="listaHistorico"></div>
-    </div>
-  </div>
-
-  <!-- ==================== VISÃO: COMPRAS ==================== -->
-  <div id="viewCompras" class="main-view" style="display: none;">
-    <div class="card">
-        <h2>🛒 Consolidador de Engenharia (Compras)</h2>
-        <button onclick="App.gerarListaCompras()" class="btn">Processar Projetos Aprovados</button>
-        <div class="resultado-lista" style="margin-top: 16px; background: #0f172a; padding: 10px; border-radius: 8px; overflow-x: auto;">
-            <table id="tabela-compras">
-                <thead><tr><th>Categoria</th><th>Material / Insumo</th><th>Total Consolidado</th></tr></thead>
-                <tbody id="corpo-tabela-compras">
-                    <tr><td colspan="3" style="text-align:center; color:#9ca3af;">Clique acima para consolidar.</td></tr>
-                </tbody>
-            </table>
+<!-- MODAL GENÉRICO -->
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">Título</h3>
+        <div id="modal-body"></div>
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button class="btn btn-outline" onclick="UI.fecharModal()" style="margin: 0;">Cancelar</button>
+            <button class="btn" id="modal-save" style="margin: 0;">Salvar</button>
         </div>
     </div>
-  </div>
+</div>
 
-  <!-- ==================== VISÃO: CONFIGURAÇÃO IA ==================== -->
-  <div id="viewConfig" class="main-view" style="display: none;">
-    <div class="card">
-      <h2>🔑 Conexão IA (API Gateway)</h2>
-      <div id="statusApiKeyBadge"></div>
-      <input type="password" id="apiKey" placeholder="Google Gemini API Key" onchange="StorageManager.saveConfig()">
-    </div>
-    <div class="card">
-      <h2>📚 Manuais e Regras Técnicas (Contexto)</h2>
-      <textarea id="notebookContexto" rows="5" style="font-size: 0.8rem;" onchange="StorageManager.saveConfig()"></textarea>
-    </div>
-  </div>
+<script>
+/* ==========================================================================
+   1. BANCO DE DADOS (Estado Inicial / Estrutura)
+   ========================================================================== */
+const DEFAULT_DB = {
+    perfis: [
+        { id: "p1", nome: "Padrão" },
+        { id: "p2", nome: "Alto Padrão" },
+        { id: "p3", nome: "Arquiteto / Parceiro" }
+    ],
+    categorias: [
+        { id: "cat_1", nome: "Guarda-roupa", precos: { "p1": 850, "p2": 1100, "p3": 750 } },
+        { id: "cat_2", nome: "Cozinha", precos: { "p1": 900, "p2": 1200, "p3": 800 } },
+        { id: "cat_3", nome: "Painel Home", precos: { "p1": 700, "p2": 950, "p3": 600 } },
+        { id: "cat_4", nome: "Banheiro", precos: { "p1": 800, "p2": 1050, "p3": 700 } }
+    ],
+    adicionais: [
+        { id: "add_1", nome: "LED", valor: 350 },
+        { id: "add_2", nome: "Espelho", valor: 500 },
+        { id: "add_3", nome: "Vidro", valor: 450 }
+    ],
+    orcamentos: [],
+    configuracoes: {
+        nomeEmpresa: "Studio DM Ambientes Planejados",
+        telefone: "",
+        observacaoPadrao: "Orçamento estimativo baseado nas dimensões informadas. Valores sujeitos à confirmação após levantamento e definição final do projeto."
+    }
+};
 
-  <script>
-    // =========================================================
-    // ESTRUTURA DE DADOS CENTRAL (StorageManager & DB)
-    // =========================================================
-    const DB = {
-        materiais: [],
-        ferragens: [],
-        servicos: [],
-        regras: [],
-        modulos: [],
-        projetos: [],
-        clientes: [],
-        perfisPreco: [
-            { id: 'p1', nome: 'Padrão (Markup 1.8)', markup: 1.8, descontoMax: 10 },
-            { id: 'p2', nome: 'Alto Padrão (Markup 2.2)', markup: 2.2, descontoMax: 15 },
-            { id: 'p3', nome: 'Arquiteto / Parceiro (Markup 1.5)', markup: 1.5, descontoMax: 5 }
-        ],
-        configuracoes: {
-            espCaixa: 15,
-            espFundo: 6,
-            folgaGaveta: 26,
-            margemFitaBorda: 1.15, // 15% perda
-            rendimentoChapa: 0.70, // 70%
-            apiKey: '',
-            contexto: ''
-        }
-    };
+let DB = {};
 
-    const StorageManager = {
-        load: function() {
-            this.migrarDadosAntigos();
-            const storedDB = localStorage.getItem('StudioDM_DB_v2');
-            if (storedDB) {
-                const parsed = JSON.parse(storedDB);
-                Object.assign(DB, parsed);
+/* ==========================================================================
+   2. STORAGE MANAGER (Persistência)
+   ========================================================================== */
+const StorageManager = {
+    key: "StudioDM_OrcamentoM2_DB_v1", // Mantido conforme instrução
+    load: function() {
+        try {
+            const data = localStorage.getItem(this.key);
+            if (data) {
+                DB = JSON.parse(data);
+                // Garantir integridade mínima caso falte algo
+                if(!DB.perfis) DB.perfis = DEFAULT_DB.perfis;
+                if(!DB.configuracoes) DB.configuracoes = DEFAULT_DB.configuracoes;
             } else {
-                this.popularDadosBase();
+                DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+                this.save();
             }
-        },
-        save: function() {
-            localStorage.setItem('StudioDM_DB_v2', JSON.stringify(DB));
-        },
-        saveConfig: function() {
-            DB.configuracoes.apiKey = document.getElementById('apiKey').value;
-            DB.configuracoes.contexto = document.getElementById('notebookContexto').value;
-            this.save();
-            UI.atualizarBadgeApiKey();
-        },
-        popularDadosBase: function() {
-            DB.materiais.push(
-                { id: 'mdf-b', categoria: 'MDF', nome: 'MDF Branco TX 15mm (Chapa 2.75x1.85)', preco: 250, espessura: 15, tipo: 'chapa' },
-                { id: 'mdf-f', categoria: 'MDF', nome: 'MDF Fundo Branco 6mm (Chapa)', preco: 180, espessura: 6, tipo: 'chapa' },
-                { id: 'fita-b', categoria: 'FITA', nome: 'Fita Borda Branca 22mm (Metro)', preco: 1.5, tipo: 'metro' }
-            );
-            DB.ferragens.push(
-                { id: 'fgv-av', categoria: 'GAVETA', fabricante: 'FGVtn', nome: 'Sistema AvantBox Slim', preco: 150, unidade: 'kit', regrasAplicacao: { tipoGaveta: ['comum'] } },
-                { id: 'rom-460', categoria: 'PERFIL', fabricante: 'Rometal', nome: 'Perfil PerfiLED RM-460', preco: 85, unidade: 'barra' },
-                { id: 'dob-35', categoria: 'DOBRADICA', fabricante: 'Generico', nome: 'Dobradiça 35mm', preco: 12, unidade: 'unid', regrasAplicacao: { portaAlturaMax: 800 } },
-                { id: 'cab-al', categoria: 'CABIDEIRO', fabricante: 'Generico', nome: 'Tubo Cabideiro Oval', preco: 25, unidade: 'metro' }
-            );
-            this.save();
-        },
-        migrarDadosAntigos: function() {
-            if (localStorage.getItem('migracao_v2_concluida')) return;
-            let velhaTabela = JSON.parse(localStorage.getItem('tabela_precos') || localStorage.getItem('tabela_mdf') || "[]");
-            let velhoHistorico = JSON.parse(localStorage.getItem('historico_projetos') || "[]");
-            
-            if(velhaTabela.length > 0 || velhoHistorico.length > 0) {
-                localStorage.setItem('backupLegacy_DB', JSON.stringify({tabela: velhaTabela, historico: velhoHistorico}));
-                velhaTabela.forEach(item => {
-                    let cat = (item.categoria || '').toUpperCase();
-                    if(cat.includes('MDF') || cat.includes('CHAPA')) DB.materiais.push({ id: `mig-${Date.now()}-${Math.random()}`, categoria: 'MDF', nome: item.nome, preco: item.preco, espessura: item.espessuraMM || 15 });
-                    else DB.ferragens.push({ id: `mig-${Date.now()}-${Math.random()}`, categoria: 'GERAL', nome: item.nome, preco: item.preco, unidade: item.unidade });
-                });
-                velhoHistorico.forEach(hist => { DB.projetos.push(hist); });
-            }
-            localStorage.setItem('migracao_v2_concluida', 'true');
+        } catch (e) {
+            alert("Erro ao carregar banco de dados. Restaurando padrão.");
+            DB = JSON.parse(JSON.stringify(DEFAULT_DB));
         }
-    };
-
-    // =========================================================
-    // SERVIÇOS & INTEGRAÇÕES (API, IA)
-    // =========================================================
-    const AIService = {
-        interpretar: async function(descricao, imagemBase64) {
-            const key = DB.configuracoes.apiKey;
-            if (!key) throw new Error("Chave de API não configurada.");
-            
-            const prompt = `Você é um intérprete técnico estruturado de marcenaria.
-Analise a instrução: "${descricao}". 
-Sua ÚNICA função é retornar OBRIGATORIAMENTE um JSON. NÃO calcule preços, peças ou ferragens.
-{
-    "tipoMovel": "roupeiro",
-    "dimensoes": { "largura": 1800, "altura": 2500, "profundidade": 600 },
-    "configuracao": { "modulos": 3, "portas": 3, "gavetas": 3, "prateleiras": 6, "maleiro": true, "cabideiros": 2 },
-    "observacoes": "Resumo"
-}`;
-            const parts = [{ text: prompt }];
-            if (imagemBase64) parts.push({ inline_data: { mime_type: "image/jpeg", data: imagemBase64 } });
-            
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: parts }] })
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-            
-            let jsonString = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
-            return JSON.parse(jsonString);
-        }
-    };
-
-    // =========================================================
-    // MOTOR DE ENGENHARIA (Core Calculador)
-    // =========================================================
-    const Engenharia = {
-        validarProjetoIA: function(jsonProj) {
-            if(!jsonProj || !jsonProj.dimensoes) return false;
-            if(jsonProj.dimensoes.largura <= 0 || jsonProj.dimensoes.altura <= 0) return false;
-            return true;
-        },
+    },
+    save: function() {
+        localStorage.setItem(this.key, JSON.stringify(DB));
+    },
+    exportBackup: function() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(DB));
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", dataStr);
+        anchor.setAttribute("download", `StudioDM_Backup_${new Date().getTime()}.json`);
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+    },
+    importBackup: function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
         
-        calcularProjeto: function(projetoStruturado) {
-            const L = projetoStruturado.dimensoes.largura;
-            const A = projetoStruturado.dimensoes.altura;
-            const P = projetoStruturado.dimensoes.profundidade;
-            const config = projetoStruturado.configuracao;
-            const modulos = config.modulos > 0 ? config.modulos : 1;
-            const espCaixa = DB.configuracoes.espCaixa;
-            
-            let pecas = [];
-            const addP = (n, q, c, l, esp, matCat) => pecas.push({ nome: n, quantidade: q, comprimento: Math.round(c), largura: Math.round(l), espessura: esp, materialCat: matCat });
-            
-            addP('Lateral Esq/Dir', 2, A, P, espCaixa, 'MDF');
-            addP('Base/Tampo', 2, L - (espCaixa*2), P, espCaixa, 'MDF');
-            if(modulos > 1) addP('Divisória', modulos - 1, A - (espCaixa*2), P - 20, espCaixa, 'MDF');
-            
-            let largMod = (L - (espCaixa * (modulos + 1))) / modulos;
-            if(config.prateleiras > 0) addP('Prateleira', config.prateleiras, largMod, P - 20, espCaixa, 'MDF');
-            addP('Fundo', modulos, A - 10, largMod + 10, DB.configuracoes.espFundo, 'MDF_FUNDO');
-            
-            if(config.portas > 0) {
-                let largPorta = (L / config.portas) - 3;
-                addP('Porta', config.portas, A - 6, largPorta, espCaixa, 'MDF');
-            }
-            if(config.gavetas > 0) {
-                addP('Frente Gaveta', config.gavetas, 200, largMod - 6, espCaixa, 'MDF');
-                addP('Caixa Gaveta (Lat)', config.gavetas * 2, P - 50, 150, espCaixa, 'MDF');
-            }
-
-            let ferragens = [];
-            if(config.portas > 0) {
-                let ruleDob = DB.ferragens.find(f => f.categoria === 'DOBRADICA') || {nome: 'Regra técnica não cadastrada (Dobradiça Padrão)', preco: 10};
-                ferragens.push({ item: ruleDob, qtd: config.portas * (A > 1600 ? 4 : 3) });
-            }
-            if(config.gavetas > 0) {
-                let ruleGav = DB.ferragens.find(f => f.id === 'fgv-av' || f.categoria === 'GAVETA') || {nome: 'Corrediça Telescópica', preco: 35};
-                ferragens.push({ item: ruleGav, qtd: config.gavetas });
-            }
-            if(config.cabideiros > 0) {
-                let ruleCab = DB.ferragens.find(f => f.categoria === 'CABIDEIRO') || {nome: 'Cabideiro', preco: 25};
-                ferragens.push({ item: ruleCab, qtd: config.cabideiros * (largMod/1000) });
-            }
-
-            let chapasRes = this.calcularChapas(pecas);
-            let fitaRes = this.calcularFitaBorda(pecas);
-
-            return {
-                projetoBase: projetoStruturado,
-                pecas: pecas,
-                ferragensAplicadas: ferragens,
-                chapasEstimadas: chapasRes,
-                fitaMetros: fitaRes
-            };
-        },
-
-        calcularChapas: function(pecas) {
-            let areaMDF = 0, areaFundo = 0;
-            pecas.forEach(p => {
-                let area = (p.comprimento * p.largura * p.quantidade) / 1000000;
-                if(p.materialCat === 'MDF') areaMDF += area;
-                if(p.materialCat === 'MDF_FUNDO') areaFundo += area;
-            });
-            const m2Chapa = 2.75 * 1.85; 
-            const rend = DB.configuracoes.rendimentoChapa;
-            return {
-                mdfPrincipal: Math.ceil(areaMDF / (m2Chapa * rend)) || 1,
-                mdfFundo: Math.ceil(areaFundo / (m2Chapa * rend)) || 1
-            };
-        },
-
-        calcularFitaBorda: function(pecas) {
-            let metros = 0;
-            pecas.forEach(p => {
-                if(p.materialCat === 'MDF') {
-                    metros += ((p.comprimento * 2) * p.quantidade) / 1000;
-                }
-            });
-            return metros * DB.configuracoes.margemFitaBorda;
-        }
-    };
-
-    // =========================================================
-    // CUSTOS E FORMAÇÃO DE PREÇO
-    // =========================================================
-    const Precificacao = {
-        calcularCustos: function(engData) {
-            let mdfPrinc = DB.materiais.find(m => m.id === 'mdf-b') || {preco: 250};
-            let mdfFundo = DB.materiais.find(m => m.id === 'mdf-f') || {preco: 180};
-            let fita = DB.materiais.find(m => m.id === 'fita-b') || {preco: 1.5};
-
-            let custoChapas = (engData.chapasEstimadas.mdfPrincipal * mdfPrinc.preco) + (engData.chapasEstimadas.mdfFundo * mdfFundo.preco);
-            let custoFita = (engData.fitaMetros * fita.preco);
-            
-            let custoFerragens = 0;
-            engData.ferragensAplicadas.forEach(f => {
-                custoFerragens += (f.item.preco * f.qtd);
-            });
-
-            return { chapas: custoChapas, fita: custoFita, ferragens: custoFerragens, diretoTotal: custoChapas + custoFita + custoFerragens };
-        },
-        aplicarPerfil: function(custoTotal, perfilId) {
-            const perfil = DB.perfisPreco.find(p => p.id === perfilId) || DB.perfisPreco[0];
-            const venda = custoTotal * perfil.markup;
-            const margem = ((venda - custoTotal) / venda) * 100;
-            const minPreco = custoTotal * 1.3;
-            return { venda: venda, margem: margem, perfil: perfil, minSeguro: minPreco };
-        }
-    };
-
-    // =========================================================
-    // CONTROLADOR PRINCIPAL DA UI (App & UI)
-    // =========================================================
-    const App = {
-        projetoTemporario: null,
-        engenhariaCalculada: null,
-        custosAtuais: null,
-        imagem64: "",
-        categoriaAtivaCadastro: 'materiais',
-
-        iniciar: function() {
-            StorageManager.load();
-            document.getElementById('apiKey').value = DB.configuracoes.apiKey;
-            document.getElementById('notebookContexto').value = DB.configuracoes.contexto;
-            this.atualizarSelectMDF();
-            this.renderListaCadastros();
-            UI.renderHistorico();
-            UI.atualizarBadgeApiKey();
-        },
-
-        processarComIA: async function() {
-            const desc = document.getElementById('descricaoMovel').value.trim();
-            const statusEl = document.getElementById('status');
-            statusEl.className = 'status-msg loading'; statusEl.innerText = '⏳ Identificando layout (IA Interpretadora)...'; statusEl.style.display = 'block';
-            document.getElementById('btnProcessar').disabled = true;
-
-            try {
-                const jsonIA = await AIService.interpretar(desc, this.imagem64);
-                statusEl.style.display = 'none';
-                
-                if(Engenharia.validarProjetoIA(jsonIA)) {
-                    this.projetoTemporario = jsonIA;
-                    UI.mostrarValidacaoIA(jsonIA);
-                } else {
-                    throw new Error("Dimensões inválidas retornadas. Detalhe melhor o pedido.");
-                }
-            } catch (err) {
-                statusEl.className = 'status-msg error'; statusEl.innerText = '❌ Erro: ' + err.message;
-                document.getElementById('btnProcessar').disabled = false;
-            }
-        },
-
-        confirmarEGerarEngenharia: function() {
-            document.getElementById('confirmacaoIACard').style.display = 'none';
-            document.getElementById('inputCard').style.display = 'block';
-
-            this.engenhariaCalculada = Engenharia.calcularProjeto(this.projetoTemporario);
-            this.custosAtuais = Precificacao.calcularCustos(this.engenhariaCalculada);
-
-            UI.exibirResultadosEngenharia(this.engenhariaCalculada, this.custosAtuais);
-        },
-
-        salvarProjeto: function() {
-            if(!this.engenhariaCalculada) return;
-            const perfilSel = document.getElementById('selectPerfilPreco').value;
-            const precoFin = Precificacao.aplicarPerfil(this.custosAtuais.diretoTotal, perfilSel);
-            
-            const novoProj = {
-                id: Date.now().toString(),
-                cliente: document.getElementById('nomeCliente').value || "Cliente s/ nome",
-                data: new Date().toLocaleString('pt-BR'),
-                snapshotCustos: this.custosAtuais,
-                snapshotVenda: precoFin,
-                engenharia: this.engenhariaCalculada
-            };
-            DB.projetos.unshift(novoProj);
-            StorageManager.save();
-            UI.renderHistorico();
-            alert("Orçamento (Versão Estática) Salvo com sucesso no Histórico!");
-        },
-
-        salvarItemCadastro: function() {
-            let nome = document.getElementById('cadItemNome').value;
-            let preco = parseFloat(document.getElementById('cadItemPreco').value);
-            if(!nome || isNaN(preco)) return;
-            
-            let obj = { id: `item-${Date.now()}`, nome: nome, preco: preco };
-            
-            if(this.categoriaAtivaCadastro === 'materiais') {
-                obj.categoria = 'MDF'; obj.tipo = 'chapa'; obj.espessura = 15;
-                DB.materiais.push(obj);
-            } else if (this.categoriaAtivaCadastro === 'ferragens') {
-                obj.categoria = 'GERAL'; obj.unidade = 'unid';
-                DB.ferragens.push(obj);
-            } else {
-                obj.categoria = 'SERVICO';
-                DB.servicos.push(obj);
-            }
-            StorageManager.save();
-            document.getElementById('cadItemNome').value = "";
-            document.getElementById('cadItemPreco').value = "";
-            this.renderListaCadastros();
-        },
-
-        renderListaCadastros: function() {
-            const list = document.getElementById('listaItensTabela');
-            list.innerHTML = '';
-            let arr = this.categoriaAtivaCadastro === 'materiais' ? DB.materiais : (this.categoriaAtivaCadastro === 'ferragens' ? DB.ferragens : DB.servicos);
-            
-            arr.forEach((item) => {
-                let catBadge = item.categoria || 'Geral';
-                let fabBadge = item.fabricante ? `| Fab: ${item.fabricante}` : '';
-                list.innerHTML += `
-                <div class="item-card">
-                    <div>
-                        <strong>${item.nome}</strong><br>
-                        <span style="font-size:0.7rem; color:var(--text-dim); background:#1b2436; padding:2px 4px;">${catBadge} ${fabBadge}</span><br>
-                        <span style="font-size:0.85rem; color:var(--accent);">R$ ${item.preco.toFixed(2).replace('.',',')}</span>
-                    </div>
-                </div>`;
-            });
-        },
-
-        gerarListaCompras: function() {
-            let tabela = document.getElementById('corpo-tabela-compras');
-            tabela.innerHTML = '';
-            if(DB.projetos.length === 0) { tabela.innerHTML = '<tr><td colspan="3">Nenhum projeto salvo.</td></tr>'; return; }
-            
-            let agregador = {};
-            DB.projetos.forEach(p => {
-                let eng = p.engenharia;
-                if(!eng) return;
-                let kMdf = "MDF Principal (Estimado)";
-                agregador[kMdf] = (agregador[kMdf] || 0) + eng.chapasEstimadas.mdfPrincipal;
-                eng.ferragensAplicadas.forEach(fer => {
-                    agregador[fer.item.nome] = (agregador[fer.item.nome] || 0) + fer.qtd;
-                });
-            });
-
-            for(let key in agregador) {
-                tabela.innerHTML += `<tr><td>Insumo</td><td>${key}</td><td>${agregador[key].toFixed(1)}</td></tr>`;
-            }
-        },
-
-        atualizarSelectMDF: function() {
-            let princ = DB.materiais.find(m => m.id === 'mdf-b');
-            if(princ) document.getElementById('lblMdfAtual').innerText = `${princ.nome} - R$ ${princ.preco}`;
-        }
-    };
-
-    const UI = {
-        mudarVisao: function(v) {
-            document.querySelectorAll('.main-view').forEach(el => el.style.display = 'none');
-            document.getElementById('view' + v.charAt(0).toUpperCase() + v.slice(1)).style.display = 'block';
-            document.getElementById('appHeader').style.display = v === 'home' ? 'none' : 'flex';
-            window.scrollTo(0,0);
-        },
-        mudarAba: function(aba) {
-            ['Comercial', 'Tecnica', 'Esboco'].forEach(a => {
-                document.getElementById('aba' + a).style.display = (a.toLowerCase() === aba) ? 'block' : 'none';
-                document.getElementById('tab' + a + 'Btn').className = (a.toLowerCase() === aba) ? 'tab active' : 'tab';
-            });
-            if(aba === 'esboco' && App.engenhariaCalculada) this.desenharSVG(App.engenhariaCalculada.projetoBase);
-        },
-        mudarAbaCadastro: function(cat) {
-            App.categoriaAtivaCadastro = cat;
-            ['CadMat', 'CadFer', 'CadSer'].forEach(a => document.getElementById('tab'+a).className = 'tab');
-            document.getElementById('tabCad' + cat.substring(0,3).charAt(0).toUpperCase() + cat.substring(1,3)).className = 'tab active';
-            App.renderListaCadastros();
-        },
-        carregarImagem: function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
+        if(confirm("ATENÇÃO: Importar um backup irá substituir TODOS os orçamentos e preços atuais. Deseja continuar?")) {
             const reader = new FileReader();
-            reader.onload = function(evt) {
-                App.imagem64 = evt.target.result.split(',')[1];
-                const imgEl = document.getElementById('preview-img');
-                imgEl.src = evt.target.result;
-                imgEl.style.display = 'block';
-                UI.validarEntradaOrcamento();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    // Validação simples da estrutura
+                    if(imported && imported.categorias && imported.orcamentos) {
+                        DB = imported;
+                        StorageManager.save();
+                        alert("Backup restaurado com sucesso!");
+                        App.atualizarDash();
+                        UI.mudarVisao('view-inicio');
+                    } else {
+                        alert("Arquivo de backup inválido.");
+                    }
+                } catch(err) {
+                    alert("Erro ao ler o arquivo JSON.");
+                }
             };
-            reader.readAsDataURL(file);
-        },
-        validarEntradaOrcamento: function() {
-            const btn = document.getElementById('btnProcessar');
-            const d = document.getElementById('descricaoMovel').value.trim();
-            if(d || App.imagem64) { btn.disabled = false; document.getElementById('msgBotao').style.display = 'none'; }
-            else { btn.disabled = true; }
-        },
-        mostrarValidacaoIA: function(json) {
-            document.getElementById('inputCard').style.display = 'none';
-            document.getElementById('confirmacaoIACard').style.display = 'block';
-            document.getElementById('dadosProjetoIA').innerHTML = `
-                <div>Móvel: <strong>${json.tipoMovel}</strong></div>
-                <div>Medidas: <strong>${json.dimensoes.largura} x ${json.dimensoes.altura} x ${json.dimensoes.profundidade}</strong></div>
-                <div>Módulos: <strong>${json.configuracao.modulos}</strong></div>
-                <div>Portas/Gav: <strong>${json.configuracao.portas} / ${json.configuracao.gavetas}</strong></div>
-            `;
-        },
-        cancelarConfirmacaoIA: function() {
-            document.getElementById('confirmacaoIACard').style.display = 'none';
-            document.getElementById('inputCard').style.display = 'block';
-        },
-        exibirResultadosEngenharia: function(eng, custos) {
-            document.getElementById('resultadoCard').style.display = 'block';
-            this.mudarAba('comercial');
-            
-            document.getElementById('resumoTexto').innerText = eng.projetoBase.observacoes;
-            
-            const selPerf = document.getElementById('selectPerfilPreco');
-            selPerf.innerHTML = '';
-            DB.perfisPreco.forEach(p => {
-                selPerf.innerHTML += `<option value="${p.id}">${p.nome} (Margem Est: ${((p.markup-1)*100).toFixed(0)}%)</option>`;
-            });
-
-            const fmt = (v) => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-            document.getElementById('tCustoChapas').innerText = fmt(custos.chapas);
-            document.getElementById('tCustoFita').innerText = fmt(custos.fita);
-            document.getElementById('tCustoFerragens').innerText = fmt(custos.ferragens);
-            document.getElementById('tCustoTotalBase').innerText = fmt(custos.diretoTotal);
-
-            const tPecas = document.querySelector('#tabelaPecas tbody');
-            tPecas.innerHTML = '';
-            eng.pecas.forEach(p => {
-                tPecas.innerHTML += `<tr><td>${p.nome}</td><td>${p.quantidade}</td><td>${p.comprimento}x${p.largura}x${p.espessura}</td><td>${p.materialCat}</td></tr>`;
-            });
-
-            const ulF = document.getElementById('listaInsumos');
-            ulF.innerHTML = `<li>Chapas MDF Estimadas: ${eng.chapasEstimadas.mdfPrincipal} principal, ${eng.chapasEstimadas.mdfFundo} fundo.</li>
-                             <li>Fita de Borda Estimada: ${eng.fitaMetros.toFixed(1)} metros (com margem de segurança).</li>`;
-            eng.ferragensAplicadas.forEach(f => {
-                ulF.innerHTML += `<li>${f.qtd.toFixed(1)}x ${f.item.nome} (${f.item.fabricante || 'Geral'})</li>`;
-            });
-
-            this.atualizarVisualizacaoPreco();
-        },
-        atualizarVisualizacaoPreco: function() {
-            if(!App.custosAtuais) return;
-            const perfilSel = document.getElementById('selectPerfilPreco').value;
-            const dadosPreco = Precificacao.aplicarPerfil(App.custosAtuais.diretoTotal, perfilSel);
-            
-            const fmt = (v) => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-            document.getElementById('valCustoFabrica').innerText = fmt(App.custosAtuais.diretoTotal);
-            document.getElementById('valorTotalVenda').innerText = fmt(dadosPreco.venda);
-            
-            const alerta = document.getElementById('alertaPrecoMinimo');
-            if(dadosPreco.venda < dadosPreco.minSeguro) { alerta.style.display = 'block'; } else { alerta.style.display = 'none'; }
-        },
-        desenharSVG: function(projBase) {
-            const dim = projBase.dimensoes;
-            const config = projBase.configuracao;
-            document.getElementById('lblLargura').innerText = (dim.largura/1000).toFixed(2) + 'm';
-            document.getElementById('lblAltura').innerText = (dim.altura/1000).toFixed(2) + 'm';
-            document.getElementById('lblProfundidade').innerText = (dim.profundidade/10) + 'cm';
-            
-            let modulos = config.modulos || 1;
-            let svg = `<svg viewBox="0 0 200 250" class="svg-cad"><rect x="10" y="10" width="180" height="230" fill="#fff" stroke="#0f172a" stroke-width="2"/>`;
-            for(let i=1; i<modulos; i++) {
-                let x = 10 + (180/modulos)*i;
-                svg += `<line x1="${x}" y1="10" x2="${x}" y2="240" stroke="#0f172a" stroke-width="1"/>`;
-            }
-            if(config.maleiro) svg += `<line x1="10" y1="60" x2="190" y2="60" stroke="#0f172a" stroke-width="2"/>`;
-            if(config.gavetas > 0) svg += `<line x1="10" y1="180" x2="190" y2="180" stroke="#0f172a" stroke-width="2"/>`;
-            svg += `</svg>`;
-            document.getElementById('svgContainer').innerHTML = svg;
-        },
-        renderHistorico: function() {
-            const div = document.getElementById('listaHistorico');
-            div.innerHTML = '';
-            if(DB.projetos.length === 0) { div.innerHTML = '<p style="text-align:center;color:var(--text-dim);">Nenhum projeto salvo.</p>'; return; }
-            DB.projetos.forEach(p => {
-                const venda = p.snapshotVenda ? p.snapshotVenda.venda : 0;
-                div.innerHTML += `
-                <div class="item-card proj-card">
-                    <div><strong style="color:var(--accent);">${p.cliente}</strong><br><span style="font-size:0.75rem; color:var(--text-dim);">${p.data}</span></div>
-                    <strong style="font-size:1.1rem;">${venda.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</strong>
-                </div>`;
-            });
-        },
-        atualizarBadgeApiKey: function() {
-            const bd = document.getElementById('statusApiKeyBadge');
-            if(DB.configuracoes.apiKey) bd.innerHTML = '<span class="badge-status badge-ok">✅ Conectado ao Gateway de Engenharia IA</span>';
-            else bd.innerHTML = '<span class="badge-status badge-alert">⚠️ Necessário configurar Chave de API</span>';
+            reader.readAsText(file);
         }
-    };
+        event.target.value = ""; 
+    }
+};
 
-    window.onload = function() { App.iniciar(); };
-  </script>
+/* ==========================================================================
+   3. CALCULADORA (Cálculos Geométricos)
+   ========================================================================== */
+const Calculadora = {
+    calcularArea: function(largura, altura) {
+        if(isNaN(largura) || isNaN(altura) || largura <= 0 || altura <= 0) return 0;
+        return largura * altura;
+    }
+};
+
+/* ==========================================================================
+   4. PRECIFICAÇÃO (Regras de Negócio / Financeiro)
+   ========================================================================== */
+const Precificacao = {
+    calcularValor: function(area, precoM2) {
+        return area * precoM2;
+    },
+    calcularAdicionais: function(listaAdicionais) {
+        return listaAdicionais.reduce((total, add) => total + add.valor, 0);
+    },
+    calcularDesconto: function(subtotal, percentual) {
+        if(isNaN(percentual) || percentual < 0) return 0;
+        return subtotal * (percentual / 100);
+    },
+    calcularTotal: function(subtotal, desconto) {
+        return subtotal - desconto;
+    }
+};
+
+/* ==========================================================================
+   5. UI (Interface e Utilitários)
+   ========================================================================== */
+const UI = {
+    mudarVisao: function(idVisao) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(idVisao).classList.add('active');
+        
+        document.querySelectorAll('.nav-bottom button').forEach(b => b.classList.remove('active'));
+        const navBtn = document.getElementById('nav-' + idVisao);
+        if(navBtn) navBtn.classList.add('active');
+        
+        window.scrollTo(0,0);
+    },
+    formatarDinheiro: function(valor) {
+        return (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    },
+    formatarNumero: function(valor, decimais = 2) {
+        return (valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: decimais, maximumFractionDigits: decimais });
+    },
+    parseNumero: function(str) {
+        if(!str) return 0;
+        // Permite tratar vírgula ou ponto, melhorando entrada mobile
+        const san = str.toString().replace(',', '.');
+        const num = parseFloat(san);
+        return isNaN(num) ? 0 : num;
+    },
+    escapeHTML: function(str) {
+        // Proteção contra injeção de HTML
+        if (typeof str !== 'string') return str;
+        return str.replace(/[&<>'"]/g, function(match) {
+            const escape = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+            return escape[match];
+        });
+    },
+    abrirModal: function(titulo, htmlBody, acaoSalvar) {
+        document.getElementById('modal-title').innerText = titulo;
+        document.getElementById('modal-body').innerHTML = htmlBody;
+        const btnSalvar = document.getElementById('modal-save');
+        btnSalvar.onclick = function() { acaoSalvar(); };
+        document.getElementById('modal').classList.add('active');
+    },
+    fecharModal: function() {
+        document.getElementById('modal').classList.remove('active');
+    }
+};
+
+/* ==========================================================================
+   6. APP (Orquestração e Fluxos)
+   ========================================================================== */
+const App = {
+    orcamentoTemporario: null, 
+    orcamentoVisualizado: null, 
+
+    iniciar: function() {
+        StorageManager.load();
+        this.atualizarDash();
+    },
+
+    atualizarDash: function() {
+        const orcamentos = DB.orcamentos;
+        document.getElementById('dash-qtd').innerText = orcamentos.length;
+        
+        const totalDinheiro = orcamentos.reduce((acc, curr) => acc + curr.total, 0);
+        document.getElementById('dash-total-orcado').innerText = UI.formatarDinheiro(totalDinheiro);
+
+        if(orcamentos.length > 0) {
+            const ultimo = orcamentos[orcamentos.length - 1];
+            document.getElementById('dash-ultimo').innerText = `${UI.escapeHTML(ultimo.cliente)}\n${UI.formatarDinheiro(ultimo.total)}`;
+        } else {
+            document.getElementById('dash-ultimo').innerText = "-";
+        }
+    },
+
+    // --- NOVO ORÇAMENTO ---
+    iniciarNovoOrcamento: function(dadosCopia = null) {
+        // Popular selects escapando dados do banco
+        const selPerfil = document.getElementById('orc-perfil');
+        selPerfil.innerHTML = DB.perfis.map(p => `<option value="${p.id}">${UI.escapeHTML(p.nome)}</option>`).join('');
+        
+        const selCat = document.getElementById('orc-categoria');
+        selCat.innerHTML = '<option value="">Selecione...</option>' + 
+            DB.categorias.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)}</option>`).join('');
+
+        // Popular Adicionais
+        const divAdds = document.getElementById('orc-adicionais-container');
+        divAdds.innerHTML = DB.adicionais.map(add => `
+            <label class="checkbox-group">
+                <span>${UI.escapeHTML(add.nome)} (+${UI.formatarDinheiro(add.valor)})</span>
+                <input type="checkbox" class="orc-add-checkbox" value="${add.id}" onchange="App.calcularTempoReal()">
+            </label>
+        `).join('');
+
+        // Preencher formulário
+        if(dadosCopia) {
+            document.getElementById('orc-cliente').value = dadosCopia.cliente || "";
+            document.getElementById('orc-perfil').value = dadosCopia.perfilId || DB.perfis[0].id;
+            document.getElementById('orc-categoria').value = dadosCopia.categoriaId || "";
+            document.getElementById('orc-largura').value = dadosCopia.largura || "";
+            document.getElementById('orc-altura').value = dadosCopia.altura || "";
+            document.getElementById('orc-desconto').value = dadosCopia.descontoPerc || "";
+            document.getElementById('orc-observacao').value = dadosCopia.observacao || "";
+            
+            const checks = document.querySelectorAll('.orc-add-checkbox');
+            checks.forEach(chk => {
+                if(dadosCopia.adicionaisIds.includes(chk.value)) chk.checked = true;
+            });
+        } else {
+            document.getElementById('orc-cliente').value = "";
+            document.getElementById('orc-perfil').value = DB.perfis[0].id;
+            document.getElementById('orc-categoria').value = "";
+            document.getElementById('orc-largura').value = "";
+            document.getElementById('orc-altura').value = "";
+            document.getElementById('orc-desconto').value = "";
+            document.getElementById('orc-observacao').value = "";
+        }
+
+        document.getElementById('orc-resumo-box').style.display = 'none';
+        document.getElementById('btn-salvar-orcamento').style.display = 'none';
+        document.getElementById('orc-area-display').innerText = "Área total: 0,00 m²";
+        this.orcamentoTemporario = null;
+        
+        if(dadosCopia) this.calcularTempoReal();
+    },
+
+    calcularTempoReal: function() {
+        const cliente = document.getElementById('orc-cliente').value.trim();
+        const perfilId = document.getElementById('orc-perfil').value;
+        const categoriaId = document.getElementById('orc-categoria').value;
+        
+        const largura = UI.parseNumero(document.getElementById('orc-largura').value);
+        const altura = UI.parseNumero(document.getElementById('orc-altura').value);
+        let descontoPerc = UI.parseNumero(document.getElementById('orc-desconto').value);
+        
+        if(descontoPerc < 0) descontoPerc = 0;
+        if(descontoPerc > 100) descontoPerc = 100;
+
+        let observacao = document.getElementById('orc-observacao').value.trim();
+        if(!observacao) observacao = DB.configuracoes.observacaoPadrao;
+
+        // Área
+        const area = Calculadora.calcularArea(largura, altura);
+        document.getElementById('orc-area-display').innerText = `Área total: ${UI.formatarNumero(area)} m²`;
+
+        // Se medidas zeradas ou negativas, não exibe resumo
+        if(area <= 0 || !categoriaId || largura <= 0 || altura <= 0) {
+            document.getElementById('orc-resumo-box').style.display = 'none';
+            document.getElementById('btn-salvar-orcamento').style.display = 'none';
+            return;
+        }
+
+        // Buscar categoria e perfil
+        const categoria = DB.categorias.find(c => c.id === categoriaId);
+        const precoM2 = categoria.precos[perfilId] || 0;
+        const perfil = DB.perfis.find(p => p.id === perfilId);
+
+        // Lógica Principal (Intocada na essência)
+        const valorMovel = Precificacao.calcularValor(area, precoM2);
+
+        // Adicionais
+        const adicionaisSelecionados = [];
+        const adicionaisIds = [];
+        document.querySelectorAll('.orc-add-checkbox:checked').forEach(chk => {
+            const addDB = DB.adicionais.find(a => a.id === chk.value);
+            if(addDB) {
+                adicionaisSelecionados.push(addDB);
+                adicionaisIds.push(addDB.id);
+            }
+        });
+
+        const valorAdicionais = Precificacao.calcularAdicionais(adicionaisSelecionados);
+        const subtotal = valorMovel + valorAdicionais;
+        const valorDesconto = Precificacao.calcularDesconto(subtotal, descontoPerc);
+        const total = Precificacao.calcularTotal(subtotal, valorDesconto);
+
+        this.orcamentoTemporario = {
+            id: Date.now().toString(),
+            data: new Date().toISOString(),
+            cliente: cliente, 
+            perfilId: perfilId,
+            perfilNome: perfil.nome,
+            categoriaId: categoriaId,
+            categoriaNome: categoria.nome,
+            largura: largura,
+            altura: altura,
+            area: area,
+            precoM2: precoM2,
+            valorMovel: valorMovel,
+            adicionais: adicionaisSelecionados,
+            adicionaisIds: adicionaisIds,
+            subtotal: subtotal,
+            descontoPerc: descontoPerc,
+            valorDesconto: valorDesconto,
+            total: total,
+            observacao: observacao
+        };
+
+        this.renderizarResumo(this.orcamentoTemporario, 'orc-resumo-content');
+        document.getElementById('orc-resumo-box').style.display = 'block';
+        document.getElementById('btn-salvar-orcamento').style.display = 'block';
+    },
+
+    renderizarResumo: function(orc, containerId) {
+        // Aplicação do layout solicitado: Valor, Adicionais, Subtotal, Desconto e Total sempre presentes.
+        // Utilizando escapeHTML para evitar injeções
+        const clienteSeguro = orc.cliente ? UI.escapeHTML(orc.cliente) : 'Não informado';
+        
+        let html = `
+            <div class="resumo-row dim"><span>Cliente:</span> <span>${clienteSeguro}</span></div>
+            <div class="resumo-row dim"><span>Móvel:</span> <span>${UI.escapeHTML(orc.categoriaNome)}</span></div>
+            <div class="resumo-row dim"><span>Dimensões:</span> <span>${UI.formatarNumero(orc.largura)}m × ${UI.formatarNumero(orc.altura)}m</span></div>
+            <div class="resumo-row dim"><span>Área:</span> <span>${UI.formatarNumero(orc.area)} m²</span></div>
+            <div class="resumo-row dim"><span>Preço (${UI.escapeHTML(orc.perfilNome)}):</span> <span>${UI.formatarDinheiro(orc.precoM2)}/m²</span></div>
+            
+            <div class="resumo-divider"></div>
+            
+            <div class="resumo-row"><span>Valor do móvel:</span> <span>${UI.formatarDinheiro(orc.valorMovel)}</span></div>
+            <div class="resumo-row"><span>Adicionais:</span> <span>${UI.formatarDinheiro(orc.valorAdicionais || Precificacao.calcularAdicionais(orc.adicionais))}</span></div>
+            
+            <div class="resumo-row resumo-subtotal"><span>Subtotal:</span> <span>${UI.formatarDinheiro(orc.subtotal)}</span></div>
+            <div class="resumo-row" style="color: var(--danger);"><span>Desconto:</span> <span>- ${UI.formatarDinheiro(orc.valorDesconto)}</span></div>
+            
+            <div class="resumo-total">
+                <span>TOTAL</span>
+                <span>${UI.formatarDinheiro(orc.total)}</span>
+            </div>
+            
+            <div style="margin-top: 16px; font-size: 13px; color: var(--text-dim); text-align: left;">
+                <strong>Obs:</strong> ${UI.escapeHTML(orc.observacao)}
+            </div>
+        `;
+
+        document.getElementById(containerId).innerHTML = html;
+    },
+
+    salvarOrcamento: function() {
+        if(!this.orcamentoTemporario) return;
+        
+        // Validações Rígidas
+        if (!this.orcamentoTemporario.cliente) {
+            alert("Informe o nome do cliente.");
+            document.getElementById('orc-cliente').focus();
+            return;
+        }
+        if (this.orcamentoTemporario.largura <= 0 || this.orcamentoTemporario.altura <= 0) {
+            alert("A largura e altura devem ser maiores que zero.");
+            return;
+        }
+
+        DB.orcamentos.push(this.orcamentoTemporario);
+        StorageManager.save();
+        this.abrirDetalheOrcamento(this.orcamentoTemporario);
+    },
+
+    // --- DETALHE E AÇÕES ---
+    abrirDetalheOrcamento: function(orcamento) {
+        this.orcamentoVisualizado = orcamento;
+        this.renderizarResumo(orcamento, 'detalhe-resumo-content');
+        UI.mudarVisao('view-detalhe');
+    },
+
+    duplicarOrcamento: function() {
+        if(!this.orcamentoVisualizado) return;
+        this.iniciarNovoOrcamento(this.orcamentoVisualizado);
+        UI.mudarVisao('view-novo-orcamento');
+    },
+
+    excluirOrcamentoAtual: function() {
+        if(!this.orcamentoVisualizado) return;
+        if(confirm("Tem certeza que deseja excluir este orçamento?")) {
+            DB.orcamentos = DB.orcamentos.filter(o => o.id !== this.orcamentoVisualizado.id);
+            StorageManager.save();
+            this.renderizarHistorico();
+            UI.mudarVisao('view-historico');
+        }
+    },
+
+    enviarWhatsApp: function() {
+        if(!this.orcamentoVisualizado) return;
+        const orc = this.orcamentoVisualizado;
+        
+        // Layout solicitado
+        let texto = `*STUDIO DM — ORÇAMENTO*\n\n`;
+        texto += `*Cliente:* ${orc.cliente}\n`;
+        texto += `*Tipo de móvel:* ${orc.categoriaNome}\n`;
+        texto += `*Perfil:* ${orc.perfilNome}\n`;
+        texto += `*Medidas:* ${UI.formatarNumero(orc.largura)} m × ${UI.formatarNumero(orc.altura)} m\n`;
+        texto += `*Área:* ${UI.formatarNumero(orc.area)} m²\n`;
+        texto += `*Preço:* ${UI.formatarDinheiro(orc.precoM2)} / m²\n\n`;
+        
+        texto += `*Valor do móvel:* ${UI.formatarDinheiro(orc.valorMovel)}\n`;
+        
+        if(orc.adicionais.length > 0) {
+            texto += `*Adicionais:*\n`;
+            orc.adicionais.forEach(add => {
+                texto += `  - ${add.nome} — ${UI.formatarDinheiro(add.valor)}\n`;
+            });
+        } else {
+            texto += `*Adicionais:* R$ 0,00\n`;
+        }
+        
+        texto += `\n*Subtotal:* ${UI.formatarDinheiro(orc.subtotal)}\n`;
+        texto += `*Desconto:* ${UI.formatarDinheiro(orc.valorDesconto)}\n`;
+        texto += `*TOTAL: ${UI.formatarDinheiro(orc.total)}*\n\n`;
+        
+        texto += `*Observações:*\n${orc.observacao}\n\n`;
+        texto += `_${DB.configuracoes.nomeEmpresa}_`;
+
+        const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+    },
+
+    imprimir: function() {
+        if(!this.orcamentoVisualizado) return;
+        const orc = this.orcamentoVisualizado;
+        
+        document.getElementById('print-empresa').innerText = DB.configuracoes.nomeEmpresa;
+        // Na impressão a observação já vai dentro do detalhe renderizado
+        document.getElementById('print-obs').innerText = ""; 
+        
+        const conteudo = document.getElementById('detalhe-resumo-content').innerHTML;
+        document.getElementById('print-content').innerHTML = `
+            <div style="margin-bottom: 20px;"><strong>Data:</strong> ${new Date(orc.data).toLocaleDateString('pt-BR')}</div>
+            ${conteudo}
+        `;
+        
+        window.print();
+    },
+
+    // --- HISTÓRICO ---
+    renderizarHistorico: function() {
+        const container = document.getElementById('historico-lista');
+        if(DB.orcamentos.length === 0) {
+            container.innerHTML = '<p>Nenhum orçamento realizado.</p>';
+            return;
+        }
+
+        const orcs = [...DB.orcamentos].reverse();
+        
+        container.innerHTML = orcs.map(orc => `
+            <div class="card" style="cursor:pointer;" onclick="App.abrirOrcamentoHistorico('${orc.id}')">
+                <div class="list-item-info">
+                    <strong style="color: var(--accent);">${UI.formatarDinheiro(orc.total)}</strong>
+                    <span>${UI.escapeHTML(orc.cliente || 'Sem nome')} — ${UI.escapeHTML(orc.categoriaNome)} (${UI.formatarNumero(orc.area)} m²)</span>
+                    <span style="font-size: 11px; margin-top:4px;">${new Date(orc.data).toLocaleDateString('pt-BR')}</span>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    abrirOrcamentoHistorico: function(id) {
+        const orc = DB.orcamentos.find(o => o.id === id);
+        // Compatibilidade para orçamentos velhos
+        if(orc && !orc.observacao) orc.observacao = DB.configuracoes.observacaoPadrao;
+        if(orc) this.abrirDetalheOrcamento(orc);
+    },
+
+    // --- PREÇOS E CADASTROS ---
+    renderizarPrecos: function() {
+        const containerCat = document.getElementById('lista-categorias');
+        containerCat.innerHTML = DB.categorias.map(c => `
+            <div class="list-item">
+                <div class="list-item-info">
+                    <strong>${UI.escapeHTML(c.nome)}</strong>
+                    <span>${DB.perfis.map(p => `${UI.escapeHTML(p.nome)}: ${UI.formatarDinheiro(c.precos[p.id] || 0)}`).join(' | ')}</span>
+                </div>
+                <button class="btn-small btn-outline" onclick="App.editarCategoria('${c.id}')">Editar</button>
+            </div>
+        `).join('');
+
+        const containerAdd = document.getElementById('lista-adicionais');
+        containerAdd.innerHTML = DB.adicionais.map(a => `
+            <div class="list-item">
+                <div class="list-item-info">
+                    <strong>${UI.escapeHTML(a.nome)}</strong>
+                    <span>Fixo: ${UI.formatarDinheiro(a.valor)}</span>
+                </div>
+                <button class="btn-small btn-outline" onclick="App.editarAdicional('${a.id}')">Editar</button>
+            </div>
+        `).join('');
+    },
+
+    novaCategoria: function() {
+        this.abrirModalCategoria();
+    },
+
+    editarCategoria: function(id) {
+        const cat = DB.categorias.find(c => c.id === id);
+        if(cat) this.abrirModalCategoria(cat);
+    },
+
+    abrirModalCategoria: function(cat = null) {
+        let html = `
+            <div class="form-group">
+                <label>Nome da Categoria</label>
+                <input type="text" id="modal-cat-nome" value="${cat ? UI.escapeHTML(cat.nome) : ''}">
+            </div>
+        `;
+        DB.perfis.forEach(p => {
+            const preco = cat && cat.precos[p.id] ? cat.precos[p.id] : '';
+            html += `
+                <div class="form-group">
+                    <label>Preço m² - ${UI.escapeHTML(p.nome)}</label>
+                    <input type="text" inputmode="decimal" class="modal-cat-preco" data-perfil="${p.id}" value="${preco}">
+                </div>
+            `;
+        });
+
+        if(cat) {
+            html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="App.excluirCategoria('${cat.id}')">🗑️ Excluir Categoria</button>`;
+        }
+
+        UI.abrirModal(cat ? 'Editar Categoria' : 'Nova Categoria', html, () => {
+            const nome = document.getElementById('modal-cat-nome').value.trim();
+            if(!nome) return alert("Informe o nome");
+            
+            const precos = {};
+            document.querySelectorAll('.modal-cat-preco').forEach(inp => {
+                precos[inp.getAttribute('data-perfil')] = UI.parseNumero(inp.value) || 0;
+            });
+
+            if(cat) {
+                cat.nome = nome;
+                cat.precos = precos;
+            } else {
+                DB.categorias.push({ id: 'cat_' + Date.now(), nome: nome, precos: precos });
+            }
+            StorageManager.save();
+            UI.fecharModal();
+            this.renderizarPrecos();
+        });
+    },
+
+    excluirCategoria: function(id) {
+        if(confirm("Deseja realmente excluir esta categoria?")) {
+            DB.categorias = DB.categorias.filter(c => c.id !== id);
+            StorageManager.save();
+            UI.fecharModal();
+            this.renderizarPrecos();
+        }
+    },
+
+    novoAdicional: function() {
+        this.abrirModalAdicional();
+    },
+
+    editarAdicional: function(id) {
+        const add = DB.adicionais.find(a => a.id === id);
+        if(add) this.abrirModalAdicional(add);
+    },
+
+    abrirModalAdicional: function(add = null) {
+        let html = `
+            <div class="form-group">
+                <label>Nome do Adicional</label>
+                <input type="text" id="modal-add-nome" value="${add ? UI.escapeHTML(add.nome) : ''}">
+            </div>
+            <div class="form-group">
+                <label>Valor Fixo (R$)</label>
+                <input type="text" inputmode="decimal" id="modal-add-valor" value="${add ? add.valor : ''}">
+            </div>
+        `;
+        
+        if(add) {
+            html += `<button class="btn btn-danger" style="margin-top: 16px;" onclick="App.excluirAdicional('${add.id}')">🗑️ Excluir Adicional</button>`;
+        }
+
+        UI.abrirModal(add ? 'Editar Adicional' : 'Novo Adicional', html, () => {
+            const nome = document.getElementById('modal-add-nome').value.trim();
+            const valor = UI.parseNumero(document.getElementById('modal-add-valor').value);
+            if(!nome) return alert("Informe o nome");
+
+            if(add) {
+                add.nome = nome;
+                add.valor = valor;
+            } else {
+                DB.adicionais.push({ id: 'add_' + Date.now(), nome: nome, valor: valor });
+            }
+            StorageManager.save();
+            UI.fecharModal();
+            this.renderizarPrecos();
+        });
+    },
+
+    excluirAdicional: function(id) {
+        if(confirm("Deseja realmente excluir este adicional?")) {
+            DB.adicionais = DB.adicionais.filter(a => a.id !== id);
+            StorageManager.save();
+            UI.fecharModal();
+            this.renderizarPrecos();
+        }
+    },
+
+    // --- CONFIGURAÇÕES ---
+    renderizarConfiguracoes: function() {
+        document.getElementById('config-empresa').value = DB.configuracoes.nomeEmpresa;
+        document.getElementById('config-telefone').value = DB.configuracoes.telefone;
+        document.getElementById('config-obs').value = DB.configuracoes.observacaoPadrao;
+    },
+
+    salvarConfiguracoes: function() {
+        DB.configuracoes.nomeEmpresa = document.getElementById('config-empresa').value.trim();
+        DB.configuracoes.telefone = document.getElementById('config-telefone').value.trim();
+        DB.configuracoes.observacaoPadrao = document.getElementById('config-obs').value.trim();
+        StorageManager.save();
+        alert("Configurações salvas com sucesso!");
+    }
+};
+
+// Inicialização
+window.onload = function() {
+    App.iniciar();
+};
+
+</script>
 </body>
 </html>
