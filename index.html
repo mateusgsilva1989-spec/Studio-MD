@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio DM — Orçamento Rápido v1.3.4</title>
+    <title>Studio DM — Orçamento Rápido v1.5</title>
     <style>
         :root {
             --bg: #121826;
@@ -41,15 +41,15 @@
         .nav-bottom {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--card); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; padding: 12px 0; z-index: 100;
+            display: flex; justify-content: space-around; padding: 10px 0; z-index: 100;
         }
         .nav-bottom button {
-            background: none; border: none; color: var(--text-dim); font-size: 12px;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            cursor: pointer; width: 20%;
+            background: none; border: none; color: var(--text-dim); font-size: 11px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            cursor: pointer; width: 16.6%;
         }
         .nav-bottom button.active { color: var(--accent); font-weight: bold; }
-        .nav-icon { font-size: 20px; }
+        .nav-icon { font-size: 18px; }
 
         /* Views */
         .view { display: none; animation: fadeIn 0.3s ease; }
@@ -148,14 +148,12 @@
             .app-container { max-width: 100%; padding: 0; }
             .print-only { display: block; }
             
-            /* Print Relatório Financeiro */
             .resumo-box { border: 1px solid #000; background: #fff; color: #000; }
             .resumo-total, .resumo-subtotal { color: #000; }
             .resumo-total { border-top: 1px solid #000; }
             .resumo-row.dim { color: #444; }
             .badge-info { border: 1px solid #000; color: #000; background: transparent; }
 
-            /* Print Lista de Corte */
             #print-area-corte { font-size: 14px; }
             .print-corte-group { margin-bottom: 24px; page-break-inside: avoid; }
             .print-corte-title { font-weight: bold; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; }
@@ -171,7 +169,7 @@
     <!-- VISÃO: INÍCIO -->
     <div id="view-inicio" class="view active">
         <h1>Studio DM</h1>
-        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.3.4</p>
+        <p style="text-align: center; color: var(--accent); margin-top: -10px; font-weight: bold;">Orçamento Rápido v1.5</p>
         
         <div class="stats-grid" style="margin-top: 32px;">
             <div class="stat-card">
@@ -189,16 +187,19 @@
         </div>
 
         <button class="btn" onclick="UI.mudarVisao('view-novo-orcamento'); App.iniciarNovoOrcamento();">
-            ➕ FAZER NOVO ORÇAMENTO
+            ➕ FAZER ORÇAMENTO DETALHADO
+        </button>
+        <button class="btn btn-outline" onclick="UI.mudarVisao('view-estimativa'); EstimativaApp.iniciar();">
+            ⚡ ESTIMATIVA RÁPIDA
         </button>
         <button class="btn btn-outline" onclick="UI.mudarVisao('view-historico')">
             📋 VER HISTÓRICO
         </button>
     </div>
 
-    <!-- VISÃO: NOVO ORÇAMENTO -->
+    <!-- VISÃO: NOVO ORÇAMENTO (DETALHADO) -->
     <div id="view-novo-orcamento" class="view">
-        <h2>Novo Orçamento</h2>
+        <h2>Orçamento Detalhado</h2>
         
         <div class="card">
             <div class="form-group">
@@ -217,7 +218,6 @@
             </div>
         </div>
 
-        <!-- Construtor de Composição -->
         <div class="card">
             <div class="card-header">
                 <h3>Composição e Peças</h3>
@@ -229,7 +229,6 @@
             </div>
         </div>
 
-        <!-- Adicionais Globais -->
         <div class="card">
             <h3>Adicionais / Ferragens</h3>
             <div id="orc-adicionais-container"></div>
@@ -246,7 +245,6 @@
             </div>
         </div>
 
-        <!-- RESUMO EM TEMPO REAL -->
         <div class="resumo-box" id="orc-resumo-box" style="display: none;">
             <div style="text-align: center; margin-bottom: 12px; color: var(--accent); font-weight: bold;">RESUMO DO ORÇAMENTO</div>
             <div id="orc-resumo-content"></div>
@@ -257,6 +255,114 @@
             <button class="btn btn-outline" id="btn-exportar-corte" onclick="App.abrirModalListaCorte(false)" style="display: none; margin-bottom: 0; border-color: var(--info); color: var(--info);">
                 📐 LISTA DE CORTE (PDF)
             </button>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       NOVA ABA: ⚡ ESTIMATIVA RÁPIDA (V1.5)
+       ========================================================================== -->
+    <div id="view-estimativa" class="view">
+        <h2>⚡ Estimativa Rápida</h2>
+        <p>Gere rapidamente uma estimativa preliminar com base nas medidas gerais e características principais.</p>
+
+        <div class="card">
+            <div class="form-group">
+                <label>Tipo de Móvel</label>
+                <select id="est-tipo">
+                    <option value="Armário">Armário</option>
+                    <option value="Guarda-roupa">Guarda-roupa</option>
+                    <option value="Closet">Closet</option>
+                    <option value="Cozinha">Cozinha</option>
+                    <option value="Balcão">Balcão</option>
+                    <option value="Torre">Torre</option>
+                    <option value="Aéreo">Aéreo</option>
+                    <option value="Painel">Painel</option>
+                    <option value="Rack">Rack</option>
+                    <option value="Banheiro">Banheiro</option>
+                    <option value="Lavanderia">Lavanderia</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Medidas Gerais (mm)</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Largura</label><input type="text" inputmode="decimal" id="est-largura" value="2400"></div>
+                <div class="form-group"><label>Altura</label><input type="text" inputmode="decimal" id="est-altura" value="2200"></div>
+                <div class="form-group"><label>Profundidade</label><input type="text" inputmode="decimal" id="est-prof" value="600"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Estrutura e Acessórios</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tamponamento</label>
+                    <select id="est-tamp"><option value="nao">Não</option><option value="sim" selected>Sim</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Fundo</label>
+                    <select id="est-fundo"><option value="nao">Não</option><option value="sim" selected>Sim</option></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Portas</label><input type="text" inputmode="decimal" id="est-portas" value="4"></div>
+                <div class="form-group"><label>Gavetas</label><input type="text" inputmode="decimal" id="est-gavetas" value="4"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Prateleiras</label><input type="text" inputmode="decimal" id="est-prats" value="6"></div>
+                <div class="form-group"><label>Divisórias</label><input type="text" inputmode="decimal" id="est-divs" value="2"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Seleção de Materiais (MDF)</h3>
+            <div class="form-group">
+                <label>MDF da Estrutura</label>
+                <select id="est-mdf-estrutura"></select>
+            </div>
+            <div class="form-group">
+                <label>MDF das Frentes</label>
+                <select id="est-mdf-frentes"></select>
+            </div>
+            <div class="form-group">
+                <label>MDF do Fundo</label>
+                <select id="est-mdf-fundo"></select>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Adicionais e Ferragens</h3>
+            <div id="est-adicionais-container"></div>
+        </div>
+
+        <div class="card">
+            <h3>Parâmetros Comerciais</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Markup Comercial (%)</label>
+                    <input type="text" inputmode="decimal" id="est-markup" value="100">
+                </div>
+                <div class="form-group">
+                    <label>Margem de Segurança (%)</label>
+                    <select id="est-margem-seguranca">
+                        <option value="5">5%</option>
+                        <option value="10" selected>10%</option>
+                        <option value="15">15%</option>
+                        <option value="20">20%</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-info" onclick="EstimativaApp.calcular()">⚡ CALCULAR ESTIMATIVA</button>
+
+        <!-- RESULTADO DA ESTIMATIVA -->
+        <div class="resumo-box" id="est-resultado-box" style="display: none; border-color: var(--info);">
+            <div style="text-align: center; margin-bottom: 12px; color: var(--info); font-weight: bold;">⚡ ESTIMATIVA PRELIMINAR</div>
+            <div id="est-resultado-content"></div>
+            <button class="btn" style="margin-top: 20px; margin-bottom: 0;" onclick="EstimativaApp.transformarEmOrcamento()">➜ TRANSFORMAR EM ORÇAMENTO</button>
         </div>
     </div>
 
@@ -358,7 +464,6 @@
                 </select>
             </div>
             <div class="form-group"><label>Margem de Perda (%) para Custo Proporcional</label><input type="text" inputmode="decimal" id="config-perda" placeholder="10"></div>
-            <!-- O campo Kerf foi removido da interface para evitar confusão com o SketchCut -->
         </div>
 
         <button class="btn" onclick="App.salvarConfiguracoes()">Salvar Configurações</button>
@@ -393,6 +498,16 @@
     </div>
 </div>
 
+<!-- BOTTOM NAVIGATION (V1.5 ATUALIZADO COM ESTIMATIVA RÁPIDA) -->
+<div class="nav-bottom no-print">
+    <button onclick="UI.mudarVisao('view-inicio'); App.atualizarDash();" id="nav-view-inicio" class="active"><span class="nav-icon">🏠</span><span>Início</span></button>
+    <button onclick="UI.mudarVisao('view-novo-orcamento'); App.iniciarNovoOrcamento();" id="nav-view-novo-orcamento"><span class="nav-icon">➕</span><span>Orçamento</span></button>
+    <button onclick="UI.mudarVisao('view-estimativa'); EstimativaApp.iniciar();" id="nav-view-estimativa"><span class="nav-icon">⚡</span><span>Estimativa</span></button>
+    <button onclick="UI.mudarVisao('view-historico'); App.renderizarHistorico();" id="nav-view-historico"><span class="nav-icon">📋</span><span>Histórico</span></button>
+    <button onclick="UI.mudarVisao('view-precos'); App.renderizarPrecos();" id="nav-view-precos"><span class="nav-icon">💰</span><span>Preços</span></button>
+    <button onclick="UI.mudarVisao('view-configuracoes'); App.renderizarConfiguracoes();" id="nav-view-configuracoes"><span class="nav-icon">⚙️</span><span>Config</span></button>
+</div>
+
 <!-- MODAL GENÉRICO -->
 <div class="modal-overlay" id="modal">
     <div class="modal-content" id="modal-container-main">
@@ -407,7 +522,7 @@
 
 <script>
 /* ==========================================================================
-   1. BANCO DE DADOS (Estrutura V1.3.4)
+   1. BANCO DE DADOS (Estrutura V1.5)
    ========================================================================== */
 const DEFAULT_DB = {
     perfis: [
@@ -607,7 +722,7 @@ const MaterialEngine = {
 };
 
 /* ==========================================================================
-   5. APP (Orquestração e Composição V1.3.4)
+   5. APP (Orquestração e Composição V1.5)
    ========================================================================== */
 const App = {
     orcamentoTemporario: null, orcamentoVisualizado: null,
@@ -735,12 +850,10 @@ const App = {
             let altM = altMm / 1000;
             let areaPeca = qtd * largM * altM;
 
-            // Custo Puro
             let precoM2Mdf = MaterialEngine.calcularPrecoM2(mdf);
             let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
             let custoMdfPeca = areaPeca * (1 + perdaPct) * precoM2Mdf;
             
-            // Valor Comercial Exibição
             let modo = DB.configuracoes.modoPrecificacao || 'markup';
             let markup = (DB.configuracoes.markupGlobal || 100) / 100;
             let valorFinalExibicao = (modo === 'markup') ? custoMdfPeca * (1 + markup) : areaPeca * precoM2ComercialTabela;
@@ -758,7 +871,6 @@ const App = {
                 custoRealMdf: custoMdfPeca, 
                 precoM2ComercialTabela: precoM2ComercialTabela,
                 valorFinalExibicao: valorFinalExibicao,
-                // PEÇAS FÍSICAS (Usadas para a Lista de Corte - Puras em mm)
                 pecasFisicas: [
                     { nome: dbRef.nome, qtd: qtd, largMm: largMm, altMm: altMm, mdf: mdf }
                 ]
@@ -821,7 +933,6 @@ const App = {
             let espCaixaMm = mdfCaixa.espessura || 15;
             let espCaixaM = espCaixaMm / 1000;
             
-            // Custos Construtivos Físicos
             let areaLateral = 2 * (profM * altM);
             let areaTraseiraEFrontal = 2 * ((largM - (2 * espCaixaM)) * altM);
             let areaFundoCaixa = (largM - (2 * espCaixaM)) * (profM - espCaixaM);
@@ -837,7 +948,6 @@ const App = {
 
             let custoTotalGavetas = custoMdfCaixa + custoMdfFundo + custoMdfFrentes;
 
-            // Formação de Preço
             let modo = DB.configuracoes.modoPrecificacao || 'markup';
             let markup = (DB.configuracoes.markupGlobal || 100) / 100;
             let valorFinalExibicao = 0;
@@ -863,7 +973,6 @@ const App = {
                 ],
                 custoRealMdf: custoTotalGavetas,
                 valorFinalExibicao: valorFinalExibicao,
-                // PEÇAS FÍSICAS (Totalmente separadas por material para a Lista de Corte em mm puros)
                 pecasFisicas: [
                     { nome: 'Lateral da gaveta', qtd: 2 * qtd, largMm: profMm, altMm: altCaixaMm, mdf: mdfCaixa },
                     { nome: 'Frente/Traseira da caixa', qtd: 2 * qtd, largMm: largMm - (2 * espCaixaMm), altMm: altCaixaMm, mdf: mdfCaixa },
@@ -890,7 +999,6 @@ const App = {
         let custoTotalMateriaisBrutos = 0;
         let valorComercialModoTabela = 0;
 
-        // 1. Coleta consumo puro e limpo
         this.orcamentoTemporario.composicao.forEach(item => {
             if(item.tipo === 'dim') {
                 let mdf = DB.mdfs.find(m => m.id === item.mdfId);
@@ -913,7 +1021,6 @@ const App = {
             }
         });
 
-        // 2. Calcula plano de compras estimado pelo Motor Financeiro
         let resumoMateriais = [];
         Object.keys(mapMateriais).forEach(mdfKey => {
             let mat = mapMateriais[mdfKey];
@@ -922,7 +1029,6 @@ const App = {
             resumoMateriais.push({ mdf: mat.mdf, ...calc });
         });
 
-        // 3. Adicionais (Ferragens)
         const adicionaisSelecionados = []; const adicionaisIds = [];
         document.querySelectorAll('.orc-add-checkbox:checked').forEach(chk => {
             const addDB = DB.adicionais.find(a => a.id === chk.value);
@@ -930,7 +1036,6 @@ const App = {
         });
         const custoTotalAdicionais = adicionaisSelecionados.reduce((acc, add) => acc + add.valor, 0);
 
-        // 4. FORMAÇÃO DO PREÇO FINAL (MARKUP)
         let CUSTO_TOTAL_REAL = custoTotalMateriaisBrutos + custoTotalAdicionais;
         let subtotal = 0;
         
@@ -1023,17 +1128,13 @@ const App = {
         document.getElementById(containerId).innerHTML = html;
     },
 
-    /* ==========================================================================
-       6. MÓDULO DE LISTA DE CORTE + PDF (NOVO v1.3.4)
-       ========================================================================== */
     agruparListaCorte: function(orcamento) {
-        let grupos = {}; // Agrupamento rigoroso pelo ID do Material
+        let grupos = {};
         if(!orcamento || !orcamento.composicao) return grupos;
         
         orcamento.composicao.forEach((comp) => {
             let pecasFisicas = comp.pecasFisicas || [];
             
-            // Fallback para orçamentos velhos salvos na versão anterior, se existirem
             if(pecasFisicas.length === 0 && comp.tipo === 'dim') {
                 let mdf = DB.mdfs.find(m => m.id === comp.mdfId);
                 if(mdf) pecasFisicas.push({ nome: comp.nome, qtd: comp.qtd, largMm: comp.larguraMm, altMm: comp.alturaMm, mdf: mdf });
@@ -1048,7 +1149,6 @@ const App = {
                     grupos[keyMat] = { mdf: mdf, pecas: {} };
                 }
                 
-                // Agrupar peças exatamente iguais (Nome + Largura + Altura) no mesmo material
                 let largInt = Math.round(peca.largMm);
                 let altInt = Math.round(peca.altMm);
                 let keyPeca = `${peca.nome}_${largInt}_${altInt}`;
@@ -1131,11 +1231,8 @@ const App = {
         });
         
         document.getElementById('print-corte-content').innerHTML = contentHtml;
-        
-        // Ativa a exibição CSS exclusiva da Lista de Corte e desativa a do Orçamento
         document.getElementById('print-area-corte').style.display = 'block';
         document.getElementById('print-area-orcamento').style.display = 'none';
-        
         window.print();
     },
 
@@ -1144,11 +1241,8 @@ const App = {
         document.getElementById('print-empresa').innerText = DB.configuracoes.nomeEmpresa; 
         document.getElementById('print-obs').innerText = ""; 
         document.getElementById('print-content').innerHTML = `<div style="margin-bottom: 20px;"><strong>Data:</strong> ${new Date(this.orcamentoVisualizado.data).toLocaleDateString('pt-BR')}</div>${document.getElementById('detalhe-resumo-content').innerHTML}`;
-        
-        // Ativa a exibição CSS exclusiva do Orçamento e desativa a da Lista de Corte
         document.getElementById('print-area-orcamento').style.display = 'block';
         document.getElementById('print-area-corte').style.display = 'none';
-        
         window.print();
     },
 
@@ -1187,7 +1281,203 @@ const App = {
 };
 
 /* ==========================================================================
-   7. CRUD COMPLETO (Preços e Cadastros v1.3.4)
+   8. MÓDULO INDEPENDENTE: ⚡ ESTIMATIVA RÁPIDA (NOVO V1.5)
+   ========================================================================== */
+const EstimativaApp = {
+    ultimoCalculo: null,
+
+    iniciar: function() {
+        const mdfOpts = DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('');
+        document.getElementById('est-mdf-estrutura').innerHTML = mdfOpts;
+        document.getElementById('est-mdf-frentes').innerHTML = mdfOpts;
+        // Seleciona um fundo por padrão se houver de menor espessura
+        const fundoOpts = DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}" ${m.espessura<=6?'selected':''}>${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('');
+        document.getElementById('est-mdf-fundo').innerHTML = fundoOpts;
+
+        const divAdds = document.getElementById('est-adicionais-container');
+        divAdds.innerHTML = DB.adicionais.map(add => `
+            <label class="checkbox-group">
+                <span>${UI.escapeHTML(add.nome)} (${UI.formatarDinheiro(add.valor)})</span>
+                <input type="checkbox" class="est-add-checkbox" value="${add.id}">
+            </label>
+        `).join('');
+
+        document.getElementById('est-resultado-box').style.display = 'none';
+    },
+
+    calcular: function() {
+        let larguraMm = UI.parseNumero(document.getElementById('est-largura').value);
+        let alturaMm = UI.parseNumero(document.getElementById('est-altura').value);
+        let profMm = UI.parseNumero(document.getElementById('est-prof').value);
+
+        if(larguraMm <= 0 || alturaMm <= 0 || profMm <= 0) {
+            return alert("Preencha as medidas gerais do móvel corretamente.");
+        }
+
+        let tipoMovel = document.getElementById('est-tipo').value;
+        let temTamponamento = document.getElementById('est-tamp').value === 'sim';
+        let temFundo = document.getElementById('est-fundo').value === 'sim';
+        let qtdPortas = UI.parseNumero(document.getElementById('est-portas').value);
+        let qtdGavetas = UI.parseNumero(document.getElementById('est-gavetas').value);
+        let qtdPrats = UI.parseNumero(document.getElementById('est-prats').value);
+        let qtdDivs = UI.parseNumero(document.getElementById('est-divs').value);
+
+        let mdfEstruturaId = document.getElementById('est-mdf-estrutura').value;
+        let mdfFrentesId = document.getElementById('est-mdf-frentes').value;
+        let mdfFundoId = document.getElementById('est-mdf-fundo').value;
+
+        let mdfEstrutura = DB.mdfs.find(m => m.id === mdfEstruturaId);
+        let mdfFrentes = DB.mdfs.find(m => m.id === mdfFrentesId);
+        let mdfFundo = DB.mdfs.find(m => m.id === mdfFundoId);
+
+        let markup = UI.parseNumero(document.getElementById('est-markup').value);
+        let margemSeguranca = UI.parseNumero(document.getElementById('est-margem-seguranca').value);
+
+        // --- CÁLCULO DA ESTRUTURA FÍSICA APROXIMADA ---
+        let largM = larguraMm / 1000, altM = alturaMm / 1000, profM = profMm / 1000;
+        
+        // 1. Estrutura básica (Laterais, Base, Topo, Divisórias)
+        let areaLaterais = 2 * (altM * profM);
+        let areaBaseTopo = 2 * (largM * profM);
+        let areaDivisorias = qtdDivs * (altM * profM);
+        let areaPrateleiras = qtdPrats * (largM * profM * 0.9);
+        let areaTamponamento = temTamponamento ? (2 * altM * profM) + (largM * altM * 0.1) : 0;
+        
+        let areaTotalEstrutura = areaLaterais + areaBaseTopo + areaDivisorias + areaPrateleiras + areaTamponamento;
+        
+        // 2. Frentes (Portas e Gavetas Frentes)
+        let areaPortas = qtdPortas * (altM * (largM / Math.max(1, qtdPortas)));
+        let areaFrentesGavetas = qtdGavetas * 0.20 * (largM / Math.max(1, Math.ceil(qtdPortas/2)));
+        let areaTotalFrentes = areaPortas + areaFrentesGavetas;
+
+        // 3. Fundo e Gavetas Caixas
+        let areaFundo = temFundo ? (largM * altM) : 0;
+        let areaCaixasGavetas = qtdGavetas * (0.45 * 0.15 * 4); // estimativa de caixas
+
+        // Custos dos Materiais
+        let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
+        
+        let custoEstrutura = areaTotalEstrutura * (1 + perdaPct) * (mdfEstrutura ? MaterialEngine.calcularPrecoM2(mdfEstrutura) : 50);
+        let custoFrentes = areaTotalFrentes * (1 + perdaPct) * (mdfFrentes ? MaterialEngine.calcularPrecoM2(mdfFrentes) : 70);
+        let custoFundoEIsolados = (areaFundo + areaCaixasGavetas) * (1 + perdaPct) * (mdfFundo ? MaterialEngine.calcularPrecoM2(mdfFundo) : 35);
+
+        let custoTotalMdf = custoEstrutura + custoFrentes + custoFundoEIsolados;
+
+        // Adicionais e Ferragens selecionadas
+        let custoAdicionais = 0;
+        let adicionaisSelecionadosIds = [];
+        document.querySelectorAll('.est-add-checkbox:checked').forEach(chk => {
+            let add = DB.adicionais.find(a => a.id === chk.value);
+            if(add) {
+                custoAdicionais += add.valor;
+                adicionaisSelecionadosIds.push(add.id);
+            }
+        });
+
+        // Adiciona custo estimado padrão para gavetas e dobradiças se o usuário não marcou manualmente
+        if(qtdGavetas > 0 && custoAdicionais === 0) custoAdicionais += qtdGavetas * 45;
+        if(qtdPortas > 0 && custoAdicionais === 0) custoAdicionais += qtdPortas * 2 * 18;
+
+        let custoTotalEstimado = custoTotalMdf + custoAdicionais;
+        let valorReferencia = custoTotalEstimado * (1 + (markup / 100));
+
+        let faixaBaixa = valorReferencia * (1 - (margemSeguranca / 100));
+        let faixaAlta = valorReferencia * (1 + (margemSeguranca / 100));
+
+        this.ultimoCalculo = {
+            tipoMovel, larguraMm, alturaMm, profMm, temTamponamento, temFundo,
+            qtdPortas, qtdGavetas, qtdPrats, qtdDivs,
+            mdfEstruturaId, mdfFrentesId, mdfFundoId,
+            adicionaisSelecionadosIds, markup, margemSeguranca,
+            custoTotalEstimado, valorReferencia, faixaBaixa, faixaAlta
+        };
+
+        let html = `
+            <div class="resumo-row dim"><span>Custo Estimado Base:</span> <span>${UI.formatarDinheiro(custoTotalEstimado)}</span></div>
+            <div class="resumo-divider"></div>
+            <div class="resumo-row" style="font-size: 16px; font-weight: bold; color: var(--text);"><span>Valor de Referência:</span> <span>${UI.formatarDinheiro(valorReferencia)}</span></div>
+            <div class="resumo-row" style="font-size: 18px; font-weight: bold; color: var(--accent); margin-top: 8px;"><span>Faixa Estimada:</span> <span>${UI.formatarDinheiro(faixaBaixa)} — ${UI.formatarDinheiro(faixaAlta)}</span></div>
+            <div class="resumo-divider"></div>
+            <div style="font-size: 12px; color: var(--text-dim); text-align: left; margin-top: 10px;">
+                <strong>Observação:</strong> Esta é uma estimativa preliminar. O valor definitivo depende do projeto, medidas finais, materiais, ferragens, acabamento, montagem e condições de instalação.
+            </div>
+        `;
+
+        document.getElementById('est-resultado-content').innerHTML = html;
+        document.getElementById('est-resultado-box').style.display = 'block';
+    },
+
+    transformarEmOrcamento: function() {
+        if(!this.ultimoCalculo) return;
+        let est = this.ultimoCalculo;
+
+        let perfilId = DB.perfis[0]?.id || 'p1';
+        let categoriaObj = DB.categorias.find(c => c.nome.toLowerCase().includes(est.tipoMovel.toLowerCase())) || DB.categorias[0];
+
+        // Cria uma composição estruturada baseada na estimativa rápida
+        let mdfEstrutura = DB.mdfs.find(m => m.id === est.mdfEstruturaId) || DB.mdfs[0];
+        let mdfFrentes = DB.mdfs.find(m => m.id === est.mdfFrentesId) || DB.mdfs[0];
+
+        let larguraM = est.larguraMm / 1000, alturaM = est.alturaMm / 1000, profM = est.profMm / 1000;
+
+        let composicaoGerada = [
+            {
+                id: 'comp_' + Date.now() + '_1',
+                tipo: 'dim',
+                nome: `Estrutura Principal (${est.tipoMovel})`,
+                qtd: 1, largura: larguraM, altura: alturaM,
+                larguraMm: est.larguraMm, alturaMm: est.alturaMm,
+                mdfId: mdfEstrutura.id,
+                mdfNome: `${mdfEstrutura.fabricante} ${mdfEstrutura.nome} (${mdfEstrutura.espessura}mm)`,
+                area: larguraM * alturaM * 1.5,
+                valorFinalExibicao: est.valorReferencia * 0.7,
+                pecasFisicas: [
+                    { nome: 'Lateral', qtd: 2, largMm: est.profMm, altMm: est.alturaMm, mdf: mdfEstrutura },
+                    { nome: 'Base / Topo', qtd: 2, largMm: est.larguraMm, altMm: est.profMm, mdf: mdfEstrutura },
+                    { nome: 'Prateleira', qtd: est.qtdPrats, largMm: est.larguraMm - 30, altMm: est.profMm - 20, mdf: mdfEstrutura }
+                ]
+            }
+        ];
+
+        if(est.qtdPortas > 0) {
+            composicaoGerada.push({
+                id: 'comp_' + Date.now() + '_2',
+                tipo: 'dim',
+                nome: `Portas (${est.qtdPortas} un)`,
+                qtd: est.qtdPortas, largura: larguraM/est.qtdPortas, altura: alturaM,
+                larguraMm: est.larguraMm/est.qtdPortas, alturaMm: est.alturaMm,
+                mdfId: mdfFrentes.id,
+                mdfNome: `${mdfFrentes.fabricante} ${mdfFrentes.nome} (${mdfFrentes.espessura}mm)`,
+                area: est.qtdPortas * (larguraM/est.qtdPortas) * alturaM,
+                valorFinalExibicao: est.valorReferencia * 0.2,
+                pecasFisicas: [
+                    { nome: 'Porta', qtd: est.qtdPortas, largMm: est.larguraMm/est.qtdPortas, altMm: est.alturaMm, mdf: mdfFrentes }
+                ]
+            });
+        }
+
+        let dadosNovoOrcamento = {
+            cliente: `${est.tipoMovel} - Estimativa Rápida`,
+            perfilId: perfilId,
+            categoriaId: categoriaObj ? categoriaObj.id : '',
+            descontoPerc: 0,
+            observacao: `Orçamento gerado a partir de Estimativa Rápida (${est.larguraMm}x${est.alturaMm}x${est.profMm}mm). ${DB.configuracoes.observacaoPadrao}`,
+            adicionaisIds: est.adicionaisSelecionadosIds,
+            composicao: composicaoGerada
+        };
+
+        // Altera temporariamente o markup global para o da estimativa se desejado, ou mantém
+        DB.configuracoes.markupGlobal = est.markup;
+        StorageManager.save();
+
+        App.iniciarNovoOrcamento(dadosNovoOrcamento);
+        UI.mudarVisao('view-novo-orcamento');
+        alert("Dados da estimativa transferidos com sucesso para um novo orçamento detalhado!");
+    }
+};
+
+/* ==========================================================================
+   9. CRUD COMPLETO (Preços e Cadastros v1.5)
    ========================================================================== */
 const CRUD = {
     init: function() { this.renderMDFs(); this.renderCompDim(); this.renderCompQtd(); this.renderCategorias(); this.renderAdicionais(); },
