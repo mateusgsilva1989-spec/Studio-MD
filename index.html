@@ -112,7 +112,6 @@
         .btn-remove { background: var(--danger); }
         
         .badge { background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 6px; }
-        .badge-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
         .badge-info { background: var(--info); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
 
         /* Resumo Visual */
@@ -124,11 +123,11 @@
         .resumo-total { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; font-size: 22px; font-weight: bold; color: var(--accent); text-align: right; display: flex; justify-content: space-between; align-items: center;}
 
         /* Lista de Corte UI */
-        .corte-group { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
-        .corte-group-title { font-weight: bold; color: var(--accent); margin-bottom: 8px; font-size: 14px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
-        .corte-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .corte-table th { text-align: left; color: var(--text-dim); padding: 4px; border-bottom: 1px solid var(--border); }
-        .corte-table td { padding: 4px; border-bottom: 1px dashed var(--border); color: var(--text); }
+        .corte-group { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 16px; }
+        .corte-group-title { font-weight: bold; color: var(--accent); margin-bottom: 8px; font-size: 14px; border-bottom: 1px solid var(--border); padding-bottom: 4px; text-transform: uppercase; }
+        .corte-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        .corte-table th { color: var(--text-dim); padding: 6px 4px; border-bottom: 1px solid var(--border); }
+        .corte-table td { padding: 8px 4px; border-bottom: 1px dashed var(--border); color: var(--text); }
 
         /* Lists */
         .list-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
@@ -139,23 +138,30 @@
         /* Modal */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--card); width: 100%; max-width: 450px; border-radius: 8px; padding: 20px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto;}
-        
-        .modal-large { max-width: 600px; }
+        .modal-content { background: var(--card); width: 100%; max-width: 500px; border-radius: 8px; padding: 20px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto;}
 
-        /* Print */
+        /* Impressão */
         .print-only { display: none; }
-        
         @media print {
-            body { background: #fff; color: #000; padding: 0; }
+            body { background: #fff; color: #000; padding: 0; font-family: Arial, sans-serif; }
             .nav-bottom, .no-print { display: none !important; }
             .app-container { max-width: 100%; padding: 0; }
             .print-only { display: block; }
+            
+            /* Print Relatório Financeiro */
             .resumo-box { border: 1px solid #000; background: #fff; color: #000; }
             .resumo-total, .resumo-subtotal { color: #000; }
             .resumo-total { border-top: 1px solid #000; }
             .resumo-row.dim { color: #444; }
-            .badge, .badge-outline, .badge-info { border: 1px solid #000; color: #000; background: transparent; }
+            .badge-info { border: 1px solid #000; color: #000; background: transparent; }
+
+            /* Print Lista de Corte */
+            #print-area-corte { font-size: 14px; }
+            .print-corte-group { margin-bottom: 24px; page-break-inside: avoid; }
+            .print-corte-title { font-weight: bold; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; }
+            .print-corte-table { width: 100%; border-collapse: collapse; text-align: left; }
+            .print-corte-table th { padding: 4px; border-bottom: 1px solid #000; }
+            .print-corte-table td { padding: 6px 4px; border-bottom: 1px dashed #ccc; }
         }
     </style>
 </head>
@@ -248,9 +254,8 @@
 
         <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
             <button class="btn" id="btn-salvar-orcamento" onclick="App.salvarOrcamento()" style="display: none; margin-bottom: 0;">💾 SALVAR ORÇAMENTO</button>
-            <button class="btn btn-outline" id="btn-exportar-corte" onclick="App.abrirModalListaCorte()" style="display: none; margin-bottom: 0; border-color: var(--info); color: var(--info);">
-                📐 EXPORTAR LISTA DE CORTE<br>
-                <span style="font-size: 11px; font-weight: normal; margin-top: 4px;">Enviar peças para otimização no SketchCut</span>
+            <button class="btn btn-outline" id="btn-exportar-corte" onclick="App.abrirModalListaCorte(false)" style="display: none; margin-bottom: 0; border-color: var(--info); color: var(--info);">
+                📐 LISTA DE CORTE (PDF)
             </button>
         </div>
     </div>
@@ -260,9 +265,9 @@
         <h2>Orçamento Salvo</h2>
         <div class="resumo-box" id="detalhe-resumo-content" style="margin-top: 0; margin-bottom: 24px;"></div>
         
-        <button class="btn btn-info" onclick="App.abrirModalListaCorte(true)" style="margin-bottom: 12px;">📐 Exportar Lista de Corte (SketchCut)</button>
-        <button class="btn" onclick="App.enviarWhatsApp()">📱 Enviar pelo WhatsApp</button>
-        <button class="btn btn-outline" onclick="App.imprimir()">🖨️ Imprimir Relatório</button>
+        <button class="btn btn-info" onclick="App.abrirModalListaCorte(true)" style="margin-bottom: 12px;">📐 Lista de Corte (PDF/Imprimir)</button>
+        <button class="btn" onclick="App.enviarWhatsApp()">📱 Enviar Orçamento pelo WhatsApp</button>
+        <button class="btn btn-outline" onclick="App.imprimirOrcamento()">🖨️ Imprimir Orçamento Comercial</button>
         <button class="btn btn-outline" onclick="App.duplicarOrcamento()">📋 Duplicar (Editar)</button>
         <button class="btn btn-danger" onclick="App.excluirOrcamentoAtual()">🗑️ Excluir Orçamento</button>
     </div>
@@ -338,7 +343,7 @@
                     <option value="markup">CUSTO TOTAL + MARKUP (%) [Recomendado]</option>
                     <option value="tabela">Tabela de Preço por m² (Módulo Antigo)</option>
                 </select>
-                <p style="margin-top: 6px; font-size: 12px;">Se usar Markup, o preço final será o custo bruto dos materiais multiplicado pela margem definida abaixo.</p>
+                <p style="margin-top: 6px; font-size: 12px;">No método Markup, o preço final será o Custo Bruto (Material + Ferragem) multiplicado pela margem definida abaixo.</p>
             </div>
             <div class="form-group"><label>Markup Comercial Geral (%)</label><input type="text" inputmode="decimal" id="config-markup" placeholder="100"></div>
         </div>
@@ -353,7 +358,7 @@
                 </select>
             </div>
             <div class="form-group"><label>Margem de Perda (%) para Custo Proporcional</label><input type="text" inputmode="decimal" id="config-perda" placeholder="10"></div>
-            <div class="form-group"><label>Espessura do Corte da Serra (Kerf em mm)</label><input type="text" inputmode="decimal" id="config-kerf" placeholder="3.2"></div>
+            <!-- O campo Kerf foi removido da interface para evitar confusão com o SketchCut -->
         </div>
 
         <button class="btn" onclick="App.salvarConfiguracoes()">Salvar Configurações</button>
@@ -369,12 +374,23 @@
     </div>
 </div>
 
-<!-- PRINT TEMPLATE -->
-<div id="print-area" class="print-only" style="padding: 20px; font-family: sans-serif;">
+<!-- PRINT TEMPLATE: ORÇAMENTO -->
+<div id="print-area-orcamento" class="print-only print-relatorio" style="padding: 20px; font-family: sans-serif;">
     <h1 id="print-empresa" style="color: black; margin-bottom: 20px;">Studio DM</h1>
     <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">RELATÓRIO COMERCIAL E TÉCNICO</h2>
     <div id="print-content" style="margin-top: 20px; font-size: 15px; line-height: 1.6;"></div>
     <div style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 12px; color: #444;" id="print-obs"></div>
+</div>
+
+<!-- PRINT TEMPLATE: LISTA DE CORTE -->
+<div id="print-area-corte" class="print-only print-corte" style="padding: 20px; font-family: sans-serif;">
+    <h1 style="color: black; margin-bottom: 10px; font-size: 24px; text-transform: uppercase;">STUDIO DM<br><span style="font-size: 18px; font-weight: normal;">LISTA DE CORTE</span></h1>
+    <div id="print-corte-header" style="margin-bottom: 30px; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 10px;"></div>
+    <div id="print-corte-content"></div>
+    <div style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px; font-size: 11px; color: #666; text-align: center;">
+        Lista de corte gerada pelo Studio DM.<br>
+        O plano de corte e otimização das chapas devem ser realizados separadamente no SketchCut.
+    </div>
 </div>
 
 <!-- MODAL GENÉRICO -->
@@ -412,11 +428,10 @@ const DEFAULT_DB = {
         { id: "mdf_4", fabricante: "Arauco", nome: "Branco Fundo", espessura: 6, faces: 1, largura: 1.85, comprimento: 2.75, precoChapa: 98.00, isBase: false, ativo: true }
     ],
     componentesDimensionais: [
-        { id: "cd_1", nome: "Lateral / Divisória", unidade: "m2", precos: { "p1": 800, "p2": 1000, "p3": 750 } },
+        { id: "cd_1", nome: "Lateral", unidade: "m2", precos: { "p1": 800, "p2": 1000, "p3": 750 } },
         { id: "cd_2", nome: "Porta", unidade: "m2", precos: { "p1": 500, "p2": 650, "p3": 450 } },
         { id: "cd_3", nome: "Prateleira", unidade: "m2", precos: { "p1": 350, "p2": 450, "p3": 300 } },
-        { id: "cd_4", nome: "Fundo de Armário", unidade: "m2", precos: { "p1": 200, "p2": 280, "p3": 180 } },
-        { id: "cd_5", nome: "Tamponamento", unidade: "m2", precos: { "p1": 850, "p2": 1100, "p3": 750 } }
+        { id: "cd_4", nome: "Fundo de Armário", unidade: "m2", precos: { "p1": 200, "p2": 280, "p3": 180 } }
     ],
     componentesQuantidade: [
         { id: "cq_1", nome: "Cabideiro (ml)", unidade: "ml", precos: { "p1": 60, "p2": 80, "p3": 50 } },
@@ -425,7 +440,7 @@ const DEFAULT_DB = {
     gavetas: [],
     orcamentos: [],
     configuracoes: {
-        nomeEmpresa: "Studio DM Ambientes Planejados", telefone: "", kerf: 3.2,
+        nomeEmpresa: "Studio DM Ambientes Planejados", telefone: "", 
         modoPrecificacao: "markup", 
         markupGlobal: 100, 
         criterioCustoMdf: "proporcional",
@@ -459,7 +474,6 @@ const StorageManager = {
     runMigrations: function() {
         if(!DB.perfis) DB.perfis = DEFAULT_DB.perfis;
         if(!DB.configuracoes) DB.configuracoes = DEFAULT_DB.configuracoes;
-        if(!DB.configuracoes.kerf) DB.configuracoes.kerf = 3.2;
         if(!DB.configuracoes.modoPrecificacao) DB.configuracoes.modoPrecificacao = 'markup';
         if(typeof DB.configuracoes.markupGlobal === 'undefined') DB.configuracoes.markupGlobal = 100;
         if(!DB.configuracoes.criterioCustoMdf) DB.configuracoes.criterioCustoMdf = 'proporcional';
@@ -533,24 +547,19 @@ const UI = {
         if (typeof str !== 'string') return str;
         return str.replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[match]);
     },
-    abrirModal: function(titulo, htmlBody, acaoSalvar, large = false) {
+    abrirModal: function(titulo, htmlBody, acaoSalvar, btnTxt = "Salvar") {
         document.getElementById('modal-title').innerText = titulo;
         document.getElementById('modal-body').innerHTML = htmlBody;
-        
-        let container = document.getElementById('modal-container-main');
-        if(large) container.classList.add('modal-large');
-        else container.classList.remove('modal-large');
-
         let btnSalvar = document.getElementById('modal-save');
         if(acaoSalvar) {
             btnSalvar.style.display = 'block';
+            btnSalvar.innerText = btnTxt;
             btnSalvar.onclick = acaoSalvar;
             document.getElementById('modal-cancel').innerText = "Cancelar";
         } else {
             btnSalvar.style.display = 'none';
             document.getElementById('modal-cancel').innerText = "Fechar";
         }
-        
         document.getElementById('modal').classList.add('active');
     },
     fecharModal: function() { document.getElementById('modal').classList.remove('active'); }
@@ -571,7 +580,6 @@ const MaterialEngine = {
         
         if (areaChapa <= 0) return { qtdCompra: 0, sobra: 0, aproveitamento: 0, teoretica: 0, custoMaterial: 0, precoM2: 0 };
 
-        // QUANTIDADE TEÓRICA E COMPRA (Arredondamento Independente)
         let teoretica = areaTotalPecas / areaChapa;
         let qtdCompra = Math.ceil(teoretica);
 
@@ -579,7 +587,6 @@ const MaterialEngine = {
         let sobra = areaComprada - areaTotalPecas;
         let aproveitamento = areaComprada > 0 ? (areaTotalPecas / areaComprada) * 100 : 0;
 
-        // CUSTO BRUTO DO MDF
         let precoM2 = this.calcularPrecoM2(mdf);
         let criterio = DB.configuracoes.criterioCustoMdf || 'proporcional';
         let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
@@ -694,7 +701,7 @@ const App = {
             <div class="form-group">
                 <label>Componente Base</label>
                 <select id="modal-add-ref">
-                    ${DB.componentesDimensionais.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)} (${c.unidade})</option>`).join('')}
+                    ${DB.componentesDimensionais.map(c => `<option value="${c.id}">${UI.escapeHTML(c.nome)}</option>`).join('')}
                 </select>
             </div>
             <div class="form-row">
@@ -703,14 +710,14 @@ const App = {
                 <div class="form-group"><label>Altura / Comp. (mm)</label><input type="text" inputmode="decimal" id="modal-add-alt" placeholder="Ex: 2800"></div>
             </div>
             <div class="form-group">
-                <label>Selecionar Material (MDF Exato)</label>
+                <label>Selecionar Material</label>
                 <select id="modal-add-mdf">
-                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm - ${m.largura}x${m.comprimento}m)</option>`).join('')}
+                    ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
                 </select>
             </div>
         `;
 
-        UI.abrirModal("Adicionar Peça Dimensional", html, () => {
+        UI.abrirModal("Adicionar Peça", html, () => {
             const refId = document.getElementById('modal-add-ref').value;
             const qtd = UI.parseNumero(document.getElementById('modal-add-qtd').value);
             const largMm = UI.parseNumero(document.getElementById('modal-add-larg').value);
@@ -728,12 +735,12 @@ const App = {
             let altM = altMm / 1000;
             let areaPeca = qtd * largM * altM;
 
-            // CÁLCULO DE CUSTO REAL DA PEÇA
+            // Custo Puro
             let precoM2Mdf = MaterialEngine.calcularPrecoM2(mdf);
             let perdaPct = (DB.configuracoes.perdaPercentual || 10) / 100;
             let custoMdfPeca = areaPeca * (1 + perdaPct) * precoM2Mdf;
             
-            // CÁLCULO DE VENDA (Para exibição no componente)
+            // Valor Comercial Exibição
             let modo = DB.configuracoes.modoPrecificacao || 'markup';
             let markup = (DB.configuracoes.markupGlobal || 100) / 100;
             let valorFinalExibicao = (modo === 'markup') ? custoMdfPeca * (1 + markup) : areaPeca * precoM2ComercialTabela;
@@ -751,9 +758,9 @@ const App = {
                 custoRealMdf: custoMdfPeca, 
                 precoM2ComercialTabela: precoM2ComercialTabela,
                 valorFinalExibicao: valorFinalExibicao,
-                // ESTRUTURA PARA EXPORTAÇÃO DE PLANO DE CORTE (Dimensões físicas puras)
+                // PEÇAS FÍSICAS (Usadas para a Lista de Corte - Puras em mm)
                 pecasFisicas: [
-                    { nome: dbRef.nome, qtd: qtd, largMm: largMm, altMm: altMm, mdf: mdf, veio: null }
+                    { nome: dbRef.nome, qtd: qtd, largMm: largMm, altMm: altMm, mdf: mdf }
                 ]
             });
 
@@ -773,26 +780,26 @@ const App = {
                 <div class="form-group"><label>Altura Frente (mm)</label><input type="text" inputmode="decimal" id="gav-alt-frente" value="180"></div>
             </div>
             <div class="form-group">
-                <label>MDF Caixa das Gavetas (Ex: Branco TX 15mm)</label>
+                <label>MDF da Caixa (Laterais/Traseira)</label>
                 <select id="gav-mdf-caixa">
                     ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
                 </select>
             </div>
             <div class="form-group">
-                <label>MDF Fundo da Caixa (Ex: 6mm)</label>
+                <label>MDF do Fundo da Gaveta</label>
                 <select id="gav-mdf-fundo">
                     ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}" ${m.espessura<=6?'selected':''}>${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
                 </select>
             </div>
             <div class="form-group">
-                <label>MDF Frentes das Gavetas (Cor Externa)</label>
+                <label>MDF da Frente da Gaveta (Externa)</label>
                 <select id="gav-mdf-frente">
                     ${DB.mdfs.filter(m => m.ativo).map(m => `<option value="${m.id}">${UI.escapeHTML(m.fabricante)} - ${UI.escapeHTML(m.nome)} (${m.espessura}mm)</option>`).join('')}
                 </select>
             </div>
         `;
 
-        UI.abrirModal("Adicionar Módulo de Gavetas", html, () => {
+        UI.abrirModal("Adicionar Gavetas", html, () => {
             const qtd = UI.parseNumero(document.getElementById('gav-qtd').value);
             const largMm = UI.parseNumero(document.getElementById('gav-larg').value);
             const profMm = UI.parseNumero(document.getElementById('gav-prof').value);
@@ -814,7 +821,7 @@ const App = {
             let espCaixaMm = mdfCaixa.espessura || 15;
             let espCaixaM = espCaixaMm / 1000;
             
-            // Separação rigorosa de custos construtivos
+            // Custos Construtivos Físicos
             let areaLateral = 2 * (profM * altM);
             let areaTraseiraEFrontal = 2 * ((largM - (2 * espCaixaM)) * altM);
             let areaFundoCaixa = (largM - (2 * espCaixaM)) * (profM - espCaixaM);
@@ -856,12 +863,12 @@ const App = {
                 ],
                 custoRealMdf: custoTotalGavetas,
                 valorFinalExibicao: valorFinalExibicao,
-                // ESTRUTURA PARA EXPORTAÇÃO DE PLANO DE CORTE (Separando Peças Físicas)
+                // PEÇAS FÍSICAS (Totalmente separadas por material para a Lista de Corte em mm puros)
                 pecasFisicas: [
-                    { nome: 'Lateral Caixa', qtd: 2 * qtd, largMm: profMm, altMm: altCaixaMm, mdf: mdfCaixa, veio: null },
-                    { nome: 'Contra-frente/Traseira', qtd: 2 * qtd, largMm: largMm - (2 * espCaixaMm), altMm: altCaixaMm, mdf: mdfCaixa, veio: null },
-                    { nome: 'Fundo Gaveta', qtd: 1 * qtd, largMm: largMm - (2 * espCaixaMm), altMm: profMm - espCaixaMm, mdf: mdfFundo, veio: null },
-                    { nome: 'Frente Aparente', qtd: 1 * qtd, largMm: largMm, altMm: altFrenteMm, mdf: mdfFrente, veio: null }
+                    { nome: 'Lateral da gaveta', qtd: 2 * qtd, largMm: profMm, altMm: altCaixaMm, mdf: mdfCaixa },
+                    { nome: 'Frente/Traseira da caixa', qtd: 2 * qtd, largMm: largMm - (2 * espCaixaMm), altMm: altCaixaMm, mdf: mdfCaixa },
+                    { nome: 'Fundo da gaveta', qtd: 1 * qtd, largMm: largMm - (2 * espCaixaMm), altMm: profMm - espCaixaMm, mdf: mdfFundo },
+                    { nome: 'Frente da gaveta', qtd: 1 * qtd, largMm: largMm, altMm: altFrenteMm, mdf: mdfFrente }
                 ]
             });
 
@@ -869,7 +876,6 @@ const App = {
         });
     },
 
-    // --- NOVO MOTOR GLOBAL DE CUSTOS E PREÇOS COMERCIAIS ---
     calcularTempoReal: function() {
         if(!this.orcamentoTemporario) return;
 
@@ -884,7 +890,7 @@ const App = {
         let custoTotalMateriaisBrutos = 0;
         let valorComercialModoTabela = 0;
 
-        // 1. Coleta consumo puro de todas as peças (Preservado da v1.3.3)
+        // 1. Coleta consumo puro e limpo
         this.orcamentoTemporario.composicao.forEach(item => {
             if(item.tipo === 'dim') {
                 let mdf = DB.mdfs.find(m => m.id === item.mdfId);
@@ -907,16 +913,16 @@ const App = {
             }
         });
 
-        // 2. Calcula plano de compras e custo global de materiais
+        // 2. Calcula plano de compras estimado pelo Motor Financeiro
         let resumoMateriais = [];
         Object.keys(mapMateriais).forEach(mdfKey => {
             let mat = mapMateriais[mdfKey];
             let calc = MaterialEngine.calcularNecessidadeChapas(mat.pecas, mat.mdf);
-            custoTotalMateriaisBrutos += calc.custoMaterial; // Custo estritamente correto
+            custoTotalMateriaisBrutos += calc.custoMaterial;
             resumoMateriais.push({ mdf: mat.mdf, ...calc });
         });
 
-        // 3. Adicionais (Ferragens e outros custos diretos)
+        // 3. Adicionais (Ferragens)
         const adicionaisSelecionados = []; const adicionaisIds = [];
         document.querySelectorAll('.orc-add-checkbox:checked').forEach(chk => {
             const addDB = DB.adicionais.find(a => a.id === chk.value);
@@ -924,7 +930,7 @@ const App = {
         });
         const custoTotalAdicionais = adicionaisSelecionados.reduce((acc, add) => acc + add.valor, 0);
 
-        // 4. FORMAÇÃO DO PREÇO FINAL DE VENDA
+        // 4. FORMAÇÃO DO PREÇO FINAL (MARKUP)
         let CUSTO_TOTAL_REAL = custoTotalMateriaisBrutos + custoTotalAdicionais;
         let subtotal = 0;
         
@@ -974,7 +980,7 @@ const App = {
         `;
 
         if (orc.composicao && orc.composicao.length > 0) {
-            html += `<div style="font-size:12px; color:var(--text-dim); margin-bottom: 8px;">COMPOSIÇÃO DO MÓVEL (Itens):</div>`;
+            html += `<div style="font-size:12px; color:var(--text-dim); margin-bottom: 8px;">COMPOSIÇÃO DO MÓVEL:</div>`;
             orc.composicao.forEach(item => {
                 html += `
                     <div class="resumo-row">
@@ -989,207 +995,161 @@ const App = {
         }
 
         if (orc.resumoMateriais && orc.resumoMateriais.length > 0) {
-            html += `<div class="resumo-divider"></div><div style="font-size:12px; color:var(--accent); margin-bottom: 6px; font-weight:bold;">🪵 MATERIAIS E LISTA DE COMPRA (Área):</div>`;
+            html += `<div class="resumo-divider"></div><div style="font-size:12px; color:var(--accent); margin-bottom: 6px; font-weight:bold;">🪵 MATERIAIS (Estimativa):</div>`;
             orc.resumoMateriais.forEach(rm => {
                 html += `
                 <div style="background:var(--card); padding:8px; border-radius:6px; margin-bottom:6px; font-size:13px;">
                     <strong>${UI.escapeHTML(rm.mdf.fabricante)} ${UI.escapeHTML(rm.mdf.nome)} (${rm.mdf.espessura}mm)</strong><br>
-                    Área útil / Consumo: ${UI.formatarNumero(rm.areaTotalPecas)} m² | Custo no orç: ${UI.formatarDinheiro(rm.custoMaterial)}<br>
-                    🛒 <strong>Compra estimada por área: ${rm.qtdCompra} chapa(s)</strong> (Valor compra: ${UI.formatarDinheiro(rm.qtdCompra * rm.mdf.precoChapa)})<br>
-                    Sobra de estoque: ${UI.formatarNumero(rm.sobra)} m² (${UI.formatarNumero(rm.aproveitamento)}% aproveitamento)
+                    Custo no orç: ${UI.formatarDinheiro(rm.custoMaterial)} | Compra est.: ${rm.qtdCompra} chapa(s)
                 </div>`;
             });
         }
 
         html += `<div class="resumo-divider"></div>`;
         
-        // Relatório Gerencial
         let labelMarkup = DB.configuracoes.markupGlobal || 100;
-        let strPrec = orc.modoPrecificacaoUtilizado === 'markup' ? `Markup Aplicado (+${labelMarkup}%)` : `Preços Tabelados / Perfil`;
+        let strPrec = orc.modoPrecificacaoUtilizado === 'markup' ? `Markup (+${labelMarkup}%)` : `Preços Tabelados`;
 
         html += `
-            <div class="resumo-row dim" style="font-size:13px;"><span>Custo Materiais (MDF):</span> <span>${UI.formatarDinheiro(orc.custoTotalMateriaisBrutos)}</span></div>
-            <div class="resumo-row dim" style="font-size:13px;"><span>Custo Adicionais (Ferragens):</span> <span>${UI.formatarDinheiro(orc.custoTotalAdicionais)}</span></div>
-            <div class="resumo-row dim" style="font-size:13px; font-weight:bold; color:var(--text);"><span>CUSTO TOTAL ESTIMADO:</span> <span>${UI.formatarDinheiro(orc.custoTotalReal)}</span></div>
+            <div class="resumo-row dim" style="font-size:13px;"><span>Custo Base Total:</span> <span>${UI.formatarDinheiro(orc.custoTotalReal)}</span></div>
+            <div class="resumo-row dim" style="font-size:13px; color:var(--info);"><span>Precificação:</span> <span>${strPrec}</span></div>
             
             <div class="resumo-divider"></div>
             
-            <div class="resumo-row" style="font-size:13px; color:var(--info);"><span>Precificação Comercial:</span> <span>${strPrec}</span></div>
             <div class="resumo-row resumo-subtotal" style="margin-top:12px;"><span>Subtotal de Venda:</span> <span>${UI.formatarDinheiro(orc.subtotal)}</span></div>
             <div class="resumo-row" style="color: var(--danger);"><span>Desconto:</span> <span>- ${UI.formatarDinheiro(orc.valorDesconto)}</span></div>
             <div class="resumo-total"><span>VALOR FINAL</span><span>${UI.formatarDinheiro(orc.total)}</span></div>
-            <div style="margin-top: 16px; font-size: 13px; color: var(--text-dim); text-align: left;"><strong>Obs:</strong> ${UI.escapeHTML(orc.observacao)}</div>
         `;
         document.getElementById(containerId).innerHTML = html;
     },
 
     /* ==========================================================================
-       6. MÓDULO DE LISTA DE CORTE (NOVO v1.3.4)
+       6. MÓDULO DE LISTA DE CORTE + PDF (NOVO v1.3.4)
        ========================================================================== */
-    agruparPecasPorMaterial: function(orcamento) {
-        let grupos = {};
+    agruparListaCorte: function(orcamento) {
+        let grupos = {}; // Agrupamento rigoroso pelo ID do Material
         if(!orcamento || !orcamento.composicao) return grupos;
         
-        orcamento.composicao.forEach((comp, idxComp) => {
-            if (comp.pecasFisicas && comp.pecasFisicas.length > 0) {
-                comp.pecasFisicas.forEach((peca, idxPeca) => {
-                    let mdf = peca.mdf;
-                    if(!mdf) return;
-                    let key = mdf.id; // Agrupamento rigoroso pelo ID Único do Material/Espessura
-                    if(!grupos[key]) {
-                        grupos[key] = { mdf: mdf, pecas: [] };
-                    }
-                    grupos[key].pecas.push({
-                        id: `P${idxComp+1}-${idxPeca+1}`,
-                        nome: peca.nome,
-                        componente: comp.nome,
-                        qtd: peca.qtd,
-                        larg: peca.largMm,
-                        alt: peca.altMm,
-                        esp: mdf.espessura,
-                        matNome: `${mdf.fabricante} ${mdf.nome} ${mdf.espessura}mm`,
-                        obs: ""
-                    });
-                });
-            } else if (comp.tipo === 'dim') {
-                // Fallback de segurança para itens criados antes da v1.3.4 (retrocompatibilidade)
+        orcamento.composicao.forEach((comp) => {
+            let pecasFisicas = comp.pecasFisicas || [];
+            
+            // Fallback para orçamentos velhos salvos na versão anterior, se existirem
+            if(pecasFisicas.length === 0 && comp.tipo === 'dim') {
                 let mdf = DB.mdfs.find(m => m.id === comp.mdfId);
-                if(mdf) {
-                    let key = mdf.id;
-                    if(!grupos[key]) grupos[key] = { mdf: mdf, pecas: [] };
-                    grupos[key].pecas.push({
-                        id: `P${idxComp+1}-FB`,
-                        nome: comp.nome,
-                        componente: comp.nome,
-                        qtd: comp.qtd,
-                        larg: comp.larguraMm,
-                        alt: comp.alturaMm,
-                        esp: mdf.espessura,
-                        matNome: `${mdf.fabricante} ${mdf.nome} ${mdf.espessura}mm`,
-                        obs: ""
-                    });
-                }
+                if(mdf) pecasFisicas.push({ nome: comp.nome, qtd: comp.qtd, largMm: comp.larguraMm, altMm: comp.alturaMm, mdf: mdf });
             }
+
+            pecasFisicas.forEach(peca => {
+                let mdf = peca.mdf;
+                if(!mdf) return;
+                
+                let keyMat = mdf.id;
+                if(!grupos[keyMat]) {
+                    grupos[keyMat] = { mdf: mdf, pecas: {} };
+                }
+                
+                // Agrupar peças exatamente iguais (Nome + Largura + Altura) no mesmo material
+                let largInt = Math.round(peca.largMm);
+                let altInt = Math.round(peca.altMm);
+                let keyPeca = `${peca.nome}_${largInt}_${altInt}`;
+                
+                if(!grupos[keyMat].pecas[keyPeca]) {
+                    grupos[keyMat].pecas[keyPeca] = {
+                        nome: peca.nome,
+                        qtd: 0,
+                        larg: largInt,
+                        alt: altInt
+                    };
+                }
+                grupos[keyMat].pecas[keyPeca].qtd += peca.qtd;
+            });
         });
         return grupos;
     },
 
     abrirModalListaCorte: function(isSavedBudget = false) {
-        let orcAtual = isSavedBudget ? this.orcamentoVisualizado : this.orcamentoTemporario;
-        if(!orcAtual || orcAtual.composicao.length === 0) return alert("Não há peças para exportar.");
+        let orc = isSavedBudget ? this.orcamentoVisualizado : this.orcamentoTemporario;
+        if(!orc || orc.composicao.length === 0) return alert("Não há peças cadastradas para gerar a lista.");
 
-        let grupos = this.agruparPecasPorMaterial(orcAtual);
-        if(Object.keys(grupos).length === 0) return alert("Nenhuma peça dimensional vinculada a um material foi encontrada.");
+        let grupos = this.agruparListaCorte(orc);
+        if(Object.keys(grupos).length === 0) return alert("Nenhuma peça com material foi encontrada.");
 
         let html = `<div style="max-height: 55vh; overflow-y: auto; padding-right: 8px;">`;
         
         Object.keys(grupos).forEach(key => {
             let grp = grupos[key];
-            let resMat = orcAtual.resumoMateriais?.find(rm => rm.mdf.id === key);
             
             html += `<div class="corte-group">
                 <div class="corte-group-title">
-                    ${UI.escapeHTML(grp.mdf.fabricante)} - ${UI.escapeHTML(grp.mdf.nome)} (${grp.mdf.espessura}mm)
-                </div>`;
+                    MDF ${UI.escapeHTML(grp.mdf.fabricante)} ${UI.escapeHTML(grp.mdf.nome)} — ${grp.mdf.espessura} MM
+                </div>
+                <table class="corte-table">
+                    <thead><tr><th>Qtd</th><th>Peça</th><th>Largura</th><th>Altura/Comp.</th></tr></thead>
+                    <tbody>`;
             
-            if(resMat) {
-                html += `<div style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.3;">
-                    Área Total: ${UI.formatarNumero(resMat.areaTotalPecas)} m² | Compra Estimada: <strong>${resMat.qtdCompra} chapa(s)</strong> (${resMat.mdf.largura}x${resMat.mdf.comprimento}m)
-                </div>`;
-            }
-
-            html += `<table class="corte-table">
-                <thead><tr><th>Peça</th><th>Qtd</th><th>Largura</th><th>Altura/Comp.</th></tr></thead>
-                <tbody>`;
-            grp.pecas.forEach(p => {
+            Object.values(grp.pecas).forEach(p => {
                 html += `<tr>
-                    <td>${UI.escapeHTML(p.nome)}<br><span style="font-size:10px;color:var(--text-dim);">${UI.escapeHTML(p.componente)}</span></td>
                     <td>${p.qtd}</td>
-                    <td>${UI.formatarNumero(p.larg, 0)} mm</td>
-                    <td>${UI.formatarNumero(p.alt, 0)} mm</td>
+                    <td>${UI.escapeHTML(p.nome)}</td>
+                    <td>${p.larg}</td>
+                    <td>${p.alt}</td>
                 </tr>`;
             });
             html += `</tbody></table></div>`;
         });
         html += `</div>`;
 
-        html += `<div style="background: var(--card-alt); border: 1px solid var(--warning); border-radius: 6px; padding: 10px; margin-top: 16px; font-size: 11px; color: var(--text-dim);">
-            <strong style="color: var(--warning);">⚠️ IMPORTANTE:</strong> A quantidade de chapas calculada no orçamento é uma <strong>estimativa por área</strong>. A quantidade física exata necessária será determinada de forma definitiva pelo software de plano de corte após o encaixe das peças.
-        </div>`;
-
-        html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
-            <button class="btn btn-info btn-small" onclick="App.copiarListaCorte('${isSavedBudget}')" style="margin:0;">📋 COPIAR TEXTO</button>
-            <button class="btn btn-outline btn-small" onclick="App.exportarListaCSV('${isSavedBudget}')" style="margin:0;">📊 EXPORTAR CSV</button>
-            <button class="btn btn-outline btn-small" onclick="App.exportarListaTXT('${isSavedBudget}')" style="margin:0; grid-column: span 2;">📝 EXPORTAR TXT (SketchCut)</button>
-        </div>`;
-
-        UI.abrirModal("Lista de Corte (Exportação)", html, null, true);
+        UI.abrirModal("Lista de Corte", html, () => {
+            App.imprimirListaCorte(isSavedBudget);
+        }, "📄 GERAR PDF / IMPRIMIR");
     },
 
-    gerarStringListaTXT: function(orcamento) {
-        let grupos = this.agruparPecasPorMaterial(orcamento);
-        let txt = `====================================\nLISTA DE CORTE - STUDIO DM\nCLIENTE: ${orcamento.cliente || 'Não informado'}\n====================================\n\n`;
+    imprimirListaCorte: function(isSaved) {
+        let orc = isSaved ? this.orcamentoVisualizado : this.orcamentoTemporario;
+        let grupos = this.agruparListaCorte(orc);
         
+        let dt = new Date(orc.data || new Date()).toLocaleDateString('pt-BR');
+        let headerHtml = `
+            <div><strong>Projeto:</strong> ${UI.escapeHTML(orc.cliente || 'Não informado')}</div>
+            <div><strong>Data:</strong> ${dt}</div>
+        `;
+        document.getElementById('print-corte-header').innerHTML = headerHtml;
+
+        let contentHtml = '';
         Object.keys(grupos).forEach(key => {
             let grp = grupos[key];
-            txt += `MATERIAL: ${grp.mdf.fabricante} ${grp.mdf.nome} ${grp.mdf.espessura}mm\n`;
-            txt += `------------------------------------\n`;
-            grp.pecas.forEach(p => {
-                txt += `${p.nome} | ${p.qtd} un | ${p.larg} x ${p.alt} mm\n`;
+            contentHtml += `
+            <div class="print-corte-group">
+                <div class="print-corte-title">MDF ${UI.escapeHTML(grp.mdf.fabricante)} ${UI.escapeHTML(grp.mdf.nome)} — ${grp.mdf.espessura} MM</div>
+                <table class="print-corte-table">
+                    <thead><tr><th>Qtd</th><th>Peça</th><th>Largura</th><th>Altura</th></tr></thead>
+                    <tbody>`;
+            Object.values(grp.pecas).forEach(p => {
+                contentHtml += `<tr><td>${p.qtd}</td><td>${UI.escapeHTML(p.nome)}</td><td>${p.larg}</td><td>${p.alt}</td></tr>`;
             });
-            txt += `\n`;
+            contentHtml += `</tbody></table></div>`;
         });
-        return txt;
-    },
-
-    gerarStringListaCSV: function(orcamento) {
-        let grupos = this.agruparPecasPorMaterial(orcamento);
-        let csv = `ID;PECA;COMPONENTE;QTD;LARGURA_MM;ALTURA_MM;ESPESSURA_MM;MATERIAL;MDF_ID;OBSERVACAO\n`;
         
-        Object.keys(grupos).forEach(key => {
-            let grp = grupos[key];
-            grp.pecas.forEach(p => {
-                csv += `"${p.id}";"${p.nome}";"${p.componente}";${p.qtd};${p.larg};${p.alt};${p.esp};"${p.matNome}";"${key}";""\n`;
-            });
-        });
-        return csv;
+        document.getElementById('print-corte-content').innerHTML = contentHtml;
+        
+        // Ativa a exibição CSS exclusiva da Lista de Corte e desativa a do Orçamento
+        document.getElementById('print-area-corte').style.display = 'block';
+        document.getElementById('print-area-orcamento').style.display = 'none';
+        
+        window.print();
     },
 
-    copiarListaCorte: function(isSavedStr) {
-        let isSaved = isSavedStr === 'true';
-        let orcAtual = isSaved ? this.orcamentoVisualizado : this.orcamentoTemporario;
-        let txt = this.gerarStringListaTXT(orcAtual);
-        navigator.clipboard.writeText(txt).then(() => {
-            alert("Lista copiada para a área de transferência!");
-        }).catch(err => {
-            alert("Erro ao copiar: " + err);
-        });
-    },
-
-    exportarListaTXT: function(isSavedStr) {
-        let isSaved = isSavedStr === 'true';
-        let orcAtual = isSaved ? this.orcamentoVisualizado : this.orcamentoTemporario;
-        let txt = this.gerarStringListaTXT(orcAtual);
-        const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(txt);
-        const anchor = document.createElement('a');
-        anchor.setAttribute("href", dataStr); 
-        let nome = orcAtual.cliente ? orcAtual.cliente.replace(/[^a-z0-9]/gi, '_') : 'Movel';
-        anchor.setAttribute("download", `Corte_${nome}.txt`);
-        document.body.appendChild(anchor); anchor.click(); anchor.remove();
-    },
-
-    exportarListaCSV: function(isSavedStr) {
-        let isSaved = isSavedStr === 'true';
-        let orcAtual = isSaved ? this.orcamentoVisualizado : this.orcamentoTemporario;
-        let csv = this.gerarStringListaCSV(orcAtual);
-        // Bom for UTF-8 compatibility in Excel
-        const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.setAttribute("href", url); 
-        let nome = orcAtual.cliente ? orcAtual.cliente.replace(/[^a-z0-9]/gi, '_') : 'Movel';
-        anchor.setAttribute("download", `Corte_${nome}.csv`);
-        document.body.appendChild(anchor); anchor.click(); anchor.remove();
+    imprimirOrcamento: function() {
+        if(!this.orcamentoVisualizado) return;
+        document.getElementById('print-empresa').innerText = DB.configuracoes.nomeEmpresa; 
+        document.getElementById('print-obs').innerText = ""; 
+        document.getElementById('print-content').innerHTML = `<div style="margin-bottom: 20px;"><strong>Data:</strong> ${new Date(this.orcamentoVisualizado.data).toLocaleDateString('pt-BR')}</div>${document.getElementById('detalhe-resumo-content').innerHTML}`;
+        
+        // Ativa a exibição CSS exclusiva do Orçamento e desativa a da Lista de Corte
+        document.getElementById('print-area-orcamento').style.display = 'block';
+        document.getElementById('print-area-corte').style.display = 'none';
+        
+        window.print();
     },
 
     salvarOrcamento: function() {
@@ -1212,18 +1172,8 @@ const App = {
         const orc = this.orcamentoVisualizado; if(!orc) return;
         let t = `*ORÇAMENTO — STUDIO DM*\n\n*Cliente:* ${orc.cliente}\n*Móvel:* ${orc.categoriaNome}\n\n*COMPOSIÇÃO:*\n`;
         orc.composicao.forEach(item => { t += `• ${item.nome} — ${UI.formatarDinheiro(item.valorFinalExibicao)}\n`; });
-        if(orc.resumoMateriais?.length > 0) {
-            t += `\n*PLANO DE CHAPAS (COMPRA ESTIMADA):*\n`;
-            orc.resumoMateriais.forEach(rm => { t += `• ${rm.mdf.fabricante} ${rm.mdf.nome} ${rm.mdf.espessura}mm: ${rm.qtdCompra} chapa(s)\n`; });
-        }
         t += `\n*TOTAL: ${UI.formatarDinheiro(orc.total)}*\n\n*Observações:*\n${orc.observacao}\n\n_${DB.configuracoes.nomeEmpresa}_`;
         window.open(`https://wa.me/?text=${encodeURIComponent(t)}`, '_blank');
-    },
-    imprimir: function() {
-        if(!this.orcamentoVisualizado) return;
-        document.getElementById('print-empresa').innerText = DB.configuracoes.nomeEmpresa; document.getElementById('print-obs').innerText = ""; 
-        document.getElementById('print-content').innerHTML = `<div style="margin-bottom: 20px;"><strong>Data:</strong> ${new Date(this.orcamentoVisualizado.data).toLocaleDateString('pt-BR')}</div>${document.getElementById('detalhe-resumo-content').innerHTML}`;
-        window.print();
     },
     renderizarHistorico: function() {
         const c = document.getElementById('historico-lista');
@@ -1296,7 +1246,6 @@ const CRUD = {
         document.getElementById('config-telefone').value = DB.configuracoes.telefone;
         document.getElementById('config-modo-preco').value = DB.configuracoes.modoPrecificacao || 'markup';
         document.getElementById('config-markup').value = DB.configuracoes.markupGlobal || 100;
-        document.getElementById('config-kerf').value = DB.configuracoes.kerf || 3.2;
         document.getElementById('config-criterio-custo').value = DB.configuracoes.criterioCustoMdf || 'proporcional';
         document.getElementById('config-perda').value = DB.configuracoes.perdaPercentual || 10;
         document.getElementById('config-obs').value = DB.configuracoes.observacaoPadrao;
@@ -1306,7 +1255,6 @@ const CRUD = {
         DB.configuracoes.telefone = document.getElementById('config-telefone').value.trim();
         DB.configuracoes.modoPrecificacao = document.getElementById('config-modo-preco').value;
         DB.configuracoes.markupGlobal = UI.parseNumero(document.getElementById('config-markup').value);
-        DB.configuracoes.kerf = UI.parseNumero(document.getElementById('config-kerf').value);
         DB.configuracoes.criterioCustoMdf = document.getElementById('config-criterio-custo').value;
         DB.configuracoes.perdaPercentual = UI.parseNumero(document.getElementById('config-perda').value);
         DB.configuracoes.observacaoPadrao = document.getElementById('config-obs').value.trim();
